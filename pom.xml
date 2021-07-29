@@ -12,7 +12,7 @@
 	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>backend</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Backend service for Hepi Plant app</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
