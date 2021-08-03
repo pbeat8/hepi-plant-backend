@@ -1,5 +1,7 @@
 package com.hepiplant.backend.entity;
 
+import com.hepiplant.backend.entity.enums.Permission;
+
 import javax.persistence.*;
 
 @Entity

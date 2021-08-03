@@ -1,4 +1,4 @@
-package com.hepiplant.backend.entity;
+package com.hepiplant.backend.entity.enums;
 
 public enum Placement {
     Sunny,
