@@ -3,12 +3,14 @@ package com.hepiplant.backend.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "salesoffers", name = "salesoffers")
+@Table(schema = "forum", name = "salesoffers")
 public class SalesOffer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @ManyToOne
     private Long id;
-    //private User user;
+    @ManyToOne
+    private User user;
     private Category category;
     private String offerTitle;
     private String offerContent;
