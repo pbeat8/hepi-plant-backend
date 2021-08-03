@@ -14,13 +14,13 @@ public class Species {
     private int wateringFrequency;
     private int fertilizingFrequency;
     private int mistingFrequency;
-    private String placement;
+    private Placement placement;
     private String soil;
 
     public Species() {
     }
 
-    public Species(Long id, String name, int wateringFrequency, int fertilizingFrequency, int mistingFrequency, String placement, String soil) {
+    public Species(Long id, String name, int wateringFrequency, int fertilizingFrequency, int mistingFrequency, Placement placement, String soil) {
         this.id = id;
         this.name = name;
         this.wateringFrequency = wateringFrequency;
@@ -66,11 +66,11 @@ public class Species {
         this.mistingFrequency = mistingFrequency;
     }
 
-    public String getPlacement() {
+    public Placement getPlacement() {
         return placement;
     }
 
-    public void setPlacement(String placement) {
+    public void setPlacement(Placement placement) {
         this.placement = placement;
     }
 
