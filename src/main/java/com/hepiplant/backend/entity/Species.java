@@ -16,6 +16,7 @@ public class Species {
     private int wateringFrequency;
     private int fertilizingFrequency;
     private int mistingFrequency;
+    @Enumerated(EnumType.STRING)
     private Placement placement;
     private String soil;
     @ManyToOne(fetch = FetchType.LAZY)
