@@ -4,25 +4,28 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(schema = "plants", name = "calendars")
-public class Calendar {
+@Table(schema = "plants", name = "events")
+public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne
-    private Plant plant;
     private String eventName;
     private String eventDescription;
     private LocalDateTime eventDate;
+    private boolean isDone;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plant_id")
+    private Plant plant;
 
-    public Calendar() {
+    public Event() {
     }
 
-    public Calendar(Plant plant, String eventName, String eventDescription, LocalDateTime eventDate) {
-        this.plant = plant;
+    public Event(Long id, String eventName, String eventDescription, LocalDateTime eventDate, boolean isDone) {
+        this.id = id;
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventDate = eventDate;
+        this.isDone = isDone;
     }
 
     public Plant getPlant() {
@@ -55,5 +58,13 @@ public class Calendar {
 
     public void setEventDate(LocalDateTime eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
     }
 }

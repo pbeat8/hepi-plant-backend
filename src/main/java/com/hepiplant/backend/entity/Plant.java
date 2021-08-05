@@ -2,6 +2,7 @@ package com.hepiplant.backend.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(schema = "plants", name = "plants")
@@ -14,12 +15,16 @@ public class Plant {
     private String name;
     private LocalDateTime purchaseDate;
     private String location;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Species species;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+    @OneToMany(mappedBy = "plant")
+    private List<Event> eventList;
+    @OneToOne(mappedBy = "plant")
+    private Schedule schedule;
 
     public Plant() {
     }
