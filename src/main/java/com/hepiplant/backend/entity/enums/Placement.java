@@ -1,7 +1,7 @@
 package com.hepiplant.backend.entity.enums;
 
 public enum Placement {
-    Sunny,
-    IndirectLight,
-    Shadow
+    SUNNY,
+    INDIRECT_LIGHT,
+    SHADOW
 }
