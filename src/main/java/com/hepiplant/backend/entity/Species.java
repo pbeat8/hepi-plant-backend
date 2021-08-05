@@ -18,11 +18,14 @@ public class Species {
     private int mistingFrequency;
     private Placement placement;
     private String soil;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
 
     public Species() {
     }
 
-    public Species(Long id, String name, int wateringFrequency, int fertilizingFrequency, int mistingFrequency, Placement placement, String soil) {
+    public Species(Long id, String name, int wateringFrequency, int fertilizingFrequency,
+                   int mistingFrequency, Placement placement, String soil, Category category) {
         this.id = id;
         this.name = name;
         this.wateringFrequency = wateringFrequency;
@@ -30,6 +33,7 @@ public class Species {
         this.mistingFrequency = mistingFrequency;
         this.placement = placement;
         this.soil = soil;
+        this.category = category;
     }
 
     public Long getId() {
@@ -82,5 +86,13 @@ public class Species {
 
     public void setSoil(String soil) {
         this.soil = soil;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
