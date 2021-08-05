@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(schema = "plants", name = "calendars")
 public class Calendar {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
     @ManyToOne
     private Plant plant;
     private String eventName;

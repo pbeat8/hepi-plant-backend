@@ -7,10 +7,10 @@ import javax.persistence.*;
 public class SalesOffer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @ManyToOne
     private Long id;
     @ManyToOne
     private User user;
+    @ManyToOne
     private Category category;
     private String offerTitle;
     private String offerContent;
