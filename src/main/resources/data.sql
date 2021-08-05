@@ -7,5 +7,25 @@ INSERT INTO plants.categories(id, name) VALUES
 	(106, 'Kaktusy');
 
 INSERT INTO plants.species(id, fertilizing_frequency, misting_frequency, name, placement, soil, watering_frequency, category_id) VALUES
-    (201, ?, ?, ?, ?, ?, ?, ?),
-    (202, ?, ?, ?, ?, ?, ?, ?);
+    (201, 14, 4, 'Aglaonemy', 'JASNE', 'Bardzo kwaśna', 4, 101),
+    (202, 30, 10, 'Aloesy', 'JASNE', 'Uniwersalna', 7, 105),
+    (203, 10, 0, 'Bonsai', 'POLCIENISTE', 'Uniwersalna', 2, 101),
+    (204, 30, 7, 'Cykasy', 'POLCIENISTE', 'Uniwersalna', 7, 101),
+    (205, 42, 10, 'Draceny', 'JASNE', 'Lekko kwaśna', 7, 101),
+    (206, 14, 5, 'Fikusy', 'BARDZO_JASNE','Uniwersalna', 5, 101),
+    (207, 14, 4, 'Juka', 'BARDZO_JASNE', 'Uniwersalna', 7, 101),
+    (208, 14, 2, 'Kalatea', 'POLCIENISTE', 'Przepuszczalna, lekko kwaśna', 4, 101),
+    (209, 16, 4, 'Maranta', 'JASNE', 'Przepuszczalna, lekko kwaśna', 5, 101),
+    (210, 21, 3, 'Monstera', 'JASNE', 'Przepuszczalna', 8, 103),
+    (211, 21, 4, 'Filodendron', 'POLCIENISTE', 'Żyzna, przepuszczalna', 12, 103),
+    (212, 14, 4, 'Palma', 'BARDZO_JASNE', 'Uniwersalna', 5, 101),
+    (213, 14, 3, 'Paproć', 'POLCIENISTE', 'Próchnicze', 7, 101),
+    (214, 14, 5, 'Strelicja', 'JASNE', 'Przepuszczalna', 3, 101),
+    (215, 28, 0, 'Sansewieria', 'ZACIENIONE', 'Przepuszczalna', 10, 101),
+    (216, 14, 2, 'Skrzydłokwiat', 'POLCIENISTE',  'Przepuszczalna', 3, 102),
+    (217, 14, 0, 'Zamiokulkas', 'ZACIENIONE', 'Pniwersalna', 10, 101),
+    (218, 30, 5, 'Zroślicha','POLCIENISTE', 'Przepuszczalna', 5, 101),
+    (219, 14, 3, 'Fitonia', 'ZACIENIONE', 'Przepuszczalna', 3, 101),
+    (220, 14, 4, 'Pilea', 'JASNE', 'Przepuszczalna', 4, 101),
+    (221, 21, 0, 'Caladium', 'JASNE', 'Przepuszczalna', 3, 101),
+    (222, 14, 0, 'Alokazja', 'POLCIENISTE', 'Przepuszczalna', 7, 101);
