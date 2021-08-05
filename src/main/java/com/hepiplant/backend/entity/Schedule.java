@@ -5,7 +5,9 @@ import javax.persistence.*;
 @Entity
 @Table(schema = "plants", name = "schedules")
 public class Schedule {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
     @OneToOne
     private Plant plant;
     private int wateringFrequency;
