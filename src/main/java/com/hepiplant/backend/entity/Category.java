@@ -1,5 +1,7 @@
 package com.hepiplant.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -12,6 +14,7 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
     @OneToMany(mappedBy = "category")
+    @JsonIgnore
     private List<Species> speciesList;
 
     public Category() {
