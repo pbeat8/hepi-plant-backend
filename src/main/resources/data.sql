@@ -4,7 +4,7 @@ INSERT INTO plants.categories(id, name) VALUES
 	(103, 'Rośliny pnące i zwisające'),
 	(104, 'Oplątwy'),
 	(105, 'Sukulenty'),
-	(106, 'Kaktusy');
+	(106, 'Kaktusy') ON CONFLICT DO NOTHING;
 
 INSERT INTO plants.species(id, fertilizing_frequency, misting_frequency, name, placement, soil, watering_frequency, category_id) VALUES
     (201, 14, 4, 'Aglaonemy', 'JASNE', 'Bardzo kwaśna', 4, 101),
@@ -28,4 +28,4 @@ INSERT INTO plants.species(id, fertilizing_frequency, misting_frequency, name, p
     (219, 14, 3, 'Fitonia', 'ZACIENIONE', 'Przepuszczalna', 3, 101),
     (220, 14, 4, 'Pilea', 'JASNE', 'Przepuszczalna', 4, 101),
     (221, 21, 0, 'Caladium', 'JASNE', 'Przepuszczalna', 3, 101),
-    (222, 14, 0, 'Alokazja', 'POLCIENISTE', 'Przepuszczalna', 7, 101);
+    (222, 14, 0, 'Alokazja', 'POLCIENISTE', 'Przepuszczalna', 7, 101) ON CONFLICT DO NOTHING;
