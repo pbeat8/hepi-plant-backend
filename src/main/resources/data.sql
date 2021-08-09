@@ -23,7 +23,7 @@ INSERT INTO plants.species(id, fertilizing_frequency, misting_frequency, name, p
     (214, 14, 5, 'Strelicja', 'JASNE', 'Przepuszczalna', 3, 101),
     (215, 28, 0, 'Sansewieria', 'ZACIENIONE', 'Przepuszczalna', 10, 101),
     (216, 14, 2, 'Skrzydłokwiat', 'POLCIENISTE',  'Przepuszczalna', 3, 102),
-    (217, 14, 0, 'Zamiokulkas', 'ZACIENIONE', 'Pniwersalna', 10, 101),
+    (217, 14, 0, 'Zamiokulkas', 'ZACIENIONE', 'Uniwersalna', 10, 101),
     (218, 30, 5, 'Zroślicha','POLCIENISTE', 'Przepuszczalna', 5, 101),
     (219, 14, 3, 'Fitonia', 'ZACIENIONE', 'Przepuszczalna', 3, 101),
     (220, 14, 4, 'Pilea', 'JASNE', 'Przepuszczalna', 4, 101),
