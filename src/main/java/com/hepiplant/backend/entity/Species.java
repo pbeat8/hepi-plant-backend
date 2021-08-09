@@ -20,6 +20,7 @@ public class Species {
     private Placement placement;
     private String soil;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     public Species() {

@@ -8,10 +8,6 @@ public class SalesOffer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne
-    private User user;
-    @ManyToOne
-    private Category category;
     private String offerTitle;
     private String offerContent;
     private String location;
@@ -19,6 +15,12 @@ public class SalesOffer {
     private String tag1;
     private String tag2;
     private String tag3;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public SalesOffer(Long id, Category category, String offerTitle, String offerContent, String location, Double price, String tag1, String tag2, String tag3) {
         this.id = id;

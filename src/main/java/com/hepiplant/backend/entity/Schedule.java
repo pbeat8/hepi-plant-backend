@@ -7,12 +7,14 @@ import javax.persistence.*;
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id")
     private Long id;
-    @OneToOne
-    private Plant plant;
     private int wateringFrequency;
     private int fertilizingFrequency;
     private int mistingFrequency;
+    @OneToOne
+    @JoinColumn(name = "plant_id", referencedColumnName = "id")
+    private Plant plant;
 
     public Schedule(Plant plant, int wateringFrequency, int fertilizingFrequency, int mistingFrequency) {
         this.plant = plant;
