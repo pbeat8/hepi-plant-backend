@@ -1,10 +1,10 @@
 package com.hepiplant.backend.repository;
 
-import com.hepiplant.backend.entity.Plant;
+import com.hepiplant.backend.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PlantRepository extends JpaRepository<Plant, Long> {
+public interface PostRepository extends JpaRepository<Post, Long> {
 
 }

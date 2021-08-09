@@ -4,7 +4,10 @@ import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.entity.Plant;
 import com.hepiplant.backend.service.PlantService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/plants")
