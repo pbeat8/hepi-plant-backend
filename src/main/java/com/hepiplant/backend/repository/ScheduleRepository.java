@@ -1,9 +1,9 @@
 package com.hepiplant.backend.repository;
 
+import com.hepiplant.backend.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.Calendar;
 
 @Repository
-public interface CalendarRepository extends JpaRepository<Calendar, Long> {
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 }
