@@ -1,6 +1,7 @@
 package com.hepiplant.backend.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(schema = "plants", name = "categories")
@@ -10,13 +11,16 @@ public class Category {
     private Long id;
     @Column(nullable = false, unique = true)
     private String name;
+    @OneToMany(mappedBy = "category")
+    private List<Species> speciesList;
 
     public Category() {
     }
 
-    public Category(Long id, String name) {
+    public Category(Long id, String name, List<Species> speciesList) {
         this.id = id;
         this.name = name;
+        this.speciesList = speciesList;
     }
 
     public Long getId() {
@@ -29,5 +33,13 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Species> getSpeciesList() {
+        return speciesList;
+    }
+
+    public void setSpeciesList(List<Species> speciesList) {
+        this.speciesList = speciesList;
     }
 }

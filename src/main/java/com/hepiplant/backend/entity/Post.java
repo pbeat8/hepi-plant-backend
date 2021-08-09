@@ -9,10 +9,6 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne
-    private User user;
-    @ManyToOne
-    private Category category;
     private String title;
     private String body;
     private String tag1;
@@ -20,6 +16,12 @@ public class Post {
     private String tag3;
     private String tag4;
     private String tag5;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public Post() {
     }
@@ -112,4 +114,5 @@ public class Post {
     public void setTag5(String tag5) {
         this.tag5 = tag5;
     }
+
 }

@@ -20,12 +20,13 @@ public class Event {
     public Event() {
     }
 
-    public Event(Long id, String eventName, String eventDescription, LocalDateTime eventDate, boolean isDone) {
+    public Event(Long id, String eventName, String eventDescription, LocalDateTime eventDate, boolean isDone, Plant plant) {
         this.id = id;
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventDate = eventDate;
         this.isDone = isDone;
+        this.plant = plant;
     }
 
     public Plant getPlant() {

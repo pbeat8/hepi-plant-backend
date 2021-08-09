@@ -18,8 +18,10 @@ public class Plant {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="species_id")
     private Species species;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
     private User user;
     @OneToMany(mappedBy = "plant")
     private List<Event> eventList;
@@ -29,7 +31,7 @@ public class Plant {
     public Plant() {
     }
 
-    public Plant(Long id, String name, LocalDateTime purchaseDate, String location, Category category, Species species, User user) {
+    public Plant(Long id, String name, LocalDateTime purchaseDate, String location, Category category, Species species, User user, List<Event> eventList, Schedule schedule) {
         this.id = id;
         this.name = name;
         this.purchaseDate = purchaseDate;
@@ -37,6 +39,8 @@ public class Plant {
         this.category = category;
         this.species = species;
         this.user = user;
+        this.eventList = eventList;
+        this.schedule = schedule;
     }
 
     public Long getId() {
@@ -93,5 +97,21 @@ public class Plant {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Event> getEventList() {
+        return eventList;
+    }
+
+    public void setEventList(List<Event> eventList) {
+        this.eventList = eventList;
+    }
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }
