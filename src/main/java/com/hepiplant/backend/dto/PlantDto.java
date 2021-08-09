@@ -1,7 +1,5 @@
 package com.hepiplant.backend.dto;
 
-import java.time.LocalDateTime;
-
 public class PlantDto {
 
     private String name;
