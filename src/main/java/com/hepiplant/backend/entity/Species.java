@@ -1,5 +1,6 @@
 package com.hepiplant.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hepiplant.backend.entity.enums.Placement;
 
 import javax.persistence.*;
