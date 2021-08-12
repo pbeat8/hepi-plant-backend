@@ -1,5 +1,8 @@
 package com.hepiplant.backend.controller;
 
+import com.hepiplant.backend.service.ScheduleService;
+import com.hepiplant.backend.service.SpeciesService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,19 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/species")
 public class SpeciesController {
 
+    private final SpeciesService speciesService;
+
+    public SpeciesController(SpeciesService speciesService) {
+        this.speciesService = speciesService;
+    }
+
     @GetMapping
-    public String someMethod(){
-        return "hello";
+    public ResponseEntity<?> getSpecies(){
+        return ResponseEntity.ok().body(speciesService.getAll());
     }
 
-    @GetMapping(path = "/ola")
-    public String someOtherMethod(){
-        return "Welcome Olas!!! :)";
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getSpeciesById(@PathVariable Long id){
+        return  ResponseEntity.ok().body(speciesService.getById(id));
     }
-
-    @GetMapping (path = "/{name}")
-    public String nameMethod(@PathVariable String name){
-        return "How are you, " + name + "?";
-    }
-
 }
