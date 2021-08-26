@@ -1,14 +1,15 @@
-package com.hepiplant.backend.service;
+package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.repository.UserRepository;
+import com.hepiplant.backend.service.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     public UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {

@@ -2,7 +2,7 @@ package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.entity.Plant;
-import com.hepiplant.backend.service.PlantServiceImpl;
+import com.hepiplant.backend.service.impl.PlantServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

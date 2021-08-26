@@ -1,14 +1,15 @@
-package com.hepiplant.backend.service;
+package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.entity.Species;
 import com.hepiplant.backend.repository.SpeciesRepository;
+import com.hepiplant.backend.service.SpeciesService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
-public class SpeciesServiceImpl implements SpeciesService{
+public class SpeciesServiceImpl implements SpeciesService {
     public SpeciesRepository speciesRepository;
 
     public SpeciesServiceImpl(SpeciesRepository speciesRepository) {
