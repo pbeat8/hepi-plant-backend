@@ -1,12 +1,15 @@
 package com.hepiplant.backend.service;
 
 
+import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.entity.Plant;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 public interface PlantService {
-    List<Plant> getAll();
-    Plant getById(Long id);
+    List<PlantDto> getAll();
+    PlantDto getById(Long id);
+    PlantDto savePlant(PlantDto plantDto);
+    PlantDto update(Long id, PlantDto plantDto);
+    String delete(Long id);
 }
