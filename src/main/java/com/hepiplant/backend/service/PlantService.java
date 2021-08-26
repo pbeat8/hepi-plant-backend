@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface PlantService {
     List<Plant> getAll();
     Plant getById(Long id);

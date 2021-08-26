@@ -1,14 +1,15 @@
-package com.hepiplant.backend.service;
+package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.repository.CategoryRepository;
+import com.hepiplant.backend.service.CategoryService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
-public class CategoryServiceImpl implements CategoryService{
+public class CategoryServiceImpl implements CategoryService {
     public CategoryRepository categoryRepository;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository) {

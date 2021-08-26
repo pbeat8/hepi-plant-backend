@@ -1,14 +1,15 @@
-package com.hepiplant.backend.service;
+package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.repository.SalesOfferRepository;
+import com.hepiplant.backend.service.SalesOfferService;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
-public class SalesOfferServiceImpl implements SalesOfferService{
+public class SalesOfferServiceImpl implements SalesOfferService {
     public SalesOfferRepository salesOfferRepository;
 
     public SalesOfferServiceImpl(SalesOfferRepository salesOfferRepository) {
