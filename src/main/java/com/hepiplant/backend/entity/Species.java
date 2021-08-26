@@ -1,5 +1,6 @@
 package com.hepiplant.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hepiplant.backend.entity.enums.Placement;
 
@@ -22,6 +23,7 @@ public class Species {
     private String soil;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Category category;
 
     public Species() {
