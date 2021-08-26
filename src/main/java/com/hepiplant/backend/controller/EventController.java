@@ -1,6 +1,5 @@
 package com.hepiplant.backend.controller;
 
-import com.hepiplant.backend.service.CategoryService;
 import com.hepiplant.backend.service.EventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
