@@ -1,11 +1,13 @@
 package com.hepiplant.backend.controller;
 
-import com.hepiplant.backend.service.ScheduleService;
+import com.hepiplant.backend.dto.UserDto;
 import com.hepiplant.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+@RestController
+@RequestMapping(path = "/users")
 public class UserController {
     private final UserService userService;
 
@@ -13,13 +15,25 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto){
+        return ResponseEntity.ok().body(userService.add(userDto));
+    }
     @GetMapping
-    public ResponseEntity<?> getUsers(){
+    public ResponseEntity<List<UserDto>> getUsers(){
         return ResponseEntity.ok().body(userService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id){
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
         return  ResponseEntity.ok().body(userService.getById(id));
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto userDto){
+        return ResponseEntity.ok().body(userService.update(id, userDto));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        return ResponseEntity.ok().body(userService.delete(id));
     }
 }
