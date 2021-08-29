@@ -21,8 +21,11 @@ public class SpeciesServiceImpl implements SpeciesService {
     public SpeciesRepository speciesRepository;
     public CategoryRepository categoryRepository;
 
-    public SpeciesServiceImpl(SpeciesRepository speciesRepository) {
+    public SpeciesServiceImpl(SpeciesRepository speciesRepository, CategoryRepository categoryRepository) {
+
         this.speciesRepository = speciesRepository;
+        this.categoryRepository = categoryRepository;
+
     }
 
     @Override
