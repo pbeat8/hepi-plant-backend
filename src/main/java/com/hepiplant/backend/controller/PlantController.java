@@ -1,9 +1,7 @@
 package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.PlantDto;
-import com.hepiplant.backend.entity.Plant;
 import com.hepiplant.backend.service.PlantService;
-import com.hepiplant.backend.service.impl.PlantServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +21,7 @@ public class PlantController {
 
     @PostMapping
     public ResponseEntity<PlantDto> addPlant(@RequestBody PlantDto plantDto){
-        return ResponseEntity.ok().body(plantService.savePlant(plantDto));
+        return ResponseEntity.ok().body(plantService.create(plantDto));
     }
 
     @GetMapping
