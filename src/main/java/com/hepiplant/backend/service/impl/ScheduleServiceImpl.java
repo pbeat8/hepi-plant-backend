@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
-    public ScheduleRepository scheduleRepository;
+
+    private ScheduleRepository scheduleRepository;
 
     public ScheduleServiceImpl(ScheduleRepository scheduleRepository) {
         this.scheduleRepository = scheduleRepository;

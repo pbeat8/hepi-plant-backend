@@ -18,8 +18,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
-    public SpeciesRepository speciesRepository;
-    public CategoryRepository categoryRepository;
+
+    private SpeciesRepository speciesRepository;
+    private CategoryRepository categoryRepository;
 
     public SpeciesServiceImpl(SpeciesRepository speciesRepository, CategoryRepository categoryRepository) {
 
