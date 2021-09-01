@@ -80,10 +80,8 @@ public class SpeciesServiceImpl implements SpeciesService {
             throw new ImmutableFieldException("Field Soil in Species is immutable!");
         }
         if(speciesDto.getCategoryId()!=null && !speciesDto.getCategoryId().equals(species.getCategory().getId())){
-            //tothink
-            //throw new ImmutableFieldException("Field Soil in Species is immutable!");
-            Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(EntityNotFoundException::new);
-            species.setCategory(category);
+            throw new ImmutableFieldException("Field Soil in Species is immutable!");
+
         }
         Species savedSpecies = speciesRepository.save(species);
         return mapToDto(savedSpecies);
