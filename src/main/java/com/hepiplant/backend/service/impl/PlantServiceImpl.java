@@ -3,9 +3,11 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.entity.Plant;
 import com.hepiplant.backend.entity.Species;
+import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.repository.PlantRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
+import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.PlantService;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +20,14 @@ import java.util.stream.Collectors;
 @Service
 public class PlantServiceImpl implements PlantService {
 
-    private PlantRepository plantRepository;
-    private SpeciesRepository speciesRepository;
+    private final PlantRepository plantRepository;
+    private final SpeciesRepository speciesRepository;
+    private final UserRepository userRepository;
 
-    public PlantServiceImpl(PlantRepository plantRepository, SpeciesRepository speciesRepository) {
+    public PlantServiceImpl(PlantRepository plantRepository, SpeciesRepository speciesRepository, UserRepository userRepository) {
         this.plantRepository = plantRepository;
         this.speciesRepository = speciesRepository;
+        this.userRepository = userRepository;
     }
 
     public PlantDto create(PlantDto plantDto){
@@ -36,6 +40,10 @@ public class PlantServiceImpl implements PlantService {
             Species species = speciesRepository.findById(plantDto.getSpeciesId()).orElseThrow(EntityNotFoundException::new);
             plant.setSpecies(species);
             plant.setCategory(species.getCategory());
+        }
+        if(plantDto.getUserId()!=null){
+            User user = userRepository.findById(plantDto.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found for id " + plantDto.getUserId()));
+            plant.setUser(user);
         }
         Plant savedPlant = plantRepository.save(plant);
         return mapToDto(savedPlant);
