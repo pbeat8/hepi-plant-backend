@@ -1,6 +1,7 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.CategoryDto;
+import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.service.CategoryService;
@@ -9,23 +10,25 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    public CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
     @Override
-    public List<Category> getAll() {
-        return categoryRepository.findAll();
+    public List<CategoryDto> getAll() {
+        List<CategoryDto> categoryList = categoryRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return categoryList;
     }
 
     @Override
-    public Category getById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+    public CategoryDto getById(Long id) {
+        return mapToDto(categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException()));
     }
 
     @Override

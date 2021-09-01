@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface CategoryService {
-    List<Category> getAll();
-    Category getById(Long id);
+    List<CategoryDto> getAll();
+    CategoryDto getById(Long id);
     CategoryDto add(CategoryDto categoryDto);
     CategoryDto update(Long id, CategoryDto categoryDto);
     String delete(Long id);

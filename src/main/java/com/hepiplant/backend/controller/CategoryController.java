@@ -6,6 +6,8 @@ import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/categories")
 public class CategoryController {
@@ -20,12 +22,12 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryService.add(categoryDto));
     }
     @GetMapping
-    public ResponseEntity<?> getCategories(){
+    public ResponseEntity<List<CategoryDto>> getCategories(){
         return ResponseEntity.ok().body(categoryService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable Long id){
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id){
         return  ResponseEntity.ok().body(categoryService.getById(id));
     }
     @PatchMapping("/{id}")

@@ -1,10 +1,15 @@
 package com.hepiplant.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class EventDto {
     private String eventName;
     private String eventDescription;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private boolean isDone;
     private Long plantId;

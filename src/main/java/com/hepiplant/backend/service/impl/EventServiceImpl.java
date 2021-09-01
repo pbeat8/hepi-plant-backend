@@ -2,10 +2,9 @@ package com.hepiplant.backend.service.impl;
 
 
 import com.hepiplant.backend.dto.EventDto;
-import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Event;
 import com.hepiplant.backend.entity.Plant;
-import com.hepiplant.backend.entity.Species;
+import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.repository.EventRepository;
 import com.hepiplant.backend.repository.PlantRepository;
 import com.hepiplant.backend.service.EventService;
@@ -14,23 +13,28 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements EventService {
-    public EventRepository eventRepository;
-    public PlantRepository plantRepository;
-    public EventServiceImpl(EventRepository eventRepository) {
+
+    private EventRepository eventRepository;
+    private PlantRepository plantRepository;
+
+    public EventServiceImpl(EventRepository eventRepository, PlantRepository plantRepository) {
         this.eventRepository = eventRepository;
+        this.plantRepository = plantRepository;
     }
 
     @Override
-    public List<Event> getAll() {
-        return eventRepository.findAll();
+    public List<EventDto> getAll() {
+        List<EventDto> eventList = eventRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return eventList;
     }
 
     @Override
-    public Event getById(Long id) {
-        return eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException());
+    public EventDto getById(Long id) {
+        return mapToDto(eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException()));
     }
 
     @Override
@@ -60,8 +64,7 @@ public class EventServiceImpl implements EventService {
         event.setEventDate(eventDto.getEventDate());
         event.setDone(eventDto.isDone());
         if(eventDto.getPlantId()!=null) {
-            Plant plant = plantRepository.findById(eventDto.getPlantId()).orElseThrow(EntityNotFoundException::new);
-            event.setPlant(plant);
+            throw new ImmutableFieldException("Field User in Event is immutable!");
         }
         Event savedEvent = eventRepository.save(event);
         return mapToDto(savedEvent);

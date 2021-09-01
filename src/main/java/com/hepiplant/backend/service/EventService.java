@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface EventService {
-    List<Event> getAll();
-    Event getById(Long id);
+    List<EventDto> getAll();
+    EventDto getById(Long id);
     EventDto add(EventDto eventDto);
     EventDto update(Long id, EventDto eventDto);
     String delete(Long id);
