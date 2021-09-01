@@ -1,44 +1,25 @@
-package com.hepiplant.backend.entity;
+package com.hepiplant.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Entity
-@Table(schema = "plants", name = "events")
-public class Event {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+public class EventDto {
     private String eventName;
     private String eventDescription;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private boolean isDone;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plant_id")
-    private Plant plant;
+    private Long plantId;
 
-    public Event() {
+    public Long getPlantId() {
+        return plantId;
     }
 
-    public Event(Long id, String eventName, String eventDescription, LocalDateTime eventDate, boolean isDone, Plant plant) {
-        this.id = id;
-        this.eventName = eventName;
-        this.eventDescription = eventDescription;
-        this.eventDate = eventDate;
-        this.isDone = isDone;
-        this.plant = plant;
-    }
-
-    public Plant getPlant() {
-        return plant;
-    }
-
-    public void setPlant(Plant plant) {
-        this.plant = plant;
+    public void setPlantId(Long plantId) {
+        this.plantId = plantId;
     }
 
     public String getEventName() {
@@ -57,16 +38,16 @@ public class Event {
         this.eventDescription = eventDescription;
     }
 
+    public boolean isDone() {
+        return isDone;
+    }
+
     public LocalDateTime getEventDate() {
         return eventDate;
     }
 
     public void setEventDate(LocalDateTime eventDate) {
         this.eventDate = eventDate;
-    }
-
-    public boolean isDone() {
-        return isDone;
     }
 
     public void setDone(boolean done) {

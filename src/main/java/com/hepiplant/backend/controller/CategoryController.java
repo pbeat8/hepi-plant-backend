@@ -1,11 +1,12 @@
 package com.hepiplant.backend.controller;
 
+import com.hepiplant.backend.dto.CategoryDto;
 import com.hepiplant.backend.service.CategoryService;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/categories")
@@ -16,13 +17,25 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @PostMapping
+    public ResponseEntity<CategoryDto> addCategory (@RequestBody CategoryDto categoryDto) {
+        return ResponseEntity.ok().body(categoryService.add(categoryDto));
+    }
     @GetMapping
-    public ResponseEntity<?> getCategories(){
+    public ResponseEntity<List<CategoryDto>> getCategories(){
         return ResponseEntity.ok().body(categoryService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable Long id){
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id){
         return  ResponseEntity.ok().body(categoryService.getById(id));
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<CategoryDto> update(@PathVariable Long id, @RequestBody CategoryDto categoryDto){
+        return ResponseEntity.ok().body(categoryService.update(id, categoryDto));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete (@PathVariable Long id){
+        return ResponseEntity.ok().body(categoryService.delete(id));
     }
 }
