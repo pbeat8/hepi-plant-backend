@@ -1,12 +1,16 @@
 package com.hepiplant.backend.service;
 
 
-import com.hepiplant.backend.entity.SalesOffer;
-import org.springframework.stereotype.Service;
+import com.hepiplant.backend.dto.SalesOfferDto;
 
 import java.util.List;
 
 public interface SalesOfferService {
-    List<SalesOffer> getAll();
-    SalesOffer getById(Long id);
+    SalesOfferDto create(SalesOfferDto salesOfferDto);
+    List<SalesOfferDto> getAll();
+    List<SalesOfferDto> getAllByCategory(Long categoryId);
+    List<SalesOfferDto> getAllByTag(String tag);
+    SalesOfferDto getById(Long id);
+    SalesOfferDto update(Long id, SalesOfferDto salesOfferDto);
+    String delete(Long id);
 }

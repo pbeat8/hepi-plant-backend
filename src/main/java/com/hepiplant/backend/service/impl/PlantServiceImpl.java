@@ -26,7 +26,7 @@ public class PlantServiceImpl implements PlantService {
         this.speciesRepository = speciesRepository;
     }
 
-    public PlantDto savePlant(PlantDto plantDto){
+    public PlantDto create(PlantDto plantDto){
         // todo check if fields have acceptable values
         Plant plant = new Plant();
         plant.setName(plantDto.getName());
@@ -67,7 +67,6 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public String delete(Long id) {
-        // todo
         Optional<Plant> plant = plantRepository.findById(id);
         if(plant.isEmpty()){
             return "No plant with id = " + id;
@@ -78,8 +77,9 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public List<PlantDto> getAll() {
-        List<PlantDto> plantList = plantRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
-        return plantList;
+        return plantRepository.findAll().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -90,12 +90,8 @@ public class PlantServiceImpl implements PlantService {
 
     private PlantDto mapToDto(Plant plant){
         PlantDto dto = new PlantDto();
-        if(plant.getName()!=null) {
-            dto.setName(plant.getName());
-        }
-        if(plant.getLocation()!=null) {
-            dto.setLocation(plant.getLocation());
-        }
+        dto.setName(plant.getName());
+        dto.setLocation(plant.getLocation());
         if(plant.getCategory()!=null) {
             dto.setCategoryId(plant.getCategory().getId());
         }
