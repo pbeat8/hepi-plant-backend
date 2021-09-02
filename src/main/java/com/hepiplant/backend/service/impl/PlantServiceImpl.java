@@ -9,10 +9,11 @@ import com.hepiplant.backend.repository.PlantRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.PlantService;
+import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
+import javax.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,15 +24,16 @@ public class PlantServiceImpl implements PlantService {
     private final PlantRepository plantRepository;
     private final SpeciesRepository speciesRepository;
     private final UserRepository userRepository;
+    private final BeanValidator beanValidator;
 
-    public PlantServiceImpl(PlantRepository plantRepository, SpeciesRepository speciesRepository, UserRepository userRepository) {
+    public PlantServiceImpl(PlantRepository plantRepository, SpeciesRepository speciesRepository, UserRepository userRepository, Validator validator, BeanValidator beanValidator) {
         this.plantRepository = plantRepository;
         this.speciesRepository = speciesRepository;
         this.userRepository = userRepository;
+        this.beanValidator = beanValidator;
     }
 
     public PlantDto create(PlantDto plantDto){
-        // todo check if fields have acceptable values
         Plant plant = new Plant();
         plant.setName(plantDto.getName());
         plant.setPurchaseDate(plantDto.getPurchaseDate());
@@ -45,6 +47,7 @@ public class PlantServiceImpl implements PlantService {
             User user = userRepository.findById(plantDto.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found for id " + plantDto.getUserId()));
             plant.setUser(user);
         }
+        beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);
         return mapToDto(savedPlant);
     }
@@ -90,6 +93,7 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getUserId()!=null && !plantDto.getUserId().equals(plant.getUser().getId())){
             throw new ImmutableFieldException("Field User in Plant is immutable!");
         }
+        beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);
         return mapToDto(savedPlant);
     }

@@ -11,9 +11,11 @@ import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.PostRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.PostService;
+import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,16 +29,17 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final BeanValidator beanValidator;
 
-    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
+    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, Validator validator, BeanValidator beanValidator) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.beanValidator = beanValidator;
     }
 
     @Override
     public PostDto create(PostDto postDto) {
-        // todo check if fields have acceptable values
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setBody(postDto.getBody());
@@ -49,6 +52,7 @@ public class PostServiceImpl implements PostService {
         Category category = categoryRepository.findById(postDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + postDto.getCategoryId()));
         post.setCategory(category);
+        beanValidator.validate(post);
         Post savedPost = postRepository.save(post);
         return mapToDto(savedPost);
     }
@@ -109,6 +113,7 @@ public class PostServiceImpl implements PostService {
                     .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + postDto.getCategoryId()));
             post.setCategory(category);
         }
+        beanValidator.validate(post);
         Post savedPost = postRepository.save(post);
         return mapToDto(savedPost);
     }

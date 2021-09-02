@@ -4,6 +4,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -13,9 +14,16 @@ public class SalesOffer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    @NotBlank
+    @Size(min=1, max=255)
     private String title;
+    @NotBlank
+    @Size(min=1, max=255) // todo we will need to make it bigger later
     private String body;
+    @NotBlank
+    @Size(min=1, max=255)
     private String location;
+    @PositiveOrZero
     private BigDecimal price;
     private String tag1;
     private String tag2;
@@ -26,6 +34,7 @@ public class SalesOffer {
     private LocalDateTime updatedDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
