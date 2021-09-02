@@ -3,30 +3,30 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Species;
-import com.hepiplant.backend.entity.enums.Placement;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
 import com.hepiplant.backend.service.SpeciesService;
+import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
 
-    private SpeciesRepository speciesRepository;
-    private CategoryRepository categoryRepository;
+    private final SpeciesRepository speciesRepository;
+    private final CategoryRepository categoryRepository;
+    private final BeanValidator beanValidator;
 
-    public SpeciesServiceImpl(SpeciesRepository speciesRepository, CategoryRepository categoryRepository) {
+    public SpeciesServiceImpl(SpeciesRepository speciesRepository, CategoryRepository categoryRepository, BeanValidator beanValidator) {
 
         this.speciesRepository = speciesRepository;
         this.categoryRepository = categoryRepository;
-
+        this.beanValidator = beanValidator;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class SpeciesServiceImpl implements SpeciesService {
 
     @Override
     public SpeciesDto getById(Long id) {
-        Species species = speciesRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Species species = speciesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Species not found for id "+id));
         return mapToDto(species);
     }
 
@@ -57,16 +57,17 @@ public class SpeciesServiceImpl implements SpeciesService {
         if(speciesDto.getSoil()!=null && !speciesDto.getSoil().isEmpty())
             species.setSoil(speciesDto.getSoil());
         if(speciesDto.getCategoryId()!=null){
-            Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(EntityNotFoundException::new);
+            Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id "+speciesDto.getCategoryId()));
             species.setCategory(category);
         }
+        beanValidator.validate(species);
         Species savedSpecies = speciesRepository.save(species);
         return mapToDto(savedSpecies);
     }
 
     @Override
     public SpeciesDto update(Long id, SpeciesDto speciesDto) {
-        Species species = speciesRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Species species = speciesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Species not found for id "+id));
         if(speciesDto.getName()!=null && !speciesDto.getName().isEmpty())
             species.setName(speciesDto.getName());
         if(speciesDto.getWateringFrequency()>=0)
@@ -84,6 +85,7 @@ public class SpeciesServiceImpl implements SpeciesService {
             throw new ImmutableFieldException("Field Soil in Species is immutable!");
 
         }
+        beanValidator.validate(species);
         Species savedSpecies = speciesRepository.save(species);
         return mapToDto(savedSpecies);
     }

@@ -2,9 +2,9 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.UserDto;
 import com.hepiplant.backend.entity.User;
-import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.UserService;
+import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -15,10 +15,12 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BeanValidator beanValidator;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BeanValidator beanValidator) {
         this.userRepository = userRepository;
+        this.beanValidator = beanValidator;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
         return mapToDto(user);
     }
 
@@ -45,6 +47,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDto.getEmail());
         if(userDto.getPermission()!=null)
             user.setPermission(userDto.getPermission());
+        beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
     }
@@ -52,7 +55,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(Long id, UserDto userDto) {
 
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
         if(userDto.getUsername()!=null && !userDto.getUsername().isEmpty())
             user.setUsername(userDto.getUsername());
         if(userDto.getLogin()!=null && !userDto.getLogin().isEmpty())
@@ -63,6 +66,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDto.getEmail());
         if(userDto.getPermission()!=null)
             user.setPermission(userDto.getPermission());
+        beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
     }
