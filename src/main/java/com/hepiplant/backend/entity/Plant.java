@@ -1,6 +1,7 @@
 package com.hepiplant.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,9 +12,13 @@ public class Plant {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @Column(nullable = false)
+    @NotBlank
+    @Size(min=1, max=255)
     private String name;
+    @PastOrPresent
     private LocalDateTime purchaseDate;
+    @NotBlank
+    @Size(min=1, max=255)
     private String location;
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
@@ -22,6 +27,7 @@ public class Plant {
     private Species species;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
+    @NotNull
     private User user;
     @OneToMany(mappedBy = "plant")
     private List<Event> eventList;

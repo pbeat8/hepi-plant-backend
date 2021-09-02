@@ -1,15 +1,29 @@
 package com.hepiplant.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.LocalDateTime;
+
 public class PlantDto {
 
+    private Long id;
     private String name;
-    //private LocalDateTime purchaseDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime purchaseDate;
     private String location;
     private Long categoryId;
     private Long speciesId;
     private Long userId;
 
     public PlantDto() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -20,13 +34,13 @@ public class PlantDto {
         this.name = name;
     }
 
-//    public LocalDateTime getPurchaseDate() {
-//        return purchaseDate;
-//    }
-//
-//    public void setPurchaseDate(LocalDateTime purchaseDate) {
-//        this.purchaseDate = purchaseDate;
-//    }
+    public LocalDateTime getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(LocalDateTime purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
 
     public String getLocation() {
         return location;

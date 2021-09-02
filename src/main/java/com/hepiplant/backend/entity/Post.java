@@ -4,6 +4,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -15,7 +16,11 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    @NotBlank
+    @Size(min=1, max=255)
     private String title;
+    @NotBlank
+    @Size(min=1, max=255) // todo we will need to make it bigger later
     private String body;
     private String tag1;
     private String tag2;
@@ -28,6 +33,7 @@ public class Post {
     private LocalDateTime updatedDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
