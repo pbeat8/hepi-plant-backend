@@ -31,7 +31,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final BeanValidator beanValidator;
 
-    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, Validator validator, BeanValidator beanValidator) {
+    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, BeanValidator beanValidator) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;

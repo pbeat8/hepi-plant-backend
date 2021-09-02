@@ -26,7 +26,7 @@ public class PlantServiceImpl implements PlantService {
     private final UserRepository userRepository;
     private final BeanValidator beanValidator;
 
-    public PlantServiceImpl(PlantRepository plantRepository, SpeciesRepository speciesRepository, UserRepository userRepository, Validator validator, BeanValidator beanValidator) {
+    public PlantServiceImpl(PlantRepository plantRepository, SpeciesRepository speciesRepository, UserRepository userRepository, BeanValidator beanValidator) {
         this.plantRepository = plantRepository;
         this.speciesRepository = speciesRepository;
         this.userRepository = userRepository;

@@ -33,7 +33,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     private final UserRepository userRepository;
     private final BeanValidator beanValidator;
 
-    public SalesOfferServiceImpl(SalesOfferRepository salesOfferRepository, CategoryRepository categoryRepository, UserRepository userRepository, Validator validator, BeanValidator beanValidator) {
+    public SalesOfferServiceImpl(SalesOfferRepository salesOfferRepository, CategoryRepository categoryRepository, UserRepository userRepository, BeanValidator beanValidator) {
         this.salesOfferRepository = salesOfferRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
