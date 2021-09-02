@@ -16,9 +16,6 @@ public class PlantController {
     public PlantController(PlantService plantService) {
         this.plantService = plantService;
     }
-
-    // GET, POST - dodawanie, PATCH - updateowanie, DELETE
-
     @PostMapping
     public ResponseEntity<PlantDto> addPlant(@RequestBody PlantDto plantDto){
         return ResponseEntity.ok().body(plantService.create(plantDto));
@@ -27,6 +24,11 @@ public class PlantController {
     @GetMapping
     public ResponseEntity<List<PlantDto>> getPlants(){
         return ResponseEntity.ok().body(plantService.getAll());
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PlantDto>> getPlantsByUser(@PathVariable Long userId){
+        return ResponseEntity.ok().body(plantService.getAllByUser(userId));
     }
 
     @GetMapping("/{id}")

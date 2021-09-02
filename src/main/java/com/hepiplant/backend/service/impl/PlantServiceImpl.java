@@ -34,10 +34,10 @@ public class PlantServiceImpl implements PlantService {
         // todo check if fields have acceptable values
         Plant plant = new Plant();
         plant.setName(plantDto.getName());
-        plant.setPurchaseDate(LocalDateTime.now());
+        plant.setPurchaseDate(plantDto.getPurchaseDate());
         plant.setLocation(plantDto.getLocation());
         if(plantDto.getSpeciesId()!=null){
-            Species species = speciesRepository.findById(plantDto.getSpeciesId()).orElseThrow(EntityNotFoundException::new);
+            Species species = speciesRepository.findById(plantDto.getSpeciesId()).orElseThrow(() -> new EntityNotFoundException("Species not found for id " + plantDto.getSpeciesId()));
             plant.setSpecies(species);
             plant.setCategory(species.getCategory());
         }
@@ -50,8 +50,29 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
+    public List<PlantDto> getAll() {
+        return plantRepository.findAll().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PlantDto> getAllByUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
+        return user.getPlantList().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PlantDto getById(Long id) {
+        Plant plant = plantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Plant not found for id " + id));
+        return mapToDto(plant);
+    }
+
+    @Override
     public PlantDto update(Long id, PlantDto plantDto) {
-        Plant plant = plantRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Plant plant = plantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Plant not found for id " + id));
         if(plantDto.getName()!=null && !plantDto.getName().isEmpty()){
             plant.setName(plantDto.getName());
         }
@@ -83,22 +104,11 @@ public class PlantServiceImpl implements PlantService {
         return "Successfully deleted the plant with id = "+ id;
     }
 
-    @Override
-    public List<PlantDto> getAll() {
-        return plantRepository.findAll().stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public PlantDto getById(Long id) {
-        Plant plant = plantRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        return mapToDto(plant);
-    }
-
     private PlantDto mapToDto(Plant plant){
         PlantDto dto = new PlantDto();
+        dto.setId(plant.getId());
         dto.setName(plant.getName());
+        dto.setPurchaseDate(plant.getPurchaseDate());
         dto.setLocation(plant.getLocation());
         if(plant.getCategory()!=null) {
             dto.setCategoryId(plant.getCategory().getId());
