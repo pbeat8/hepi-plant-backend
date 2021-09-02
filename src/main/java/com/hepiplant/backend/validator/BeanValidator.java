@@ -16,12 +16,12 @@ public class BeanValidator {
         this.validator = validator;
     }
 
-    public  <T> void validate(T bean) {
+    public <T> void validate(T bean) {
         Set<ConstraintViolation<T>> violations = validator.validate(bean);
         if(!violations.isEmpty()){
-            StringBuilder sb = new StringBuilder("Provided " + bean.getClass().getName() + "is not valid: ");
+            StringBuilder sb = new StringBuilder("Provided " + bean.getClass().getSimpleName() + " is not valid: ");
             for (ConstraintViolation<T> constraintViolation : violations) {
-                sb.append("\n")
+                sb.append("\n\t")
                     .append(constraintViolation.getPropertyPath())
                     .append(": ")
                     .append(constraintViolation.getMessage());
