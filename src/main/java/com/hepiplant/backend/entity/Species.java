@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hepiplant.backend.entity.enums.Placement;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(schema = "plants", name = "species")
@@ -14,12 +17,20 @@ public class Species {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(nullable = false, unique = true)
+    @NotBlank
+    @Size(min=1, max=255)
     private String name;
+    @Min(value = 0, message = "Watering frequency should be greater than 0")
     private int wateringFrequency;
+    @Min(value = 0, message = "Fertilizing frequency should be greater than 0")
     private int fertilizingFrequency;
+    @Min(value = 0, message = "Misting frequency should be greater than 0")
     private int mistingFrequency;
+    @NotBlank
     @Enumerated(EnumType.STRING)
     private Placement placement;
+    @NotBlank
+    @Size(min=1, max=255)
     private String soil;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

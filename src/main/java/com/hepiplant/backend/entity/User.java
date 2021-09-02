@@ -3,6 +3,9 @@ package com.hepiplant.backend.entity;
 import com.hepiplant.backend.entity.enums.Permission;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -11,9 +14,17 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    @NotBlank
+    @Size(min=1, max=50)
     private String username;
+    @NotBlank
+    @Size(min=1, max=50)
     private String login;
+    @NotBlank
+    @Size(min=8, max=255)
     private String password;
+    @NotBlank
+    @Email
     private String email;
     @Enumerated(EnumType.STRING)
     private Permission permission;
