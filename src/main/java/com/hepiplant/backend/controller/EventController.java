@@ -29,6 +29,10 @@ public class EventController {
     public ResponseEntity<EventDto> getEventById(@PathVariable Long id){
         return  ResponseEntity.ok().body(eventService.getById(id));
     }
+    @GetMapping("/plant/{plandId}")
+    public ResponseEntity<List<EventDto>> getEventsByPlant(@PathVariable Long plantId){
+        return ResponseEntity.ok().body(eventService.getAllByPlant(plantId));
+    }
     @PatchMapping("/{id}")
     public ResponseEntity<EventDto> update(@PathVariable Long id, @RequestBody EventDto eventDto){
         return ResponseEntity.ok().body(eventService.update(id, eventDto));
