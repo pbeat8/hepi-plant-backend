@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,6 +67,20 @@ class UserServiceImplTest {
     }
 
     @Test
+    void shouldGetByIdThrow(){
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
+            userService.getById(-1L);
+        });
+
+        String expectedMessage = "User not found for id -1";
+        String actualMessage = exception.getMessage();
+
+        assertEquals(actualMessage,expectedMessage);
+
+    }
+
+    @Test
     void shouldAddOk() {
         //given
         User user = new User(1L, "username 1", "login 1", "password 1", "email 1", null, null, null, null);
@@ -97,5 +112,15 @@ class UserServiceImplTest {
 
     @Test
     void shouldDeleteOk() {
+        //given
+        User user = new User(1L, "username 1", "login 1", "password 1", "email 1", null, null, null, null);
+        given(userRepository.findById(1L)).willReturn(java.util.Optional.of(user));
+
+        //when
+        String result = userService.delete(1L);
+
+        //then
+        then(userRepository).should(times(1)).delete(user);
+        assertEquals("Successfully deleted the user with id = 1",result);
     }
 }

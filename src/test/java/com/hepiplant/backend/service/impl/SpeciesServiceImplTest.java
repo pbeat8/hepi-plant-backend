@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,6 +75,19 @@ class SpeciesServiceImplTest {
         assertEquals(0,result.getMistingFrequency());
         assertEquals("soil 1",result.getSoil());
     }
+    @Test
+    void shouldGetByIdThrow(){
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
+            speciesService.getById(-1L);
+        });
+
+        String expectedMessage = "Species not found for id -1";
+        String actualMessage = exception.getMessage();
+
+        assertEquals(actualMessage,expectedMessage);
+
+    }
 
     @Test
     void shouldAddOk() {
@@ -101,10 +115,46 @@ class SpeciesServiceImplTest {
     }
 
     @Test
+    void shouldAddWrongValue() {
+        //given
+        Species species = new Species(1L, "species 1", 5, -21, 0, null, "soil 1", null);
+
+        //when
+        when(speciesRepository.save(any(Species.class))).thenAnswer(i -> i.getArguments()[0]);
+        SpeciesDto speciesDto = new SpeciesDto();
+        speciesDto.setName(species.getName());
+        speciesDto.setWateringFrequency(species.getWateringFrequency());
+        speciesDto.setFertilizingFrequency(species.getFertilizingFrequency());
+        speciesDto.setMistingFrequency(species.getMistingFrequency());
+        speciesDto.setSoil(species.getSoil());
+        SpeciesDto result = speciesService.add(speciesDto);
+
+        //then
+        then(speciesRepository).should(times(1)).save(any(Species.class));
+
+        assertEquals("species 1", result.getName());
+        assertEquals(5,result.getWateringFrequency());
+        assertEquals(0,result.getFertilizingFrequency());
+        assertEquals(0,result.getMistingFrequency());
+        assertEquals("soil 1",result.getSoil());
+    }
+
+
+    @Test
     void shouldUpdateOk() {
     }
 
     @Test
     void shouldDeleteOk() {
+        //given
+        Species species = new Species(1L, "species 1", 5, 21, 0, null, "soil 1", null);
+        given(speciesRepository.findById(1L)).willReturn(java.util.Optional.of(species));
+
+        //when
+        String result = speciesService.delete(1L);
+
+        //then
+        then(speciesRepository).should(times(1)).delete(species);
+        assertEquals("Successfully deleted the species with id = 1",result);
     }
 }

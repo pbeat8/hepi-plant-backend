@@ -7,6 +7,7 @@ import com.hepiplant.backend.repository.ScheduleRepository;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -15,8 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +76,20 @@ class ScheduleServiceImplTest {
         assertEquals(2,result.getMistingFrequency());
     }
 
+    @Test
+    void shouldGetByIdThrow(){
+
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
+           scheduleService.getById(-1L);
+        });
+
+        String expectedMessage = "Schedule not found for id -1";
+        String actualMessage = exception.getMessage();
+
+        assertEquals(actualMessage,expectedMessage);
+
+    }
+
 
     @Test
     void shouldAddOk() {
@@ -96,31 +113,62 @@ class ScheduleServiceImplTest {
         assertEquals(2,result.getMistingFrequency());
 
     }
+    @Test
+    void shouldAddWrongValue() {
+        //given
+        Plant plant = new Plant(1l,"name",null,"location",null,null,null,null,null);
+        Schedule schedule = new Schedule(1L, plant,-1,21,2);
+
+        //when
+        when(scheduleRepository.save(any(Schedule.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        ScheduleDto scheduleDto = new ScheduleDto();
+        scheduleDto.setWateringFrequency(schedule.getWateringFrequency());
+        scheduleDto.setMistingFrequency(schedule.getMistingFrequency());
+        scheduleDto.setFertilizingFrequency(schedule.getFertilizingFrequency());
+        ScheduleDto result = scheduleService.add(scheduleDto); //tothink
+
+        //then
+        then(scheduleRepository).should(times(1)).save(any(Schedule.class));
+        assertEquals(0,result.getWateringFrequency());
+        assertEquals(21,result.getFertilizingFrequency());
+        assertEquals(2,result.getMistingFrequency());
+
+    }
 
     @Test
     void shouldUpdateOk() {
-//        //given
-//        Plant plant = new Plant(1l,"name",null,"location",null,null,null,null,null);
-//        Schedule schedule = new Schedule(1L, plant,3,21,2);
-//
-//        //when
-//        when(scheduleRepository.save(schedule)).thenAnswer(i -> i.getArguments()[0]);
-//
-//        ScheduleDto scheduleDto = new ScheduleDto();
-//        scheduleDto.setWateringFrequency(schedule.getWateringFrequency());
-//        scheduleDto.setMistingFrequency(schedule.getMistingFrequency());
-//        scheduleDto.setFertilizingFrequency(schedule.getFertilizingFrequency());
-//        ScheduleDto result = scheduleService.update(1L,scheduleDto); //tothink
-//
-//        //then
-//        then(scheduleRepository).should(times(1)).save(schedule);
-//        assertEquals(3,result.getWateringFrequency());
-//        assertEquals(21,result.getFertilizingFrequency());
-//        assertEquals(2,result.getMistingFrequency());
+        //given
+        Plant plant = new Plant(1l,"name",null,"location",null,null,null,null,null);
+        Schedule schedule = new Schedule(1L, plant,3,21,2);
+        given(scheduleRepository.findById(1L)).willReturn(java.util.Optional.of(schedule));
+
+        //when
+        ScheduleDto scheduleDto = new ScheduleDto();
+        scheduleDto.setWateringFrequency(schedule.getWateringFrequency());
+        scheduleDto.setMistingFrequency(schedule.getMistingFrequency());
+        scheduleDto.setFertilizingFrequency(schedule.getFertilizingFrequency());
+        ScheduleDto result = scheduleService.update(1L,scheduleDto);
+
+        //then
+        then(scheduleRepository).should(times(1)).save(schedule);
+        assertEquals(3,result.getWateringFrequency());
+        assertEquals(21,result.getFertilizingFrequency());
+        assertEquals(2,result.getMistingFrequency());
     }
 
     @Test
     void shouldDeleteOk() {
+        //given
+        Plant plant = new Plant(1l,"name",null,"location",null,null,null,null,null);
+        Schedule schedule = new Schedule(1L, plant,3,21,2);
+        given(scheduleRepository.findById(1L)).willReturn(java.util.Optional.of(schedule));
+        //when
+        String result = scheduleService.delete(1L);
+        //then
+        then(scheduleRepository).should(times(1)).delete(schedule);
+        assertEquals("Successfully deleted the schedule with id = 1",result);
 
     }
+
 }
