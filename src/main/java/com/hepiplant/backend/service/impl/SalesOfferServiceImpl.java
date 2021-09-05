@@ -13,7 +13,6 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
