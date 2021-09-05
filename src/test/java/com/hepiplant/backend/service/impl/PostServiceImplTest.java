@@ -1,7 +1,9 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.PostDto;
-import com.hepiplant.backend.entity.*;
+import com.hepiplant.backend.entity.Category;
+import com.hepiplant.backend.entity.Post;
+import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
@@ -9,7 +11,6 @@ import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.PostRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.validator.BeanValidator;
-import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
