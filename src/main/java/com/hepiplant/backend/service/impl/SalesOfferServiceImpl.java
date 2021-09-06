@@ -92,7 +92,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     @Override
     public SalesOfferDto update(Long id, SalesOfferDto salesOfferDto) {
         SalesOffer salesOffer = salesOfferRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Post not found for id " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Sales offer not found for id " + id));
         if(salesOfferDto.getTitle() != null){
             salesOffer.setTitle(salesOfferDto.getTitle());
         }
@@ -109,7 +109,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
             addTagsToSalesOffer(salesOffer, salesOfferDto.getTags());
         }
         if(salesOfferDto.getUserId() != null){
-            throw new ImmutableFieldException("Cannot change User for Post!");
+            throw new ImmutableFieldException("Cannot change User for Sales offer!");
         }
         if(salesOfferDto.getCategoryId() != null){
             Category category = categoryRepository.findById(salesOfferDto.getCategoryId())

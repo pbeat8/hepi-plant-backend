@@ -66,7 +66,7 @@ class PostServiceImplTest {
 
     @BeforeEach
     public void initializePost(){
-        post = new Post(1L, user, category, "Post 1", "Body 1", "tag1", "tag2", "tag3", null, null);
+        post = new Post(1L, "Post 1", "Body 1", "tag1", "tag2", "tag3", null, null, user, category);
         dto = new PostDto();
         dto.setTitle(post.getTitle());
         dto.setBody(post.getBody());
@@ -307,7 +307,6 @@ class PostServiceImplTest {
     @Test
     public void shouldUpdatePostDoesNotExistThrowsException(){
         //given
-        Post postToUpdate = new Post();
         dto.setUserId(null);
 
         given(postRepository.findById(post.getId())).willReturn(Optional.empty());

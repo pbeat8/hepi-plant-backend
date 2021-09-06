@@ -46,9 +46,8 @@ public class SalesOffer {
     public SalesOffer() {
     }
 
-    public SalesOffer(Long id, Category category, String title, String body, String location, BigDecimal price, String tag1, String tag2, String tag3) {
+    public SalesOffer(Long id, String title, String body, String location, BigDecimal price, String tag1, String tag2, String tag3, User user, Category category) {
         this.id = id;
-        this.category = category;
         this.title = title;
         this.body = body;
         this.location = location;
@@ -56,6 +55,8 @@ public class SalesOffer {
         this.tag1 = tag1;
         this.tag2 = tag2;
         this.tag3 = tag3;
+        this.user = user;
+        this.category = category;
     }
 
     public Long getId() {
