@@ -33,6 +33,10 @@ public class Schedule {
     public Schedule() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Plant getPlant() {
         return plant;
     }
