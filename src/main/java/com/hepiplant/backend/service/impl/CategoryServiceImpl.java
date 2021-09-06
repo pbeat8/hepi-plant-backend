@@ -31,7 +31,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getById(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Category not found for id "+id));
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException("Category not found for id "+id));
         return mapToDto(category);
     }
 
