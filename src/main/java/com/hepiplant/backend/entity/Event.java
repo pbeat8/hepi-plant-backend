@@ -37,6 +37,10 @@ public class Event {
         return plant;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setPlant(Plant plant) {
         this.plant = plant;
     }

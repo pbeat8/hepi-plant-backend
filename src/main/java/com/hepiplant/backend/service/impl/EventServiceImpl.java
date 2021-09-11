@@ -78,7 +78,7 @@ public class EventServiceImpl implements EventService {
         event.setEventDate(eventDto.getEventDate());
         event.setDone(eventDto.isDone());
         if(eventDto.getPlantId()!=null) {
-            throw new ImmutableFieldException("Field User in Event is immutable!");
+            throw new ImmutableFieldException("Field Plant in Event is immutable!");
         }
         beanValidator.validate(event);
         Event savedEvent = eventRepository.save(event);
