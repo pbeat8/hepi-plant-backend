@@ -16,7 +16,7 @@ public class Schedule {
     @JoinColumn(name = "plant_id", referencedColumnName = "id")
     private Plant plant;
 
-    public Schedule(Plant plant, int wateringFrequency, int fertilizingFrequency, int mistingFrequency) {
+    public Schedule(long l, Plant plant, int wateringFrequency, int fertilizingFrequency, int mistingFrequency) {
         this.plant = plant;
         this.wateringFrequency = wateringFrequency;
         this.fertilizingFrequency = fertilizingFrequency;
