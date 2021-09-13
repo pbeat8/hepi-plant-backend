@@ -1,11 +1,13 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.ScheduleDto;
-import com.hepiplant.backend.entity.Plant;
-import com.hepiplant.backend.entity.Schedule;
+import com.hepiplant.backend.entity.*;
+import com.hepiplant.backend.entity.enums.Permission;
+import com.hepiplant.backend.entity.enums.Placement;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.ScheduleRepository;
 import com.hepiplant.backend.validator.BeanValidator;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +20,9 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,10 +48,16 @@ class ScheduleServiceImplTest {
     private ScheduleServiceImpl scheduleService;
     private Schedule schedule;
     private ScheduleDto dto;
+    private static Plant plant;
+
+    @BeforeAll
+    public static void initializeVariables(){
+        plant = new Plant(1l,"name",LocalDateTime.now(),"location",null,null,null,null,null);
+    }
 
     @BeforeEach
     public void initializeSchedule(){
-        Plant plant = new Plant(1l,"name",null,"location",null,null,null,null,null);
+
         schedule = new Schedule(1L, plant,3,21,2);
         dto = new ScheduleDto();
         dto.setWateringFrequency(schedule.getWateringFrequency());

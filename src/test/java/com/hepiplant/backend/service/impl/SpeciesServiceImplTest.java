@@ -1,12 +1,16 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.SpeciesDto;
+import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Schedule;
 import com.hepiplant.backend.entity.Species;
+import com.hepiplant.backend.entity.enums.Placement;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
 import com.hepiplant.backend.validator.BeanValidator;
+import org.checkerframework.checker.units.qual.C;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,16 +49,24 @@ class SpeciesServiceImplTest {
     private SpeciesServiceImpl speciesService;
     private Species species;
     private SpeciesDto dto;
+    private static Category category;
 
+    @BeforeAll
+    public static void initializeVariables(){
+        category = new Category(1L,"name",null);
+    }
     @BeforeEach
     public void initializeSpecies(){
-        species = new Species(1L, "species 1", 5, 21, 0, null, "soil 1", null);
+
+        species = new Species(1L, "species 1", 5, 21, 0, Placement.BARDZO_JASNE, "soil 1", category);
         dto = new SpeciesDto();
         dto.setName(species.getName());
         dto.setWateringFrequency(species.getWateringFrequency());
         dto.setFertilizingFrequency(species.getFertilizingFrequency());
         dto.setMistingFrequency(species.getMistingFrequency());
         dto.setSoil(species.getSoil());
+        dto.setCategoryId(species.getCategory().getId());
+        dto.setPlacement(species.getPlacement());
     }
 
     @Test
@@ -74,6 +86,8 @@ class SpeciesServiceImplTest {
         assertEquals(species.getFertilizingFrequency(),result.get(0).getFertilizingFrequency());
         assertEquals(species.getMistingFrequency(),result.get(0).getMistingFrequency());
         assertEquals(species.getSoil(),result.get(0).getSoil());
+        assertEquals(species.getPlacement(), result.get(0).getPlacement());
+        assertEquals(species.getCategory().getId(), result.get(0).getCategoryId());
 
     }
 
@@ -107,6 +121,8 @@ class SpeciesServiceImplTest {
         assertEquals(species.getFertilizingFrequency(),result.getFertilizingFrequency());
         assertEquals(species.getMistingFrequency(),result.getMistingFrequency());
         assertEquals(species.getSoil(),result.getSoil());
+        assertEquals(species.getPlacement(), result.getPlacement());
+        assertEquals(species.getCategory().getId(), result.getCategoryId());
     }
     @Test
     void shouldGetSpeciesByIdDoesNotExistThrowsException(){
@@ -125,10 +141,12 @@ class SpeciesServiceImplTest {
     @Test
     void shouldAddSpeciesOk() {
         //given
+        given(categoryRepository.findById(species.getCategory().getId())).willReturn(Optional.ofNullable(category));
         given(speciesRepository.save(speciesArgumentCaptor.capture())).willAnswer(returnsFirstArg());
         //when
         SpeciesDto result = speciesService.add(dto);
         //then
+        then(categoryRepository).should(times(1)).findById(dto.getCategoryId());
         then(beanValidator).should(times(1)).validate(any());
         then(speciesRepository).should(times(1)).save(any(Species.class));
 
@@ -137,6 +155,8 @@ class SpeciesServiceImplTest {
         assertEquals(species.getFertilizingFrequency(),result.getFertilizingFrequency());
         assertEquals(species.getMistingFrequency(),result.getMistingFrequency());
         assertEquals(species.getSoil(),result.getSoil());
+        assertEquals(species.getPlacement(), result.getPlacement());
+        assertEquals(species.getCategory().getId(), result.getCategoryId());
 
         Species captorValue = speciesArgumentCaptor.getValue();
         assertEquals(species.getName(), captorValue.getName());
@@ -144,16 +164,19 @@ class SpeciesServiceImplTest {
         assertEquals(species.getFertilizingFrequency(),captorValue.getFertilizingFrequency());
         assertEquals(species.getMistingFrequency(),captorValue.getMistingFrequency());
         assertEquals(species.getSoil(),captorValue.getSoil());
+        assertEquals(species.getPlacement(), captorValue.getPlacement());
+        assertEquals(category, captorValue.getCategory());
     }
 
     @Test
     void shouldAddSpeciesInvalidValuesThrowsException() {
         //given
-        doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
+        given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.empty());
+
         //when
         //then
-        assertThrows(InvalidBeanException.class, () -> speciesService.add(dto));
-        then(beanValidator).should(times(1)).validate(any());
+        assertThrows(EntityNotFoundException.class, () -> speciesService.add(dto));
+        then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
         then(speciesRepository).should(times(0)).save(any(Species.class));
     }
 
@@ -163,6 +186,7 @@ class SpeciesServiceImplTest {
         //given
         Species speciesToUpdate = new Species();
         speciesToUpdate.setSoil(species.getSoil());
+        speciesToUpdate.setCategory(species.getCategory());
         given(speciesRepository.findById(species.getId())).willReturn(Optional.of(speciesToUpdate));
         given(speciesRepository.save(speciesArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
@@ -172,11 +196,14 @@ class SpeciesServiceImplTest {
         //then
         then(speciesRepository).should(times(1)).findById(species.getId());
         then(beanValidator).should(times(1)).validate(any());
+        then(speciesRepository).should(times(1)).save(any(Species.class));
         assertEquals(species.getName(), result.getName());
         assertEquals(species.getWateringFrequency(),result.getWateringFrequency());
         assertEquals(species.getFertilizingFrequency(),result.getFertilizingFrequency());
         assertEquals(species.getMistingFrequency(),result.getMistingFrequency());
         assertEquals(species.getSoil(),result.getSoil());
+        assertEquals(species.getPlacement(), result.getPlacement());
+        assertEquals(species.getCategory().getId(), result.getCategoryId());
 
         Species captorValue = speciesArgumentCaptor.getValue();
         assertEquals(species.getName(), captorValue.getName());
@@ -184,6 +211,8 @@ class SpeciesServiceImplTest {
         assertEquals(species.getFertilizingFrequency(),captorValue.getFertilizingFrequency());
         assertEquals(species.getMistingFrequency(),captorValue.getMistingFrequency());
         assertEquals(species.getSoil(),captorValue.getSoil());
+        assertEquals(species.getPlacement(), captorValue.getPlacement());
+        assertEquals(species.getCategory(), captorValue.getCategory());
     }
 
     @Test
@@ -192,6 +221,7 @@ class SpeciesServiceImplTest {
         //given
         Species speciesToUpdate = new Species();
         speciesToUpdate.setSoil(species.getSoil());
+        speciesToUpdate.setCategory(species.getCategory());
         given(speciesRepository.findById(species.getId())).willReturn(Optional.of(speciesToUpdate));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 

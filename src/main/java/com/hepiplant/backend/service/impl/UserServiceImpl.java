@@ -36,13 +36,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto add(UserDto userDto) {
+        Optional<User> optionalUser = userRepository.findByuId(userDto.getuId());
+        if(optionalUser.isPresent()) return mapToDto(optionalUser.get());
         User user = new User();
         if(userDto.getUsername()!=null)
             user.setUsername(userDto.getUsername());
-        if(userDto.getLogin()!=null)
-            user.setLogin(userDto.getLogin());
-        if(userDto.getPassword()!=null)
-            user.setPassword(userDto.getPassword());
+        if(userDto.getuId()!=null)
+            user.setuId(userDto.getuId());
         if(userDto.getEmail()!=null)
             user.setEmail(userDto.getEmail());
         if(userDto.getPermission()!=null)
@@ -58,10 +58,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
         if(userDto.getUsername()!=null && !userDto.getUsername().isEmpty())
             user.setUsername(userDto.getUsername());
-        if(userDto.getLogin()!=null && !userDto.getLogin().isEmpty())
-            user.setLogin(userDto.getLogin());
-        if(userDto.getPassword()!=null && !userDto.getPassword().isEmpty())
-            user.setPassword(userDto.getPassword());
+        if(userDto.getuId()!=null && !userDto.getuId().isEmpty())
+            user.setuId(userDto.getuId());
         if(userDto.getEmail()!=null && !userDto.getEmail().isEmpty())
             user.setEmail(userDto.getEmail());
         if(userDto.getPermission()!=null)
@@ -82,17 +80,11 @@ public class UserServiceImpl implements UserService {
     }
     private UserDto mapToDto(User user){
         UserDto dto = new UserDto();
-
-        if(user.getUsername()!=null)
-            dto.setUsername(user.getUsername());
-        if(user.getLogin()!=null)
-            dto.setLogin(user.getLogin());
-        if(user.getPassword()!=null)
-            dto.setPassword(user.getPassword());
-        if(user.getEmail()!=null)
-            dto.setEmail(user.getEmail());
-        if(user.getPermission()!=null)
-            dto.setPermission(user.getPermission());
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setuId(user.getuId());
+        dto.setEmail(user.getEmail());
+        dto.setPermission(user.getPermission());
         return dto;
     }
 }

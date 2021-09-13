@@ -18,10 +18,8 @@ public class User {
     private String username;
     @NotBlank
     @Size(min=1, max=50)
-    private String login;
-    @NotBlank
-    @Size(min=8, max=255)
-    private String password;
+    @Column(unique = true)
+    private String uId;
     @NotBlank
     @Email
     private String email;
@@ -37,12 +35,11 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String login, String password, String email, Permission permission,
+    public User(Long id, String username, String uId, String email, Permission permission,
                 List<Plant> plantList, List<Post> postList, List<SalesOffer> salesOfferList) {
         this.id = id;
         this.username = username;
-        this.login = login;
-        this.password = password;
+        this.uId = uId;
         this.email = email;
         this.permission = permission;
         this.plantList = plantList;
@@ -90,20 +87,12 @@ public class User {
         this.username = username;
     }
 
-    public String getLogin() {
-        return login;
+    public String getuId() {
+        return uId;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setuId(String uId) {
+        this.uId = uId;
     }
 
     public String getEmail() {

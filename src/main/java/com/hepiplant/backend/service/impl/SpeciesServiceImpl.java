@@ -43,8 +43,6 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public SpeciesDto add(SpeciesDto speciesDto) {
         Species species = new Species();
-
-        if(speciesDto.getName()!=null && !speciesDto.getName().isEmpty())
         species.setName(speciesDto.getName());
         if(speciesDto.getWateringFrequency()>=0)
             species.setWateringFrequency(speciesDto.getWateringFrequency());
@@ -56,10 +54,10 @@ public class SpeciesServiceImpl implements SpeciesService {
             species.setPlacement(speciesDto.getPlacement());
         if(speciesDto.getSoil()!=null && !speciesDto.getSoil().isEmpty())
             species.setSoil(speciesDto.getSoil());
-        if(speciesDto.getCategoryId()!=null){
-            Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id "+speciesDto.getCategoryId()));
-            species.setCategory(category);
-        }
+
+        Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id "+speciesDto.getCategoryId()));
+        species.setCategory(category);
+
         beanValidator.validate(species);
         Species savedSpecies = speciesRepository.save(species);
         return mapToDto(savedSpecies);
@@ -81,7 +79,7 @@ public class SpeciesServiceImpl implements SpeciesService {
         if(speciesDto.getSoil()!=null && !speciesDto.getSoil().isEmpty() && !speciesDto.getSoil().equals(species.getSoil())){
             throw new ImmutableFieldException("Field Soil in Species is immutable!");
         }
-        if(speciesDto.getCategoryId()!=null && !speciesDto.getCategoryId().equals(species.getCategory().getId())){
+        if(speciesDto.getCategoryId()!=null &&  !speciesDto.getSoil().isEmpty() && !speciesDto.getCategoryId().equals(species.getCategory().getId())){
             throw new ImmutableFieldException("Field Soil in Species is immutable!");
 
         }

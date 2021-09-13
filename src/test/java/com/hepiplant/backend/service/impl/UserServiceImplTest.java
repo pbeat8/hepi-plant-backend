@@ -1,8 +1,8 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.UserDto;
-import com.hepiplant.backend.entity.Species;
-import com.hepiplant.backend.entity.User;
+import com.hepiplant.backend.entity.*;
+import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.validator.BeanValidator;
@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,13 +46,14 @@ class UserServiceImplTest {
 
     @BeforeEach
     public void initializeUser(){
-        user = new User(1L, "username 1", "login 1", "password 1", "email 1", null, null, null, null);
+
+        user = new User(1L, "username 1", "uid 1", "password 1", Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         dto = new UserDto();
         dto.setUsername(user.getUsername());
-        dto.setLogin(user.getLogin());
+        dto.setuId(user.getuId());
         dto.setEmail(user.getEmail());
-        dto.setPassword(user.getPassword());
         dto.setPermission(user.getPermission());
+
     }
 
     @Test
@@ -66,9 +69,9 @@ class UserServiceImplTest {
 
         assertEquals(1,result.size());
         assertEquals(user.getUsername(),result.get(0).getUsername());
-        assertEquals(user.getLogin(),result.get(0).getLogin());
-        assertEquals(user.getPassword(),result.get(0).getPassword());
+        assertEquals(user.getuId(),result.get(0).getuId());
         assertEquals(user.getEmail(),result.get(0).getEmail());
+        assertEquals(user.getPermission(), result.get(0).getPermission());
     }
 
     @Test
@@ -96,9 +99,9 @@ class UserServiceImplTest {
         then(userRepository).should(times(1)).findById(user.getId());
 
         assertEquals(user.getUsername(),result.getUsername());
-        assertEquals(user.getLogin(),result.getLogin());
-        assertEquals(user.getPassword(),result.getPassword());
+        assertEquals(user.getuId(),result.getuId());
         assertEquals(user.getEmail(),result.getEmail());
+        assertEquals(user.getPermission(), result.getPermission());
     }
 
     @Test
@@ -127,14 +130,14 @@ class UserServiceImplTest {
         then(beanValidator).should(times(1)).validate(any());
         then(userRepository).should(times(1)).save(any(User.class));
         assertEquals(user.getUsername(),result.getUsername());
-        assertEquals(user.getLogin(),result.getLogin());
-        assertEquals(user.getPassword(),result.getPassword());
+        assertEquals(user.getuId(),result.getuId());
+        assertEquals(user.getPermission(),result.getPermission());
         assertEquals(user.getEmail(),result.getEmail());
 
         User captorValue = userArgumentCaptor.getValue();
         assertEquals(user.getUsername(),captorValue.getUsername());
-        assertEquals(user.getLogin(),captorValue.getLogin());
-        assertEquals(user.getPassword(),captorValue.getPassword());
+        assertEquals(user.getuId(),captorValue.getuId());
+        assertEquals(user.getPermission(),captorValue.getPermission());
         assertEquals(user.getEmail(),captorValue.getEmail());
 
     }
@@ -165,14 +168,14 @@ class UserServiceImplTest {
         then(userRepository).should(times(1)).findById(user.getId());
         then(beanValidator).should(times(1)).validate(any());
         assertEquals(user.getUsername(),result.getUsername());
-        assertEquals(user.getLogin(),result.getLogin());
-        assertEquals(user.getPassword(),result.getPassword());
+        assertEquals(user.getuId(),result.getuId());
+        assertEquals(user.getPermission(),result.getPermission());
         assertEquals(user.getEmail(),result.getEmail());
 
         User captorValue = userArgumentCaptor.getValue();
         assertEquals(user.getUsername(),captorValue.getUsername());
-        assertEquals(user.getLogin(),captorValue.getLogin());
-        assertEquals(user.getPassword(),captorValue.getPassword());
+        assertEquals(user.getuId(),captorValue.getuId());
+        assertEquals(user.getPermission(),captorValue.getPermission());
         assertEquals(user.getEmail(),captorValue.getEmail());
     }
 
