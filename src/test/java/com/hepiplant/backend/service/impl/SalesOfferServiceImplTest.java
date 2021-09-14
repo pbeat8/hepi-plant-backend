@@ -1,5 +1,6 @@
 package com.hepiplant.backend.service.impl;
 
+import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
@@ -60,7 +61,7 @@ class SalesOfferServiceImplTest {
 
     @BeforeAll
     public static void initializeVariables(){
-        user = new User(1L, "username1", "login1", "p@ssw0rd", "email@gmail.com",
+        user = new User(1L, "username1", "uId1", "email@gmail.com",
                 Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
     }
@@ -197,6 +198,84 @@ class SalesOfferServiceImplTest {
 
         //then
         then(salesOfferRepository).should(times(1)).findAll();
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetAllSalesOfferByUserOk(){
+        //given
+        given(userRepository.findById(salesOffer.getUser().getId())).willReturn(Optional.of(user));
+        given(salesOfferRepository.findAllByUser(salesOffer.getUser())).willReturn(List.of(salesOffer));
+
+        //when
+        List<SalesOfferDto> result = salesOfferService.getAllByUser(salesOffer.getUser().getId());
+
+        //then
+        then(userRepository).should(times(1)).findById(dto.getUserId());
+        then(salesOfferRepository).should(times(1)).findAllByUser(any(User.class));
+        assertEquals(1, result.size());
+        assertEquals(salesOffer.getTitle(), result.get(0).getTitle());
+        assertEquals(salesOffer.getBody(), result.get(0).getBody());
+        assertEquals(salesOffer.getLocation(), result.get(0).getLocation());
+        assertEquals(salesOffer.getPrice(), result.get(0).getPrice());
+        assertEquals(2, result.get(0).getTags().size());
+        assertEquals(salesOffer.getTag1(), result.get(0).getTags().get(0));
+        assertEquals(salesOffer.getTag2(), result.get(0).getTags().get(1));
+        assertEquals(user.getId(), result.get(0).getUserId());
+        assertEquals(category.getId(), result.get(0).getCategoryId());
+    }
+
+    @Test
+    public void shouldGetAllSalesOffersByUserEmptyListOk(){
+        //given
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+        given(salesOfferRepository.findAllByUser(salesOffer.getUser())).willReturn(List.of());
+
+        //when
+        List<SalesOfferDto> result = salesOfferService.getAllByUser(anyLong());
+
+        //then
+        then(userRepository).should(times(1)).findById(anyLong());
+        then(salesOfferRepository).should(times(1)).findAllByUser(any(User.class));
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetAllSalesOffersByCategoryOk(){
+        //given
+        given(categoryRepository.findById(salesOffer.getCategory().getId())).willReturn(Optional.of(category));
+        given(salesOfferRepository.findAllByCategory(salesOffer.getCategory())).willReturn(List.of(salesOffer));
+
+        //when
+        List<SalesOfferDto> result = salesOfferService.getAllByCategory(salesOffer.getCategory().getId());
+
+        //then
+        then(categoryRepository).should(times(1)).findById(dto.getCategoryId());
+        then(salesOfferRepository).should(times(1)).findAllByCategory(any(Category.class));
+        assertEquals(1, result.size());
+        assertEquals(salesOffer.getTitle(), result.get(0).getTitle());
+        assertEquals(salesOffer.getBody(), result.get(0).getBody());
+        assertEquals(salesOffer.getLocation(), result.get(0).getLocation());
+        assertEquals(salesOffer.getPrice(), result.get(0).getPrice());
+        assertEquals(2, result.get(0).getTags().size());
+        assertEquals(salesOffer.getTag1(), result.get(0).getTags().get(0));
+        assertEquals(salesOffer.getTag2(), result.get(0).getTags().get(1));
+        assertEquals(user.getId(), result.get(0).getUserId());
+        assertEquals(category.getId(), result.get(0).getCategoryId());
+    }
+
+    @Test
+    public void shouldGetAllSalesOffersByCategoryEmptyListOk(){
+        //given
+        given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
+        given(salesOfferRepository.findAllByCategory(salesOffer.getCategory())).willReturn(List.of());
+
+        //when
+        List<SalesOfferDto> result = salesOfferService.getAllByCategory(anyLong());
+
+        //then
+        then(categoryRepository).should(times(1)).findById(anyLong());
+        then(salesOfferRepository).should(times(1)).findAllByCategory(any(Category.class));
         assertEquals(0, result.size());
     }
 

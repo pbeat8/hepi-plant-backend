@@ -59,7 +59,7 @@ class PostServiceImplTest {
 
     @BeforeAll
     public static void initializeVariables(){
-        user = new User(1L, "username1", "login1", "p@ssw0rd", "email@gmail.com",
+        user = new User(1L, "username1", "uId1", "email@gmail.com",
                 Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
     }
@@ -228,6 +228,82 @@ class PostServiceImplTest {
 
         //then
         then(postRepository).should(times(1)).findAll();
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetAllPostsByUserOk(){
+        //given
+        given(userRepository.findById(post.getUser().getId())).willReturn(Optional.of(user));
+        given(postRepository.findAllByUser(post.getUser())).willReturn(List.of(post));
+
+        //when
+        List<PostDto> result = postService.getAllByUser(post.getUser().getId());
+
+        //then
+        then(userRepository).should(times(1)).findById(dto.getUserId());
+        then(postRepository).should(times(1)).findAllByUser(any(User.class));
+        assertEquals(1, result.size());
+        assertEquals(post.getTitle(), result.get(0).getTitle());
+        assertEquals(post.getBody(), result.get(0).getBody());
+        assertEquals(3, result.get(0).getTags().size());
+        assertEquals(post.getTag1(), result.get(0).getTags().get(0));
+        assertEquals(post.getTag2(), result.get(0).getTags().get(1));
+        assertEquals(post.getTag3(), result.get(0).getTags().get(2));
+        assertEquals(user.getId(), result.get(0).getUserId());
+        assertEquals(category.getId(), result.get(0).getCategoryId());
+    }
+
+    @Test
+    public void shouldGetAllPostsByUserEmptyListOk(){
+        //given
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+        given(postRepository.findAllByUser(post.getUser())).willReturn(List.of());
+
+        //when
+        List<PostDto> result = postService.getAllByUser(anyLong());
+
+        //then
+        then(userRepository).should(times(1)).findById(anyLong());
+        then(postRepository).should(times(1)).findAllByUser(any(User.class));
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetAllPostsByCategoryOk(){
+        //given
+        given(categoryRepository.findById(post.getCategory().getId())).willReturn(Optional.of(category));
+        given(postRepository.findAllByCategory(post.getCategory())).willReturn(List.of(post));
+
+        //when
+        List<PostDto> result = postService.getAllByCategory(post.getCategory().getId());
+
+        //then
+        then(categoryRepository).should(times(1)).findById(dto.getCategoryId());
+        then(postRepository).should(times(1)).findAllByCategory(any(Category.class));
+        assertEquals(1, result.size());
+        assertEquals(post.getTitle(), result.get(0).getTitle());
+        assertEquals(post.getBody(), result.get(0).getBody());
+        assertEquals(3, result.get(0).getTags().size());
+        assertEquals(post.getTag1(), result.get(0).getTags().get(0));
+        assertEquals(post.getTag2(), result.get(0).getTags().get(1));
+        assertEquals(post.getTag3(), result.get(0).getTags().get(2));
+        assertEquals(user.getId(), result.get(0).getUserId());
+        assertEquals(category.getId(), result.get(0).getCategoryId());
+    }
+
+    @Test
+    public void shouldGetAllPostsByCategoryEmptyListOk(){
+        //given
+        given(categoryRepository.findById(anyLong())).willReturn(Optional.of(category));
+        given(postRepository.findAllByCategory(post.getCategory())).willReturn(List.of());
+
+        //when
+        List<PostDto> result = postService.getAllByCategory(anyLong());
+
+        //then
+        then(categoryRepository).should(times(1)).findById(anyLong());
+        then(postRepository).should(times(1)).findAllByCategory(any(Category.class));
         assertEquals(0, result.size());
     }
 
