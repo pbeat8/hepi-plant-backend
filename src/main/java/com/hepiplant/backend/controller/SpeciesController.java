@@ -1,6 +1,5 @@
 package com.hepiplant.backend.controller;
 
-import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.service.SpeciesService;
 import org.springframework.http.ResponseEntity;

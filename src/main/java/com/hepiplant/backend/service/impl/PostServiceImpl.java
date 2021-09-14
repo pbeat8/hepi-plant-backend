@@ -4,7 +4,6 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
-
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.repository.CategoryRepository;
@@ -15,7 +14,6 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

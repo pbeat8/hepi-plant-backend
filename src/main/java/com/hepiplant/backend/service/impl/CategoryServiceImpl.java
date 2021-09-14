@@ -1,7 +1,6 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.CategoryDto;
-import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.service.CategoryService;

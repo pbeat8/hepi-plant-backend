@@ -42,10 +42,8 @@ public class Post {
     public Post() {
     }
 
-    public Post(Long id, User user, Category category, String title, String body, String tag1, String tag2, String tag3, String tag4, String tag5) {
+    public Post(Long id, String title, String body, String tag1, String tag2, String tag3, String tag4, String tag5, User user, Category category) {
         this.id = id;
-        this.user = user;
-        this.category = category;
         this.title = title;
         this.body = body;
         this.tag1 = tag1;
@@ -53,6 +51,8 @@ public class Post {
         this.tag3 = tag3;
         this.tag4 = tag4;
         this.tag5 = tag5;
+        this.user = user;
+        this.category = category;
     }
 
     public Long getId() {
