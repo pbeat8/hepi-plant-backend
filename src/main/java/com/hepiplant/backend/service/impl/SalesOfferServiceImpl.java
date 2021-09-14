@@ -1,5 +1,6 @@
 package com.hepiplant.backend.service.impl;
 
+import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
@@ -73,6 +74,14 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + categoryId));
         return salesOfferRepository.findAllByCategory(category).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SalesOfferDto> getAllByUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
+        return salesOfferRepository.findAllByUser(user).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }

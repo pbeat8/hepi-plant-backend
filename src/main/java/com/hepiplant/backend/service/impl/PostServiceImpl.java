@@ -74,6 +74,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostDto> getAllByUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
+        return postRepository.findAllByUser(user).stream().map(this::mapToDto).collect(Collectors.toList());
+    }
+
+    @Override
     public List<PostDto> getAllByTag(String tag) {
         return postRepository.findAll().stream()
                 .filter(p -> tag.equals(p.getTag1()) ||

@@ -34,6 +34,10 @@ public class SalesOfferController {
     public ResponseEntity<List<SalesOfferDto>> getSalesOffersByCategory(@PathVariable Long categoryId){
         return ResponseEntity.ok().body(salesOfferService.getAllByCategory(categoryId));
     }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<SalesOfferDto>> getSalesOffersByUser(@PathVariable Long userId){
+        return ResponseEntity.ok().body(salesOfferService.getAllByCategory(userId));
+    }
 
     @GetMapping("/tag/{tag}")
     public ResponseEntity<List<SalesOfferDto>> getSalesOffersByTag(@PathVariable String tag){
