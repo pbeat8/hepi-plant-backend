@@ -2,7 +2,6 @@ package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.CategoryDto;
 import com.hepiplant.backend.service.CategoryService;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

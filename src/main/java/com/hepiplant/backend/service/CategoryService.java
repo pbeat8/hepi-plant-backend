@@ -1,8 +1,6 @@
 package com.hepiplant.backend.service;
 
 import com.hepiplant.backend.dto.CategoryDto;
-import com.hepiplant.backend.entity.Category;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

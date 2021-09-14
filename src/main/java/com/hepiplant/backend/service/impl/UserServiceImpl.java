@@ -2,7 +2,6 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.UserDto;
 import com.hepiplant.backend.entity.User;
-import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.UserService;
 import org.springframework.stereotype.Service;
