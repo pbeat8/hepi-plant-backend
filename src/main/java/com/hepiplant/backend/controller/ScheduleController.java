@@ -1,8 +1,6 @@
 package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.ScheduleDto;
-import com.hepiplant.backend.entity.Schedule;
-import com.hepiplant.backend.service.CategoryService;
 import com.hepiplant.backend.service.ScheduleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

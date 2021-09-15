@@ -2,11 +2,9 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
-import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
-import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SalesOfferRepository;
 import com.hepiplant.backend.repository.UserRepository;
@@ -15,12 +13,9 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,7 +92,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     @Override
     public SalesOfferDto update(Long id, SalesOfferDto salesOfferDto) {
         SalesOffer salesOffer = salesOfferRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Post not found for id " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Sales offer not found for id " + id));
         if(salesOfferDto.getTitle() != null){
             salesOffer.setTitle(salesOfferDto.getTitle());
         }
@@ -114,7 +109,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
             addTagsToSalesOffer(salesOffer, salesOfferDto.getTags());
         }
         if(salesOfferDto.getUserId() != null){
-            throw new ImmutableFieldException("Cannot change User for Post!");
+            throw new ImmutableFieldException("Cannot change User for Sales offer!");
         }
         if(salesOfferDto.getCategoryId() != null){
             Category category = categoryRepository.findById(salesOfferDto.getCategoryId())

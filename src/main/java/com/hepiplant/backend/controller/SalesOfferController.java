@@ -1,9 +1,6 @@
 package com.hepiplant.backend.controller;
 
-import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
-import com.hepiplant.backend.entity.SalesOffer;
-import com.hepiplant.backend.service.CategoryService;
 import com.hepiplant.backend.service.SalesOfferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

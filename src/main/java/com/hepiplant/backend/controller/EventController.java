@@ -1,6 +1,5 @@
 package com.hepiplant.backend.controller;
 
-import com.hepiplant.backend.dto.CategoryDto;
 import com.hepiplant.backend.dto.EventDto;
 import com.hepiplant.backend.service.EventService;
 import org.springframework.http.ResponseEntity;

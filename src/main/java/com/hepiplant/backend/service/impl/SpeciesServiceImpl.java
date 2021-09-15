@@ -3,7 +3,6 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Species;
-import com.hepiplant.backend.entity.enums.Placement;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

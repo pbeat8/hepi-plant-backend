@@ -1,6 +1,5 @@
 package com.hepiplant.backend.configuration;
 
-import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
