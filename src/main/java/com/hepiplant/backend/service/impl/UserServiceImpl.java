@@ -2,6 +2,7 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.UserDto;
 import com.hepiplant.backend.entity.User;
+import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.UserService;
 import com.hepiplant.backend.validator.BeanValidator;
@@ -36,17 +37,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto add(UserDto userDto) {
-        Optional<User> optionalUser = userRepository.findByuId(userDto.getuId());
-        if(optionalUser.isPresent()) return mapToDto(optionalUser.get());
+        Optional<User> optionalUser = userRepository.findByUid(userDto.getUid());
+        if(optionalUser.isPresent())
+            return mapToDto(optionalUser.get());
+
         User user = new User();
-        if(userDto.getUsername()!=null)
-            user.setUsername(userDto.getUsername());
-        if(userDto.getuId()!=null)
-            user.setuId(userDto.getuId());
-        if(userDto.getEmail()!=null)
-            user.setEmail(userDto.getEmail());
-        if(userDto.getPermission()!=null)
-            user.setPermission(userDto.getPermission());
+        user.setUsername(userDto.getUsername());
+        user.setUid(userDto.getUid());
+        user.setEmail(userDto.getEmail());
+        user.setPermission(userDto.getPermission());
+
         beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
@@ -56,14 +56,13 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long id, UserDto userDto) {
 
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
-        if(userDto.getUsername()!=null && !userDto.getUsername().isEmpty())
-            user.setUsername(userDto.getUsername());
-        if(userDto.getuId()!=null && !userDto.getuId().isEmpty())
-            user.setuId(userDto.getuId());
-        if(userDto.getEmail()!=null && !userDto.getEmail().isEmpty())
-            user.setEmail(userDto.getEmail());
-        if(userDto.getPermission()!=null)
-            user.setPermission(userDto.getPermission());
+        user.setUsername(userDto.getUsername());
+        if(userDto.getUid()!=null){
+            throw new ImmutableFieldException("Field uid in User is immutable!");
+        }
+
+        user.setEmail(userDto.getEmail());
+        user.setPermission(userDto.getPermission());
         beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
@@ -82,7 +81,7 @@ public class UserServiceImpl implements UserService {
         UserDto dto = new UserDto();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
-        dto.setuId(user.getuId());
+        dto.setUid(user.getUid());
         dto.setEmail(user.getEmail());
         dto.setPermission(user.getPermission());
         return dto;

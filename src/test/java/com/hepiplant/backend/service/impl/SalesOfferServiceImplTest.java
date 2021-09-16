@@ -241,6 +241,20 @@ class SalesOfferServiceImplTest {
     }
 
     @Test
+    public void shouldGetAllSalesOffersByUserIdUserDoesNotExistThrowsException(){
+        //given
+        given(userRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+
+        //when
+
+        //then
+        //then(userRepository).should(times(1)).findById(post.getUser().getId());
+        assertThrows(EntityNotFoundException.class, () -> salesOfferService.getAllByUser(anyLong()));
+
+        //then(postRepository).should(times(0)).findAllByUser(any(User.class));
+    }
+
+    @Test
     public void shouldGetAllSalesOffersByCategoryOk(){
         //given
         given(categoryRepository.findById(salesOffer.getCategory().getId())).willReturn(Optional.of(category));
@@ -277,6 +291,20 @@ class SalesOfferServiceImplTest {
         then(categoryRepository).should(times(1)).findById(anyLong());
         then(salesOfferRepository).should(times(1)).findAllByCategory(any(Category.class));
         assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetAllSalesOffersByCategoryIdDoesNotExistThrowsException(){
+        //given
+        given(categoryRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+
+        //when
+
+        //then
+        //assertThrows(EntityNotFoundException.class, () -> categoryRepository.getById(anyLong()));
+        assertThrows(EntityNotFoundException.class, () -> salesOfferService.getAllByCategory(anyLong()));
+        //then(categoryRepository).should(times(1)).findById(post.getCategory().getId());
+        //then(salesOfferRepository).should(times(0)).findAllByCategory(any(Category.class));
     }
 
     // GET ALL BY TAG tests

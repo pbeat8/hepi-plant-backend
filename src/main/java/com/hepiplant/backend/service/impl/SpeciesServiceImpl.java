@@ -44,20 +44,17 @@ public class SpeciesServiceImpl implements SpeciesService {
     public SpeciesDto add(SpeciesDto speciesDto) {
         Species species = new Species();
         species.setName(speciesDto.getName());
-        if(speciesDto.getWateringFrequency()>=0)
-            species.setWateringFrequency(speciesDto.getWateringFrequency());
-        if(speciesDto.getFertilizingFrequency()>=0)
-            species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
-        if(speciesDto.getMistingFrequency()>=0)
-            species.setMistingFrequency(speciesDto.getMistingFrequency());
+        species.setWateringFrequency(speciesDto.getWateringFrequency());
+        species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
+        species.setMistingFrequency(speciesDto.getMistingFrequency());
         if(speciesDto.getPlacement()!=null )
             species.setPlacement(speciesDto.getPlacement());
-        if(speciesDto.getSoil()!=null && !speciesDto.getSoil().isEmpty())
+        if(speciesDto.getSoil()!=null)
             species.setSoil(speciesDto.getSoil());
-
-        Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id "+speciesDto.getCategoryId()));
-        species.setCategory(category);
-
+        if(speciesDto.getCategoryId()!=null) {
+            Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id " + speciesDto.getCategoryId()));
+            species.setCategory(category);
+        }
         beanValidator.validate(species);
         Species savedSpecies = speciesRepository.save(species);
         return mapToDto(savedSpecies);
@@ -66,22 +63,17 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public SpeciesDto update(Long id, SpeciesDto speciesDto) {
         Species species = speciesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Species not found for id "+id));
-        if(speciesDto.getName()!=null && !speciesDto.getName().isEmpty())
-            species.setName(speciesDto.getName());
-        if(speciesDto.getWateringFrequency()>=0)
-            species.setWateringFrequency(speciesDto.getWateringFrequency());
-        if(speciesDto.getFertilizingFrequency()>=0)
-            species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
-        if(speciesDto.getMistingFrequency()>=0)
-            species.setMistingFrequency(speciesDto.getMistingFrequency());
-        if(speciesDto.getPlacement()!=null )
-            species.setPlacement(speciesDto.getPlacement());
-        if(speciesDto.getSoil()!=null && !speciesDto.getSoil().isEmpty() && !speciesDto.getSoil().equals(species.getSoil())){
+
+        species.setName(speciesDto.getName());
+        species.setWateringFrequency(speciesDto.getWateringFrequency());
+        species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
+        species.setMistingFrequency(speciesDto.getMistingFrequency());
+        species.setPlacement(speciesDto.getPlacement());
+        if(speciesDto.getSoil()!=null){
             throw new ImmutableFieldException("Field Soil in Species is immutable!");
         }
-        if(speciesDto.getCategoryId()!=null &&  !speciesDto.getSoil().isEmpty() && !speciesDto.getCategoryId().equals(species.getCategory().getId())){
-            throw new ImmutableFieldException("Field Soil in Species is immutable!");
-
+        if(speciesDto.getCategoryId()!=null){
+            throw new ImmutableFieldException("Field Category in Species is immutable!");
         }
         beanValidator.validate(species);
         Species savedSpecies = speciesRepository.save(species);

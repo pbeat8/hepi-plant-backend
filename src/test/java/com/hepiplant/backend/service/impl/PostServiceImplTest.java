@@ -270,6 +270,20 @@ class PostServiceImplTest {
     }
 
     @Test
+    public void shouldGetAllPostsByUserIdUserDoesNotExistThrowsException(){
+        //given
+        given(userRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+
+        //when
+
+        //then
+        //then(userRepository).should(times(1)).findById(post.getUser().getId());
+        assertThrows(EntityNotFoundException.class, () -> postService.getAllByUser(anyLong()));
+
+        //then(postRepository).should(times(0)).findAllByUser(any(User.class));
+    }
+
+    @Test
     public void shouldGetAllPostsByCategoryOk(){
         //given
         given(categoryRepository.findById(post.getCategory().getId())).willReturn(Optional.of(category));
@@ -305,6 +319,20 @@ class PostServiceImplTest {
         then(categoryRepository).should(times(1)).findById(anyLong());
         then(postRepository).should(times(1)).findAllByCategory(any(Category.class));
         assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetAllPostsByCategoryIdDoesNotExistThrowsException(){
+        //given
+        given(categoryRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+
+        //when
+
+        //then
+        //assertThrows(EntityNotFoundException.class, () -> categoryRepository.getById(anyLong()));
+        assertThrows(EntityNotFoundException.class, () -> postService.getAllByCategory(anyLong()));
+        //then(categoryRepository).should(times(1)).findById(post.getCategory().getId());
+        //then(postRepository).should(times(1)).findAllByCategory(any(Category.class));
     }
 
     // GET BY ID tests

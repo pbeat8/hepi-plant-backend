@@ -18,11 +18,11 @@ public class Species {
     @NotBlank
     @Size(min=1, max=255)
     private String name;
-    @Min(value = 0, message = "Watering frequency should be greater than 0")
+    @Min(value = 1, message = "Watering frequency for species should be greater than 0")
     private int wateringFrequency;
-    @Min(value = 0, message = "Fertilizing frequency should be greater than 0")
+    @Min(value = 0, message = "Fertilizing frequency for species should be greater or equals 0")
     private int fertilizingFrequency;
-    @Min(value = 0, message = "Misting frequency should be greater than 0")
+    @Min(value = 0, message = "Misting frequency for species should be greater or equals 0")
     private int mistingFrequency;
     @NotBlank
     @Enumerated(EnumType.STRING)

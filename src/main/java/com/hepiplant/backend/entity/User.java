@@ -19,7 +19,7 @@ public class User {
     @NotBlank
     @Size(min=1, max=50)
     @Column(unique = true)
-    private String uId;
+    private String uid;
     @NotBlank
     @Email
     private String email;
@@ -39,7 +39,7 @@ public class User {
                 List<Plant> plantList, List<Post> postList, List<SalesOffer> salesOfferList) {
         this.id = id;
         this.username = username;
-        this.uId = uId;
+        this.uid = uId;
         this.email = email;
         this.permission = permission;
         this.plantList = plantList;
@@ -87,12 +87,12 @@ public class User {
         this.username = username;
     }
 
-    public String getuId() {
-        return uId;
+    public String getUid() {
+        return uid;
     }
 
-    public void setuId(String uId) {
-        this.uId = uId;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getEmail() {

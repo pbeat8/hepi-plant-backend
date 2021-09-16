@@ -5,6 +5,7 @@ import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Schedule;
 import com.hepiplant.backend.entity.Species;
 import com.hepiplant.backend.entity.enums.Placement;
+import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
@@ -55,6 +56,7 @@ class SpeciesServiceImplTest {
     public static void initializeVariables(){
         category = new Category(1L,"name",null);
     }
+
     @BeforeEach
     public void initializeSpecies(){
 
@@ -124,6 +126,7 @@ class SpeciesServiceImplTest {
         assertEquals(species.getPlacement(), result.getPlacement());
         assertEquals(species.getCategory().getId(), result.getCategoryId());
     }
+
     @Test
     void shouldGetSpeciesByIdDoesNotExistThrowsException(){
 
@@ -171,6 +174,20 @@ class SpeciesServiceImplTest {
     @Test
     void shouldAddSpeciesInvalidValuesThrowsException() {
         //given
+        given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
+
+        //when
+        //then
+        assertThrows(InvalidBeanException.class, () -> speciesService.add(dto));
+        then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(beanValidator).should(times(1)).validate(any());
+        then(speciesRepository).should(times(0)).save(any(Species.class));
+    }
+
+    @Test
+    void shouldAddSpeciesCategoryDoesNotExistsThrowsException() {
+        //given
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.empty());
 
         //when
@@ -180,13 +197,12 @@ class SpeciesServiceImplTest {
         then(speciesRepository).should(times(0)).save(any(Species.class));
     }
 
-
     @Test
     void shouldUpdateSpeciesOk() {
         //given
         Species speciesToUpdate = new Species();
-        speciesToUpdate.setSoil(species.getSoil());
-        speciesToUpdate.setCategory(species.getCategory());
+        dto.setSoil(null);
+        dto.setCategoryId(null);
         given(speciesRepository.findById(species.getId())).willReturn(Optional.of(speciesToUpdate));
         given(speciesRepository.save(speciesArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
@@ -201,18 +217,14 @@ class SpeciesServiceImplTest {
         assertEquals(species.getWateringFrequency(),result.getWateringFrequency());
         assertEquals(species.getFertilizingFrequency(),result.getFertilizingFrequency());
         assertEquals(species.getMistingFrequency(),result.getMistingFrequency());
-        assertEquals(species.getSoil(),result.getSoil());
         assertEquals(species.getPlacement(), result.getPlacement());
-        assertEquals(species.getCategory().getId(), result.getCategoryId());
 
         Species captorValue = speciesArgumentCaptor.getValue();
         assertEquals(species.getName(), captorValue.getName());
         assertEquals(species.getWateringFrequency(),captorValue.getWateringFrequency());
         assertEquals(species.getFertilizingFrequency(),captorValue.getFertilizingFrequency());
         assertEquals(species.getMistingFrequency(),captorValue.getMistingFrequency());
-        assertEquals(species.getSoil(),captorValue.getSoil());
         assertEquals(species.getPlacement(), captorValue.getPlacement());
-        assertEquals(species.getCategory(), captorValue.getCategory());
     }
 
     @Test
@@ -220,8 +232,8 @@ class SpeciesServiceImplTest {
     {
         //given
         Species speciesToUpdate = new Species();
-        speciesToUpdate.setSoil(species.getSoil());
-        speciesToUpdate.setCategory(species.getCategory());
+        dto.setSoil(null);
+        dto.setCategoryId(null);
         given(speciesRepository.findById(species.getId())).willReturn(Optional.of(speciesToUpdate));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 
@@ -232,6 +244,39 @@ class SpeciesServiceImplTest {
         then(speciesRepository).should(times(1)).findById(species.getId());
         then(beanValidator).should(times(1)).validate(any());
         then(speciesRepository).should(times(0)).save(any(Species.class));
+    }
+
+    @Test
+    public void shouldUpdateSpeciesInvalidSoilChangeThrowsException()
+    {
+        //given
+        Species speciesToUpdate = new Species();
+        given(speciesRepository.findById(species.getId())).willReturn(Optional.of(speciesToUpdate));
+        //when
+
+        //then
+        assertThrows(ImmutableFieldException.class, () -> speciesService.update(species.getId(), dto));
+        then(speciesRepository).should(times(1)).findById(species.getId());
+        then(categoryRepository).should(atMostOnce()).findById(eq(dto.getCategoryId()));
+        then(speciesRepository).should(times(0)).save(any(Species.class));
+
+    }
+
+    @Test
+    public void shouldUpdateSpeciesInvalidCategoryChangeThrowsException()
+    {
+        //given
+        Species speciesToUpdate = new Species();
+        given(speciesRepository.findById(species.getId())).willReturn(Optional.of(speciesToUpdate));
+
+        //when
+
+        //then
+        assertThrows(ImmutableFieldException.class, () -> speciesService.update(species.getId(), dto));
+        then(speciesRepository).should(times(1)).findById(species.getId());
+        then(categoryRepository).should(atMostOnce()).findById(dto.getCategoryId());
+        then(speciesRepository).should(times(0)).save(any(Species.class));
+
     }
 
     @Test
@@ -261,4 +306,5 @@ class SpeciesServiceImplTest {
         then(speciesRepository).should(times(0)).delete(any());
         assertTrue(result.contains("No species") );
     }
+
 }

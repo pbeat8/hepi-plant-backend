@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +49,7 @@ class UserServiceImplTest {
         user = new User(1L, "username 1", "uid 1", "password 1", Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         dto = new UserDto();
         dto.setUsername(user.getUsername());
-        dto.setuId(user.getuId());
+        dto.setUid(user.getUid());
         dto.setEmail(user.getEmail());
         dto.setPermission(user.getPermission());
 
@@ -69,7 +68,7 @@ class UserServiceImplTest {
 
         assertEquals(1,result.size());
         assertEquals(user.getUsername(),result.get(0).getUsername());
-        assertEquals(user.getuId(),result.get(0).getuId());
+        assertEquals(user.getUid(),result.get(0).getUid());
         assertEquals(user.getEmail(),result.get(0).getEmail());
         assertEquals(user.getPermission(), result.get(0).getPermission());
     }
@@ -99,7 +98,7 @@ class UserServiceImplTest {
         then(userRepository).should(times(1)).findById(user.getId());
 
         assertEquals(user.getUsername(),result.getUsername());
-        assertEquals(user.getuId(),result.getuId());
+        assertEquals(user.getUid(),result.getUid());
         assertEquals(user.getEmail(),result.getEmail());
         assertEquals(user.getPermission(), result.getPermission());
     }
@@ -130,15 +129,33 @@ class UserServiceImplTest {
         then(beanValidator).should(times(1)).validate(any());
         then(userRepository).should(times(1)).save(any(User.class));
         assertEquals(user.getUsername(),result.getUsername());
-        assertEquals(user.getuId(),result.getuId());
+        assertEquals(user.getUid(),result.getUid());
         assertEquals(user.getPermission(),result.getPermission());
         assertEquals(user.getEmail(),result.getEmail());
 
         User captorValue = userArgumentCaptor.getValue();
         assertEquals(user.getUsername(),captorValue.getUsername());
-        assertEquals(user.getuId(),captorValue.getuId());
+        assertEquals(user.getUid(),captorValue.getUid());
         assertEquals(user.getPermission(),captorValue.getPermission());
         assertEquals(user.getEmail(),captorValue.getEmail());
+
+    }
+
+    @Test
+    void shouldAddUserAlreadyInBaseOk() {
+        //given
+        given(userRepository.findByUid(user.getUid())).willReturn(Optional.of(user));
+
+        //when
+        UserDto result = userService.add(dto);
+
+        //then
+        then(userRepository).should(times(1)).findByUid(user.getUid());
+        then(userRepository).should(times(0)).save(any(User.class));
+        assertEquals(user.getUsername(),result.getUsername());
+        assertEquals(user.getUid(),result.getUid());
+        assertEquals(user.getPermission(),result.getPermission());
+        assertEquals(user.getEmail(),result.getEmail());
 
     }
 
@@ -158,6 +175,7 @@ class UserServiceImplTest {
 
         //given
         User userToUpdate = new User();
+        dto.setUid(null);
         given(userRepository.findById(user.getId())).willReturn(Optional.of(userToUpdate));
         given(userRepository.save(userArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
@@ -168,13 +186,11 @@ class UserServiceImplTest {
         then(userRepository).should(times(1)).findById(user.getId());
         then(beanValidator).should(times(1)).validate(any());
         assertEquals(user.getUsername(),result.getUsername());
-        assertEquals(user.getuId(),result.getuId());
         assertEquals(user.getPermission(),result.getPermission());
         assertEquals(user.getEmail(),result.getEmail());
 
         User captorValue = userArgumentCaptor.getValue();
         assertEquals(user.getUsername(),captorValue.getUsername());
-        assertEquals(user.getuId(),captorValue.getuId());
         assertEquals(user.getPermission(),captorValue.getPermission());
         assertEquals(user.getEmail(),captorValue.getEmail());
     }
@@ -184,6 +200,7 @@ class UserServiceImplTest {
     {
         //given
         User userToUpdate = new User();
+        dto.setUid(null);
         given(userRepository.findById(user.getId())).willReturn(Optional.of(userToUpdate));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 
@@ -224,4 +241,5 @@ class UserServiceImplTest {
         then(userRepository).should(times(0)).delete(any());
         assertTrue(result.contains("No user"));
     }
+
 }

@@ -12,12 +12,13 @@ public class Schedule {
     @Column(name = "id")
     private Long id;
     @NotBlank
-    @Min(value = 0, message = "Watering frequency should be greater than 0")
+    @Min(value = 1, message = "Watering frequency should be greater than 0")
     private int wateringFrequency;
-    @Min(value = 0, message = "Fertilizing frequency should be greater than 0")
+    @Min(value = 0, message = "Fertilizing frequency should be greater or equals  0")
     private int fertilizingFrequency;
-    @Min(value = 0, message = "Misting frequency should be greater than 0")
+    @Min(value = 0, message = "Misting frequency should be greater or equals 0")
     private int mistingFrequency;
+    @NotBlank
     @OneToOne
     @JoinColumn(name = "plant_id", referencedColumnName = "id")
     private Plant plant;
