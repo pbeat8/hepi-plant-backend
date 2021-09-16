@@ -14,6 +14,7 @@ public class PlantDto {
     private Long categoryId;
     private Long speciesId;
     private Long userId;
+    private ScheduleDto schedule;
 
     public PlantDto() {
     }
@@ -73,4 +74,13 @@ public class PlantDto {
     public void setUserId(Long userId) {
         this.userId = userId;
     }
+
+    public ScheduleDto getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(ScheduleDto schedule) {
+        this.schedule = schedule;
+    }
+    
 }
