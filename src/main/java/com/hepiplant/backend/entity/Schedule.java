@@ -3,6 +3,7 @@ package com.hepiplant.backend.entity;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(schema = "plants", name = "schedules")
@@ -11,14 +12,14 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
-    @NotBlank
+    @NotNull
     @Min(value = 1, message = "Watering frequency should be greater than 0")
     private int wateringFrequency;
     @Min(value = 0, message = "Fertilizing frequency should be greater or equals  0")
     private int fertilizingFrequency;
     @Min(value = 0, message = "Misting frequency should be greater or equals 0")
     private int mistingFrequency;
-    @NotBlank
+    @NotNull
     @OneToOne
     @JoinColumn(name = "plant_id", referencedColumnName = "id")
     private Plant plant;
@@ -36,6 +37,10 @@ public class Schedule {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Plant getPlant() {

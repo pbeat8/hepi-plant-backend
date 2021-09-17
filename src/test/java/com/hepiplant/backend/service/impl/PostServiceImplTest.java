@@ -272,15 +272,14 @@ class PostServiceImplTest {
     @Test
     public void shouldGetAllPostsByUserIdUserDoesNotExistThrowsException(){
         //given
-        given(userRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
 
         //then
-        //then(userRepository).should(times(1)).findById(post.getUser().getId());
         assertThrows(EntityNotFoundException.class, () -> postService.getAllByUser(anyLong()));
-
-        //then(postRepository).should(times(0)).findAllByUser(any(User.class));
+        then(userRepository).should(times(1)).findById(anyLong());
+        then(postRepository).should(times(0)).findAllByUser(any(User.class));
     }
 
     @Test
@@ -324,15 +323,13 @@ class PostServiceImplTest {
     @Test
     public void shouldGetAllPostsByCategoryIdDoesNotExistThrowsException(){
         //given
-        given(categoryRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+        given(categoryRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
-
         //then
-        //assertThrows(EntityNotFoundException.class, () -> categoryRepository.getById(anyLong()));
         assertThrows(EntityNotFoundException.class, () -> postService.getAllByCategory(anyLong()));
-        //then(categoryRepository).should(times(1)).findById(post.getCategory().getId());
-        //then(postRepository).should(times(1)).findAllByCategory(any(Category.class));
+        then(categoryRepository).should(times(1)).findById(anyLong());
+        then(postRepository).should(times(0)).findAllByCategory(any(Category.class));
     }
 
     // GET BY ID tests
@@ -363,7 +360,6 @@ class PostServiceImplTest {
         given(postRepository.findById(post.getId())).willReturn(Optional.empty());
 
         //when
-
         //then
         assertThrows(EntityNotFoundException.class, () -> postService.getById(post.getId()));
         then(postRepository).should(times(1)).findById(post.getId());
@@ -412,7 +408,6 @@ class PostServiceImplTest {
     public void shouldUpdatePostDoesNotExistThrowsException(){
         //given
         dto.setUserId(null);
-
         given(postRepository.findById(post.getId())).willReturn(Optional.empty());
 
         //when

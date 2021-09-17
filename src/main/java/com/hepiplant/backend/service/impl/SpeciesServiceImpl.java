@@ -43,7 +43,8 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public SpeciesDto add(SpeciesDto speciesDto) {
         Species species = new Species();
-        species.setName(speciesDto.getName());
+        if(speciesDto.getName()!=null)
+            species.setName(speciesDto.getName());
         species.setWateringFrequency(speciesDto.getWateringFrequency());
         species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
         species.setMistingFrequency(speciesDto.getMistingFrequency());
@@ -63,12 +64,13 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public SpeciesDto update(Long id, SpeciesDto speciesDto) {
         Species species = speciesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Species not found for id "+id));
-
-        species.setName(speciesDto.getName());
+        if(speciesDto.getName()!=null)
+            species.setName(speciesDto.getName());
         species.setWateringFrequency(speciesDto.getWateringFrequency());
         species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
         species.setMistingFrequency(speciesDto.getMistingFrequency());
-        species.setPlacement(speciesDto.getPlacement());
+        if(speciesDto.getPlacement()!=null)
+            species.setPlacement(speciesDto.getPlacement());
         if(speciesDto.getSoil()!=null){
             throw new ImmutableFieldException("Field Soil in Species is immutable!");
         }
@@ -91,7 +93,7 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
     private SpeciesDto mapToDto(Species species){
         SpeciesDto dto = new SpeciesDto();
-
+        dto.setId(species.getId());
         if(species.getName()!=null){
             dto.setName(species.getName());
         }

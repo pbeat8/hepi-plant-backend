@@ -54,15 +54,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(Long id, UserDto userDto) {
-
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
-        user.setUsername(userDto.getUsername());
+        if(userDto.getUsername()!=null)
+            user.setUsername(userDto.getUsername());
         if(userDto.getUid()!=null){
             throw new ImmutableFieldException("Field uid in User is immutable!");
         }
-
-        user.setEmail(userDto.getEmail());
-        user.setPermission(userDto.getPermission());
+        if(userDto.getEmail()!=null)
+            user.setEmail(userDto.getEmail());
+        if(userDto.getPermission()!=null)
+            user.setPermission(userDto.getPermission());
         beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
@@ -83,7 +84,8 @@ public class UserServiceImpl implements UserService {
         dto.setUsername(user.getUsername());
         dto.setUid(user.getUid());
         dto.setEmail(user.getEmail());
-        dto.setPermission(user.getPermission());
+        if(user.getPermission()!=null)
+            dto.setPermission(user.getPermission());
         return dto;
     }
 }

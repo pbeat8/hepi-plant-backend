@@ -1,6 +1,6 @@
 package com.hepiplant.backend.service.impl;
 
-import com.hepiplant.backend.dto.PostDto;
+
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
@@ -243,15 +243,13 @@ class SalesOfferServiceImplTest {
     @Test
     public void shouldGetAllSalesOffersByUserIdUserDoesNotExistThrowsException(){
         //given
-        given(userRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
-
         //then
-        //then(userRepository).should(times(1)).findById(post.getUser().getId());
         assertThrows(EntityNotFoundException.class, () -> salesOfferService.getAllByUser(anyLong()));
-
-        //then(postRepository).should(times(0)).findAllByUser(any(User.class));
+        then(userRepository).should(times(1)).findById(anyLong());
+        then(salesOfferRepository).should(times(0)).findAllByUser(any(User.class));
     }
 
     @Test
@@ -296,15 +294,13 @@ class SalesOfferServiceImplTest {
     @Test
     public void shouldGetAllSalesOffersByCategoryIdDoesNotExistThrowsException(){
         //given
-        given(categoryRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+        given(categoryRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
-
         //then
-        //assertThrows(EntityNotFoundException.class, () -> categoryRepository.getById(anyLong()));
         assertThrows(EntityNotFoundException.class, () -> salesOfferService.getAllByCategory(anyLong()));
-        //then(categoryRepository).should(times(1)).findById(post.getCategory().getId());
-        //then(salesOfferRepository).should(times(0)).findAllByCategory(any(Category.class));
+        then(categoryRepository).should(times(1)).findById(anyLong());
+        then(salesOfferRepository).should(times(0)).findAllByCategory(any(Category.class));
     }
 
     // GET ALL BY TAG tests

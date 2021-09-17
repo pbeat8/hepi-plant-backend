@@ -88,8 +88,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
     private ScheduleDto mapToDto(Schedule schedule){
         ScheduleDto dto = new ScheduleDto();
+        dto.setId(schedule.getId());
         if(schedule.getPlant()!=null){
-         dto.setPlantId(schedule.getPlant().getId());
+            dto.setPlantId(schedule.getPlant().getId());
         }
         dto.setWateringFrequency(schedule.getWateringFrequency());
         dto.setFertilizingFrequency(schedule.getFertilizingFrequency());

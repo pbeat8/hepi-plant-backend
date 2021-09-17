@@ -61,6 +61,7 @@ class ScheduleServiceImplTest {
 
         schedule = new Schedule(1L, plant,3,21,2);
         dto = new ScheduleDto();
+        dto.setId(schedule.getId());
         dto.setPlantId(schedule.getPlant().getId());
         dto.setWateringFrequency(schedule.getWateringFrequency());
         dto.setMistingFrequency(schedule.getMistingFrequency());
@@ -138,12 +139,14 @@ class ScheduleServiceImplTest {
     @Test
     void shouldGetAllSchedulesByPlantDoesNotExistsThrowsException() {
         //given
-        given(plantRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+        given(plantRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
 
         //then
         assertThrows(EntityNotFoundException.class, () -> scheduleService.getAllByPlant(anyLong()));
+        then(plantRepository).should(times(1)).findById(anyLong());
+        then(scheduleRepository).should(times(0)).findAllByPlant(any(Plant.class));
     }
 
     @Test
@@ -228,12 +231,13 @@ class ScheduleServiceImplTest {
     @Test
     void shouldAddScheduleInvalidPlantThrowException() {
         //given
-
-        given(plantRepository.findById(anyLong())).willThrow(EntityNotFoundException.class);
+        given(plantRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
         //then
         assertThrows(EntityNotFoundException.class, () -> scheduleService.add(dto));
+        then(plantRepository).should(times(1)).findById(anyLong());
+        then(scheduleRepository).should(times(0)).findAllByPlant(any(Plant.class));
     }
 
     @Test
@@ -298,7 +302,7 @@ class ScheduleServiceImplTest {
     public void shouldUpdateScheduleThatNotExistsThrowsException()
     {
         //given
-        doThrow(EntityNotFoundException.class).when(scheduleRepository).findById(anyLong());
+        given(scheduleRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
         //then
