@@ -2,8 +2,10 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.UserDto;
 import com.hepiplant.backend.entity.User;
+import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.UserService;
+import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,10 +16,12 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BeanValidator beanValidator;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BeanValidator beanValidator) {
         this.userRepository = userRepository;
+        this.beanValidator = beanValidator;
     }
 
     @Override
@@ -27,41 +31,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
         return mapToDto(user);
     }
 
     @Override
     public UserDto add(UserDto userDto) {
+        Optional<User> optionalUser = userRepository.findByUid(userDto.getUid());
+        if(optionalUser.isPresent())
+            return mapToDto(optionalUser.get());
+
         User user = new User();
-        if(userDto.getUsername()!=null)
-            user.setUsername(userDto.getUsername());
-        if(userDto.getLogin()!=null)
-            user.setLogin(userDto.getLogin());
-        if(userDto.getPassword()!=null)
-            user.setPassword(userDto.getPassword());
-        if(userDto.getEmail()!=null)
-            user.setEmail(userDto.getEmail());
-        if(userDto.getPermission()!=null)
-            user.setPermission(userDto.getPermission());
+        user.setUsername(userDto.getUsername());
+        user.setUid(userDto.getUid());
+        user.setEmail(userDto.getEmail());
+        user.setPermission(userDto.getPermission());
+
+        beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
     }
 
     @Override
     public UserDto update(Long id, UserDto userDto) {
-
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        if(userDto.getUsername()!=null && !userDto.getUsername().isEmpty())
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
+        if(userDto.getUsername()!=null)
             user.setUsername(userDto.getUsername());
-        if(userDto.getLogin()!=null && !userDto.getLogin().isEmpty())
-            user.setLogin(userDto.getLogin());
-        if(userDto.getPassword()!=null && !userDto.getPassword().isEmpty())
-            user.setPassword(userDto.getPassword());
-        if(userDto.getEmail()!=null && !userDto.getEmail().isEmpty())
+        if(userDto.getUid()!=null){
+            throw new ImmutableFieldException("Field uid in User is immutable!");
+        }
+        if(userDto.getEmail()!=null)
             user.setEmail(userDto.getEmail());
         if(userDto.getPermission()!=null)
             user.setPermission(userDto.getPermission());
+        beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
     }
@@ -77,15 +80,10 @@ public class UserServiceImpl implements UserService {
     }
     private UserDto mapToDto(User user){
         UserDto dto = new UserDto();
-
-        if(user.getUsername()!=null)
-            dto.setUsername(user.getUsername());
-        if(user.getLogin()!=null)
-            dto.setLogin(user.getLogin());
-        if(user.getPassword()!=null)
-            dto.setPassword(user.getPassword());
-        if(user.getEmail()!=null)
-            dto.setEmail(user.getEmail());
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setUid(user.getUid());
+        dto.setEmail(user.getEmail());
         if(user.getPermission()!=null)
             dto.setPermission(user.getPermission());
         return dto;
