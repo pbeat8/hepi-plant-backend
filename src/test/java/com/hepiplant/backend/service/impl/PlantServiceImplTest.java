@@ -1,6 +1,7 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.PlantDto;
+import com.hepiplant.backend.dto.ScheduleDto;
 import com.hepiplant.backend.entity.*;
 import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.ImmutableFieldException;
@@ -60,6 +61,7 @@ public class PlantServiceImplTest {
     private static Category category2;
     private static Species species;
     private static Schedule schedule;
+    private static ScheduleDto scheduleDto;
     private static User user;
     private static User user2;
 
@@ -68,14 +70,20 @@ public class PlantServiceImplTest {
         Plant plant2 = new Plant(1l,"name",null,"location",null,null,null,null,null);
         ArrayList<Plant> plants = new ArrayList<Plant>();
         plants.add(plant2);
-        user = new User(1L, "username1", "login1", "p@ssw0rd", "email@gmail.com",
+        user = new User(1L, "username1", "p@ssw0rd", "email@gmail.com",
                 Permission.USER, plants, new ArrayList<>(), new ArrayList<>());
-        user2 = new User(2L, "username2", "login2", "p@ssw0rd2", "email2@gmail.com",
+        user2 = new User(2L, "username2", "p@ssw0rd2", "email2@gmail.com",
                 Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
         category2 = new Category(4L, "Category2", new ArrayList<>());
         species = new Species(3L, "name", 3, 21,1,  BARDZO_JASNE, "soil", category);
-        schedule = new Schedule(1L, plant2, 2, 21, 2);
+        schedule = new Schedule(5L, plant2, 2, 21, 2);
+        scheduleDto = new ScheduleDto();
+        scheduleDto.setId(5L);
+        scheduleDto.setPlantId(plant2.getId());
+        scheduleDto.setWateringFrequency(2);
+        scheduleDto.setFertilizingFrequency(21);
+        scheduleDto.setMistingFrequency(2);
     }
 
     @BeforeEach
@@ -89,6 +97,7 @@ public class PlantServiceImplTest {
         dto.setCategoryId(category.getId());
         dto.setSpeciesId(species.getId());
         dto.setUserId(user.getId());
+        dto.setSchedule(scheduleDto);
 
     }
 
@@ -98,6 +107,7 @@ public class PlantServiceImplTest {
         //given
         given(speciesRepository.findById(dto.getSpeciesId())).willReturn(Optional.of(species));
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+        given(scheduleRepository.save(any())).willAnswer(returnsFirstArg());
         given(plantRepository.save(plantArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -105,6 +115,7 @@ public class PlantServiceImplTest {
 
         //then
         then(speciesRepository).should(times(1)).findById(eq(dto.getSpeciesId()));
+        then(scheduleRepository).should(times(1)).save(any(Schedule.class));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(beanValidator).should(times(1)).validate(any());
         then(plantRepository).should(times(1)).save(any(Plant.class));
@@ -116,8 +127,6 @@ public class PlantServiceImplTest {
         assertEquals(user.getId(), result.getUserId());
 
 
-
-
         Plant captorValue = plantArgumentCaptor.getValue();
         assertEquals(plant.getName(), captorValue.getName());
         assertEquals(plant.getPurchaseDate(), captorValue.getPurchaseDate());
@@ -125,8 +134,9 @@ public class PlantServiceImplTest {
         assertEquals(category, captorValue.getCategory());
         assertEquals(species, captorValue.getSpecies());
         assertEquals(user, captorValue.getUser());
-
-
+        assertEquals(scheduleDto.getFertilizingFrequency(), captorValue.getSchedule().getFertilizingFrequency());
+        assertEquals(scheduleDto.getWateringFrequency(), captorValue.getSchedule().getWateringFrequency());
+        assertEquals(scheduleDto.getMistingFrequency(), captorValue.getSchedule().getMistingFrequency());
     }
     @Test
     public void shouldCreateUserDoesNotExistThrowsException(){
@@ -137,6 +147,7 @@ public class PlantServiceImplTest {
         //then
         assertThrows(EntityNotFoundException.class, () -> plantService.create(dto));
         then(speciesRepository).should(atMostOnce()).findById(eq(dto.getSpeciesId()));
+        then(scheduleRepository).should(atMostOnce()).save(any(Schedule.class));
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
     @Test
@@ -148,6 +159,19 @@ public class PlantServiceImplTest {
         //then
         assertThrows(EntityNotFoundException.class, () -> plantService.create(dto));
         then(userRepository).should(atMostOnce()).findById(eq(dto.getUserId()));
+        then(scheduleRepository).should(atMostOnce()).save(any(Schedule.class));
+        then(plantRepository).should(times(0)).save(any(Plant.class));
+    }
+    @Test
+    public void shouldCreateScheduleDoesNotExistThrowsException(){
+        //given
+
+        //when
+
+        //then
+        assertThrows(EntityNotFoundException.class, () -> plantService.create(dto));
+        then(userRepository).should(atMostOnce()).findById(eq(dto.getUserId()));
+        then(speciesRepository).should(atMostOnce()).findById(eq(dto.getSpeciesId()));
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
     @Test
@@ -186,7 +210,9 @@ public class PlantServiceImplTest {
         assertEquals(category.getId(), result.get(0).getCategoryId());
         assertEquals(species.getId(), result.get(0).getSpeciesId());
         assertEquals(user.getId(), result.get(0).getUserId());
-
+        assertEquals(scheduleDto.getFertilizingFrequency(), result.get(0).getSchedule().getFertilizingFrequency());
+        assertEquals(scheduleDto.getWateringFrequency(), result.get(0).getSchedule().getWateringFrequency());
+        assertEquals(scheduleDto.getMistingFrequency(), result.get(0).getSchedule().getMistingFrequency());
 
     }
     @Test
@@ -233,6 +259,9 @@ public class PlantServiceImplTest {
         assertEquals(category.getId(), result.getCategoryId());
         assertEquals(species.getId(), result.getSpeciesId());
         assertEquals(user.getId(), result.getUserId());
+        assertEquals(scheduleDto.getFertilizingFrequency(), result.getSchedule().getFertilizingFrequency());
+        assertEquals(scheduleDto.getWateringFrequency(), result.getSchedule().getWateringFrequency());
+        assertEquals(scheduleDto.getMistingFrequency(), result.getSchedule().getMistingFrequency());
     }
 
     @Test

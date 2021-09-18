@@ -125,7 +125,7 @@ public class CategoryServiceImplTest {
         then(categoryRepository).should(times(1)).findById(category.getId());
     }
     @Test
-    public void shouldUpdatePostOk()
+    public void shouldUpdateCategoryOk()
     {
         //given
         Category categoryToUpdate = new Category();

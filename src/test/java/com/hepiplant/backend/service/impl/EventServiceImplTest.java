@@ -93,12 +93,12 @@ public class EventServiceImplTest {
     @Test
     public void shouldCreateEventPlantDoesNotExistThrowsException(){
         //given
-
+        given(plantRepository.findById(dto.getPlantId())).willReturn(Optional.empty());
         //when
 
         //then
         assertThrows(EntityNotFoundException.class, () -> eventService.add(dto));
-        then(plantRepository).should(atMostOnce()).findById(eq(dto.getPlantId()));
+        then(plantRepository).should(times(1)).findById(eq(dto.getPlantId()));
         then(eventRepository).should(times(0)).save(any(Event.class));
     }
 
@@ -182,7 +182,7 @@ public class EventServiceImplTest {
         Event eventToUpdate = new Event();
         dto.setPlantId(null);
 
-        given(eventRepository.findById(event.getId())).willReturn(Optional.of(event));
+        given(eventRepository.findById(event.getId())).willReturn(Optional.of(eventToUpdate));
         given(eventRepository.save(eventArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -196,7 +196,7 @@ public class EventServiceImplTest {
         assertEquals(event.getEventDescription(), result.getEventDescription());
         assertEquals(event.getEventDate(), result.getEventDate());
         assertEquals(event.isDone(), result.isDone());
-        assertEquals(plant.getId(), result.getPlantId());
+
 
         Event captorValue = eventArgumentCaptor.getValue();
         assertEquals(event.getEventName(), result.getEventName());
