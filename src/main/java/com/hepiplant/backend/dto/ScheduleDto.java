@@ -2,12 +2,15 @@ package com.hepiplant.backend.dto;
 
 public class ScheduleDto {
 
+    private Long id;
     private int wateringFrequency;
     private int fertilizingFrequency;
     private int mistingFrequency;
 
     public ScheduleDto() {
     }
+
+    public Long getId() { return id; }
 
     public int getWateringFrequency() {
         return wateringFrequency;

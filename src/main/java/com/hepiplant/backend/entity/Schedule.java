@@ -12,19 +12,23 @@ public class Schedule {
     private int wateringFrequency;
     private int fertilizingFrequency;
     private int mistingFrequency;
+
+
+
     @OneToOne
     @JoinColumn(name = "plant_id", referencedColumnName = "id")
     private Plant plant;
 
     public Schedule(long l, Plant plant, int wateringFrequency, int fertilizingFrequency, int mistingFrequency) {
+        this.id = l;
         this.plant = plant;
         this.wateringFrequency = wateringFrequency;
         this.fertilizingFrequency = fertilizingFrequency;
         this.mistingFrequency = mistingFrequency;
     }
-
     public Schedule() {
     }
+    public Long getId() { return id; }
 
     public Plant getPlant() {
         return plant;

@@ -87,8 +87,8 @@ public class PlantServiceImplTest {
         dto.setPurchaseDate(plant.getPurchaseDate());
         dto.setLocation(plant.getLocation());
         dto.setCategoryId(category.getId());
-        dto.setSpeciesId(user.getId());
-        dto.setUserId(species.getId());
+        dto.setSpeciesId(species.getId());
+        dto.setUserId(user.getId());
 
     }
 
@@ -114,7 +114,9 @@ public class PlantServiceImplTest {
         assertEquals(category.getId(), result.getCategoryId());
         assertEquals(species.getId(), result.getSpeciesId());
         assertEquals(user.getId(), result.getUserId());
-        assertEquals(category.getId(), result.getCategoryId());
+
+
+
 
         Plant captorValue = plantArgumentCaptor.getValue();
         assertEquals(plant.getName(), captorValue.getName());
@@ -123,7 +125,7 @@ public class PlantServiceImplTest {
         assertEquals(category, captorValue.getCategory());
         assertEquals(species, captorValue.getSpecies());
         assertEquals(user, captorValue.getUser());
-        assertEquals(category, captorValue.getCategory());
+
 
     }
     @Test
@@ -184,6 +186,7 @@ public class PlantServiceImplTest {
         assertEquals(category.getId(), result.get(0).getCategoryId());
         assertEquals(species.getId(), result.get(0).getSpeciesId());
         assertEquals(user.getId(), result.get(0).getUserId());
+
 
     }
     @Test

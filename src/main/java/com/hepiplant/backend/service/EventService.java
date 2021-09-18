@@ -11,6 +11,4 @@ public interface EventService {
     EventDto add(EventDto eventDto);
     EventDto update(Long id, EventDto eventDto);
     String delete(Long id);
-
-
 }
