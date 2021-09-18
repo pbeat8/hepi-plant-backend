@@ -1,8 +1,10 @@
 package com.hepiplant.backend.entity;
 
 import com.hepiplant.backend.entity.enums.Permission;
-
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -11,9 +13,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    @NotBlank
+    @Size(min=1, max=50)
     private String username;
-    private String login;
-    private String password;
+    @NotBlank
+    @Size(min=1, max=50)
+    @Column(unique = true)
+    private String uid;
+    @NotBlank
+    @Email
     private String email;
     @Enumerated(EnumType.STRING)
     private Permission permission;
@@ -27,12 +35,11 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String login, String password, String email, Permission permission,
+    public User(Long id, String username, String uId, String email, Permission permission,
                 List<Plant> plantList, List<Post> postList, List<SalesOffer> salesOfferList) {
         this.id = id;
         this.username = username;
-        this.login = login;
-        this.password = password;
+        this.uid = uId;
         this.email = email;
         this.permission = permission;
         this.plantList = plantList;
@@ -80,20 +87,12 @@ public class User {
         this.username = username;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUid() {
+        return uid;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getEmail() {

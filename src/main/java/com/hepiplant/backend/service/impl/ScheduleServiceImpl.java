@@ -1,9 +1,13 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.ScheduleDto;
+import com.hepiplant.backend.entity.Plant;
 import com.hepiplant.backend.entity.Schedule;
+import com.hepiplant.backend.exception.ImmutableFieldException;
+import com.hepiplant.backend.repository.PlantRepository;
 import com.hepiplant.backend.repository.ScheduleRepository;
 import com.hepiplant.backend.service.ScheduleService;
+import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,10 +18,14 @@ import java.util.stream.Collectors;
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
 
-    private ScheduleRepository scheduleRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final PlantRepository plantRepository;
+    private final BeanValidator beanValidator;
 
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepository) {
+    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, PlantRepository plantRepository, BeanValidator beanValidator) {
         this.scheduleRepository = scheduleRepository;
+        this.plantRepository = plantRepository;
+        this.beanValidator = beanValidator;
     }
 
     @Override
@@ -27,32 +35,43 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleDto getById(Long id) {
-        Schedule schedule = scheduleRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Schedule not found for id "+id));
         return mapToDto(schedule);
+    }
+
+    @Override
+    public List<ScheduleDto> getAllByPlant(Long plantId) {
+        Plant plant = plantRepository.findById(plantId).orElseThrow(() -> new EntityNotFoundException("Plant not found for id " + plantId));
+        return scheduleRepository.findAllByPlant(plant).stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override
     public ScheduleDto add(ScheduleDto scheduleDto) {
         Schedule schedule = new Schedule();
-        if(scheduleDto.getWateringFrequency()>=0)
+        if(scheduleDto.getPlantId()!=null){
+            Plant plant = plantRepository.findById(scheduleDto.getPlantId()).orElseThrow(() ->new EntityNotFoundException("Plant not found for id " + scheduleDto.getPlantId()));
+            schedule.setPlant(plant);
+        }
+
         schedule.setWateringFrequency(scheduleDto.getWateringFrequency());
-        if(scheduleDto.getFertilizingFrequency()>=0)
         schedule.setFertilizingFrequency(scheduleDto.getFertilizingFrequency());
-        if(scheduleDto.getMistingFrequency()>=0)
         schedule.setMistingFrequency(scheduleDto.getMistingFrequency());
+
+        beanValidator.validate(schedule);
         Schedule savedSchedule = scheduleRepository.save(schedule);
         return mapToDto(savedSchedule);
     }
 
     @Override
     public ScheduleDto update(Long id, ScheduleDto scheduleDto) {
-        Schedule schedule = scheduleRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        if(scheduleDto.getWateringFrequency()!=schedule.getWateringFrequency() && scheduleDto.getWateringFrequency()>=0)
+        Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Schedule not found for id "+id));
+        if(scheduleDto.getPlantId()!=null){
+            throw new ImmutableFieldException("Field Plant in Schedule is immutable!");
+        }
         schedule.setWateringFrequency(scheduleDto.getWateringFrequency());
-        if(scheduleDto.getFertilizingFrequency()!=schedule.getFertilizingFrequency() && scheduleDto.getFertilizingFrequency()>=0)
         schedule.setFertilizingFrequency(scheduleDto.getFertilizingFrequency());
-        if(scheduleDto.getMistingFrequency()!=schedule.getMistingFrequency() && scheduleDto.getMistingFrequency()>=0)
         schedule.setMistingFrequency(scheduleDto.getMistingFrequency());
+        beanValidator.validate(schedule);
         Schedule savedSchedule = scheduleRepository.save(schedule);
         return mapToDto(savedSchedule);
     }
@@ -69,6 +88,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
     private ScheduleDto mapToDto(Schedule schedule){
         ScheduleDto dto = new ScheduleDto();
+        dto.setId(schedule.getId());
+        if(schedule.getPlant()!=null){
+            dto.setPlantId(schedule.getPlant().getId());
+        }
         dto.setWateringFrequency(schedule.getWateringFrequency());
         dto.setFertilizingFrequency(schedule.getFertilizingFrequency());
         dto.setMistingFrequency(schedule.getMistingFrequency());

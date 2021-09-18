@@ -6,11 +6,18 @@ public class ScheduleDto {
     private int wateringFrequency;
     private int fertilizingFrequency;
     private int mistingFrequency;
+    private Long plantId;
 
     public ScheduleDto() {
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public int getWateringFrequency() {
         return wateringFrequency;
@@ -36,4 +43,11 @@ public class ScheduleDto {
         this.mistingFrequency = mistingFrequency;
     }
 
+    public Long getPlantId() {
+        return plantId;
+    }
+
+    public void setPlantId(Long plantId) {
+        this.plantId = plantId;
+    }
 }
