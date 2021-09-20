@@ -53,10 +53,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto add(EventDto eventDto) {
         Event event = new Event();
-        if(eventDto.getEventName()!=null && !eventDto.getEventName().isEmpty())
-            event.setEventName(eventDto.getEventName());
-        if(eventDto.getEventDescription()!=null && !eventDto.getEventName().isEmpty())
-            event.setEventDescription(eventDto.getEventDescription());
+        event.setEventName(eventDto.getEventName());
+        event.setEventDescription(eventDto.getEventDescription());
         event.setEventDate(eventDto.getEventDate());
         event.setDone(eventDto.isDone());
         if(eventDto.getPlantId()!=null) {
@@ -71,11 +69,12 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventDto update(Long id, EventDto eventDto) {
         Event event = eventRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        if(eventDto.getEventName()!=null && !eventDto.getEventName().isEmpty())
+        if(eventDto.getEventName()!=null)
             event.setEventName(eventDto.getEventName());
-        if(eventDto.getEventDescription()!=null && !eventDto.getEventName().isEmpty())
+        if(eventDto.getEventDescription()!=null)
             event.setEventDescription(eventDto.getEventDescription());
-        event.setEventDate(eventDto.getEventDate());
+        if(eventDto.getEventDescription()!=null)
+            event.setEventDate(eventDto.getEventDate());
         event.setDone(eventDto.isDone());
         if(eventDto.getPlantId()!=null) {
             throw new ImmutableFieldException("Field Plant in Event is immutable!");
@@ -94,8 +93,10 @@ public class EventServiceImpl implements EventService {
         eventRepository.delete(event.get());
         return "Successfully deleted the event with id = "+ id;
     }
+
     private EventDto mapToDto(Event event) {
         EventDto dto = new EventDto();
+        dto.setId(event.getId());
         if (event.getEventName()!=null)
             dto.setEventName(event.getEventName());
         if (event.getEventDescription()!=null)

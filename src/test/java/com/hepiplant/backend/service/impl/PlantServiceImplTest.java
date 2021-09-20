@@ -81,9 +81,9 @@ public class PlantServiceImplTest {
         scheduleDto = new ScheduleDto();
         scheduleDto.setId(5L);
         scheduleDto.setPlantId(plant2.getId());
-        scheduleDto.setWateringFrequency(2);
-        scheduleDto.setFertilizingFrequency(21);
-        scheduleDto.setMistingFrequency(2);
+        scheduleDto.setWateringFrequency(schedule.getWateringFrequency());
+        scheduleDto.setFertilizingFrequency(schedule.getFertilizingFrequency());
+        scheduleDto.setMistingFrequency(schedule.getMistingFrequency());
     }
 
     @BeforeEach
@@ -138,6 +138,7 @@ public class PlantServiceImplTest {
         assertEquals(scheduleDto.getWateringFrequency(), captorValue.getSchedule().getWateringFrequency());
         assertEquals(scheduleDto.getMistingFrequency(), captorValue.getSchedule().getMistingFrequency());
     }
+
     @Test
     public void shouldCreateUserDoesNotExistThrowsException(){
         //given
@@ -150,6 +151,7 @@ public class PlantServiceImplTest {
         then(scheduleRepository).should(atMostOnce()).save(any(Schedule.class));
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
+
     @Test
     public void shouldCreateSpeciesDoesNotExistThrowsException(){
         //given
@@ -162,6 +164,7 @@ public class PlantServiceImplTest {
         then(scheduleRepository).should(atMostOnce()).save(any(Schedule.class));
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
+
     @Test
     public void shouldCreateScheduleDoesNotExistThrowsException(){
         //given
@@ -174,6 +177,7 @@ public class PlantServiceImplTest {
         then(speciesRepository).should(atMostOnce()).findById(eq(dto.getSpeciesId()));
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
+
     @Test
     public void shouldCreatePlantInvalidValuesThrowsException() {
         //given
@@ -213,8 +217,8 @@ public class PlantServiceImplTest {
         assertEquals(scheduleDto.getFertilizingFrequency(), result.get(0).getSchedule().getFertilizingFrequency());
         assertEquals(scheduleDto.getWateringFrequency(), result.get(0).getSchedule().getWateringFrequency());
         assertEquals(scheduleDto.getMistingFrequency(), result.get(0).getSchedule().getMistingFrequency());
-
     }
+
     @Test
     public void shouldGetAllPlantEmptyListOk(){
         //given
@@ -241,6 +245,7 @@ public class PlantServiceImplTest {
         then(userRepository).should(times(1)).findById(user.getId());
         assertEquals(1, result.size());
     }
+
     //GET by id
 
     @Test
@@ -308,6 +313,7 @@ public class PlantServiceImplTest {
         assertEquals(category, captorValue.getCategory());
         assertEquals(species, captorValue.getSpecies());
     }
+
     @Test
     public void shouldUpdatePlantDoesNotExistThrowsException(){
         //given
@@ -323,6 +329,7 @@ public class PlantServiceImplTest {
         then(plantRepository).should(times(1)).findById(plant.getId());
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
+
     @Test
     public void shouldUpdatePlantInvalidValuesThrowsException(){
         //given

@@ -82,10 +82,8 @@ public class PlantDto {
     public void setSchedule(ScheduleDto schedule) {
         this.schedule = schedule;
     }
+
     public Long getScheduleId() {
         return schedule.getId();
     }
-
-
-
 }

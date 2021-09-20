@@ -45,6 +45,7 @@ public class CategoryServiceImplTest {
     public void initializeCategory(){
         category = new Category(1L, "Category", new ArrayList<>());
         dto = new CategoryDto();
+        dto.setId(category.getId());
         dto.setName(category.getName());
     }
 
@@ -63,6 +64,7 @@ public class CategoryServiceImplTest {
         Category captorValue = categoryArgumentCaptor.getValue();
         assertEquals(category.getName(), captorValue.getName());
     }
+
     @Test
     public void sholudCreateCategoryInvalidValuesThrowsException(){
         //given
@@ -73,6 +75,7 @@ public class CategoryServiceImplTest {
         then(beanValidator).should(times(1)).validate(any());
         then(categoryRepository).should(times(0)).save(any(Category.class));
     }
+
     @Test
     public void shouldGetAllCategoriesOk(){
         //given
@@ -86,6 +89,7 @@ public class CategoryServiceImplTest {
         assertEquals(1, result.size());
         assertEquals(category.getName(), result.get(0).getName());
     }
+
     @Test
     public void shouldGetAllCategoriesEmptyListOk()
     {
@@ -99,6 +103,7 @@ public class CategoryServiceImplTest {
         then(categoryRepository).should(times(1)).findAll();
         assertEquals(0, result.size());
     }
+
     @Test
     public void shouldGetCategoryByIdOk()
     {
@@ -112,6 +117,7 @@ public class CategoryServiceImplTest {
         then(categoryRepository).should(times(1)).findById(category.getId());
         assertEquals(category.getName(), result.getName());
     }
+
     @Test
     public void shouldGetCategoryByIdDoesNotExistThrowsException()
     {
@@ -124,6 +130,7 @@ public class CategoryServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> categoryService.getById(category.getId()));
         then(categoryRepository).should(times(1)).findById(category.getId());
     }
+
     @Test
     public void shouldUpdateCategoryOk()
     {
@@ -143,6 +150,7 @@ public class CategoryServiceImplTest {
         Category captorValue = categoryArgumentCaptor.getValue();
         assertEquals(category.getName(), captorValue.getName());
     }
+
     @Test
     public void shouldUpdateCategoryInvalidValuesThrowsException()
     {
@@ -159,6 +167,7 @@ public class CategoryServiceImplTest {
         then(beanValidator).should(times(1)).validate(any());
         then(categoryRepository).should(times(0)).save(any(Category.class));
     }
+
     @Test
     public void shouldDeleteCategoryOk(){
         //given
@@ -172,6 +181,7 @@ public class CategoryServiceImplTest {
         then(categoryRepository).should(times(1)).delete(category);
         assertTrue(result.contains("Successfully deleted"));
     }
+
     @Test
     public void shouldDeleteCategoryDoesNotExistThrowsException()
     {

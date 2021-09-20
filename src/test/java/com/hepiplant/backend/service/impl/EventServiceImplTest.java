@@ -57,12 +57,14 @@ public class EventServiceImplTest {
     public void initializeEvent(){
         event = new Event(1L, "EventName", "EventDescription", null, false, plant);
         dto = new EventDto();
+        dto.setId(event.getId());
         dto.setEventName(event.getEventName());
         dto.setEventDescription(event.getEventDescription());
         dto.setEventDate(event.getEventDate());
         dto.setDone(event.isDone());
         dto.setPlantId(plant.getId());
     }
+
     //CREATE tests
     @Test
     public void shouldCreateEvent(){
@@ -90,6 +92,7 @@ public class EventServiceImplTest {
         assertEquals(event.isDone(), result.isDone());
         assertEquals(plant.getId(), result.getPlantId());
     }
+
     @Test
     public void shouldCreateEventPlantDoesNotExistThrowsException(){
         //given
@@ -116,6 +119,7 @@ public class EventServiceImplTest {
         then(beanValidator).should(times(1)).validate(any());
         then(eventRepository).should(times(0)).save(any(Event.class));
     }
+
     //GET ALL tests
 
     @Test
@@ -135,6 +139,7 @@ public class EventServiceImplTest {
         assertEquals(event.isDone(), result.get(0).isDone());
         assertEquals(plant.getId(), result.get(0).getPlantId());
     }
+
     @Test
     public void shouldGetAllEventsEmptyList() {
         //given
@@ -148,6 +153,7 @@ public class EventServiceImplTest {
         assertEquals(0, result.size());
 
     }
+
     // GET BY ID tests
     @Test
     public void shouldGetEventByIdOk() {
@@ -164,6 +170,7 @@ public class EventServiceImplTest {
         assertEquals(event.isDone(), result.isDone());
         assertEquals(plant.getId(), result.getPlantId());
     }
+
     @Test
     public void shouldGetEventByIdEventDoesNotExistThrowsException(){
         //given
@@ -175,6 +182,7 @@ public class EventServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> eventService.getById(event.getId()));
         then(eventRepository).should(times(1)).findById(event.getId());
     }
+
     //UPDATE tests
     @Test
     public void shouldUpdateEventOk(){
@@ -269,6 +277,7 @@ public class EventServiceImplTest {
         assertTrue(result.contains("Successfully deleted"));
 
     }
+
     @Test
     public void shouldDeleteEventDoesNotExistThrowsException() {
         //given
@@ -281,7 +290,6 @@ public class EventServiceImplTest {
         then(eventRepository).should(times(1)).findById(event.getId());
         then(eventRepository).should(times(0)).delete(any());
         assertTrue(result.contains("No event"));
-
     }
 
 }
