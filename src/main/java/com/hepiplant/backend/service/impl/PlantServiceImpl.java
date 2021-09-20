@@ -151,6 +151,7 @@ public class PlantServiceImpl implements PlantService {
 
     private ScheduleDto mapToDto(Schedule schedule){
         ScheduleDto dto = new ScheduleDto();
+        dto.setId(schedule.getId());
         dto.setWateringFrequency(schedule.getWateringFrequency());
         dto.setFertilizingFrequency(schedule.getFertilizingFrequency());
         dto.setMistingFrequency(schedule.getMistingFrequency());

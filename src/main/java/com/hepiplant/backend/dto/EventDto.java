@@ -5,12 +5,18 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 public class EventDto {
+
+    private Long id;
     private String eventName;
     private String eventDescription;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private boolean isDone;
     private Long plantId;
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public Long getPlantId() {
         return plantId;
