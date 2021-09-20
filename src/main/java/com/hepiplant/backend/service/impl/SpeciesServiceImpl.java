@@ -43,15 +43,12 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public SpeciesDto add(SpeciesDto speciesDto) {
         Species species = new Species();
-        if(speciesDto.getName()!=null)
-            species.setName(speciesDto.getName());
+        species.setName(speciesDto.getName());
         species.setWateringFrequency(speciesDto.getWateringFrequency());
         species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
         species.setMistingFrequency(speciesDto.getMistingFrequency());
-        if(speciesDto.getPlacement()!=null )
-            species.setPlacement(speciesDto.getPlacement());
-        if(speciesDto.getSoil()!=null)
-            species.setSoil(speciesDto.getSoil());
+        species.setPlacement(speciesDto.getPlacement());
+        species.setSoil(speciesDto.getSoil());
         if(speciesDto.getCategoryId()!=null) {
             Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id " + speciesDto.getCategoryId()));
             species.setCategory(category);
