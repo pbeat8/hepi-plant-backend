@@ -12,7 +12,7 @@ public class PlantDto {
     private LocalDateTime purchaseDate;
     private String location;
     private Long categoryId;
-    private Long speciesId;
+    private SpeciesDto species;
     private Long userId;
     private ScheduleDto schedule;
 
@@ -59,12 +59,12 @@ public class PlantDto {
         this.categoryId = categoryId;
     }
 
-    public Long getSpeciesId() {
-        return speciesId;
+    public SpeciesDto getSpecies() {
+        return species;
     }
 
-    public void setSpeciesId(Long speciesId) {
-        this.speciesId = speciesId;
+    public void setSpecies(SpeciesDto species) {
+        this.species = species;
     }
 
     public Long getUserId() {
@@ -83,7 +83,4 @@ public class PlantDto {
         this.schedule = schedule;
     }
 
-    public Long getScheduleId() {
-        return schedule.getId();
-    }
 }

@@ -4,6 +4,7 @@ import com.hepiplant.backend.dto.ScheduleDto;
 import com.hepiplant.backend.entity.Plant;
 import com.hepiplant.backend.entity.Schedule;
 import com.hepiplant.backend.exception.ImmutableFieldException;
+import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.PlantRepository;
 import com.hepiplant.backend.repository.ScheduleRepository;
 import com.hepiplant.backend.service.ScheduleService;
@@ -14,6 +15,8 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -30,7 +33,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleDto> getAll() {
-        return scheduleRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return scheduleRepository.findAll().stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -42,7 +45,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<ScheduleDto> getAllByPlant(Long plantId) {
         Plant plant = plantRepository.findById(plantId).orElseThrow(() -> new EntityNotFoundException("Plant not found for id " + plantId));
-        return scheduleRepository.findAllByPlant(plant).stream().map(this::mapToDto).collect(Collectors.toList());
+        return scheduleRepository.findAllByPlant(plant).stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -85,16 +88,5 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
         scheduleRepository.delete(schedule.get());
         return "Successfully deleted the schedule with id = "+ id;
-    }
-    private ScheduleDto mapToDto(Schedule schedule){
-        ScheduleDto dto = new ScheduleDto();
-        dto.setId(schedule.getId());
-        if(schedule.getPlant()!=null){
-            dto.setPlantId(schedule.getPlant().getId());
-        }
-        dto.setWateringFrequency(schedule.getWateringFrequency());
-        dto.setFertilizingFrequency(schedule.getFertilizingFrequency());
-        dto.setMistingFrequency(schedule.getMistingFrequency());
-        return dto;
     }
 }

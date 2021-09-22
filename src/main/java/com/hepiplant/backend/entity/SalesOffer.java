@@ -13,9 +13,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(schema = "forum", name = "sales_offers")
+@SequenceGenerator(name = "forum.sales_offers", allocationSize = 1)
 public class SalesOffer {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "forum.sales_offers")
     private Long id;
     @NotBlank
     @Size(min=1, max=255)

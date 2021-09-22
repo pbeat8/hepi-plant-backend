@@ -1,6 +1,7 @@
 package com.hepiplant.backend.entity;
 
 import com.hepiplant.backend.entity.enums.Permission;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -9,9 +10,10 @@ import java.util.List;
 
 @Entity
 @Table(schema = "users", name="users")
+@SequenceGenerator(name = "users.users_seq", allocationSize = 1)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users.users_seq")
     private Long id;
     @NotBlank
     @Size(min=1, max=50)

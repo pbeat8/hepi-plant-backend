@@ -10,10 +10,11 @@ import java.util.List;
 
 @Entity
 @Table(schema = "plants", name = "plants")
+@SequenceGenerator(name = "plants.plants_seq", allocationSize = 1)
 public class Plant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plants.plants_seq")
     private Long id;
     @NotBlank
     @Size(min=1, max=255)

@@ -3,6 +3,7 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.UserDto;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
+import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.UserService;
 import com.hepiplant.backend.validator.BeanValidator;
@@ -12,6 +13,8 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -77,15 +80,5 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.delete(user.get());
         return "Successfully deleted the user with id = "+ id;
-    }
-    private UserDto mapToDto(User user){
-        UserDto dto = new UserDto();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setUid(user.getUid());
-        dto.setEmail(user.getEmail());
-        if(user.getPermission()!=null)
-            dto.setPermission(user.getPermission());
-        return dto;
     }
 }

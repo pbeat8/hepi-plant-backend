@@ -1,7 +1,6 @@
 package com.hepiplant.backend.service;
 
 
-import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
 
 import java.util.List;
