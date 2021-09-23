@@ -2,18 +2,19 @@ package com.hepiplant.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hepiplant.backend.entity.enums.Placement;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(schema = "plants", name = "species")
+@SequenceGenerator(name = "plants.species_seq", allocationSize = 1)
 public class Species {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plants.species_seq")
     private Long id;
     @Column(nullable = false, unique = true)
     @NotNull

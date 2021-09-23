@@ -2,6 +2,7 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.CategoryDto;
 import com.hepiplant.backend.entity.Category;
+import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.service.CategoryService;
 import com.hepiplant.backend.validator.BeanValidator;
@@ -12,9 +13,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
     private final BeanValidator beanValidator;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository, BeanValidator beanValidator) {
@@ -25,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAll() {
         return categoryRepository.findAll().stream()
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -64,14 +67,5 @@ public class CategoryServiceImpl implements CategoryService {
         }
         categoryRepository.delete(category.get());
         return "Successfully deleted the category with id = "+id;
-    }
-
-    private CategoryDto mapToDto(Category category)
-    {
-        CategoryDto dto = new CategoryDto();
-        dto.setId(category.getId());
-        if(category.getName()!=null)
-            dto.setName(category.getName());
-        return dto;
     }
 }

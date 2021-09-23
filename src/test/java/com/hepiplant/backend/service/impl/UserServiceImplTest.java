@@ -1,7 +1,7 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.UserDto;
-import com.hepiplant.backend.entity.*;
+import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.UserRepository;
@@ -25,7 +25,8 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {

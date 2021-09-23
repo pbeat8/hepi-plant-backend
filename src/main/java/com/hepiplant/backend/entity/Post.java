@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(schema = "forum", name = "posts")
+@SequenceGenerator(name = "forum.posts_seq", allocationSize = 1)
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "forum.posts_seq")
     private Long id;
     @NotBlank
     @Size(min=1, max=255)

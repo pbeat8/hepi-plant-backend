@@ -2,14 +2,14 @@ package com.hepiplant.backend.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(schema = "plants", name = "schedules")
+@SequenceGenerator(name = "plants.schedules_seq", allocationSize = 1)
 public class Schedule {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plants.schedules_seq")
     @Column(name = "id")
     private Long id;
     @NotNull

@@ -6,6 +6,7 @@ import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
+import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.PostRepository;
 import com.hepiplant.backend.repository.UserRepository;
@@ -14,10 +15,11 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -58,7 +60,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getAll() {
         return postRepository.findAll().stream()
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -67,14 +69,14 @@ public class PostServiceImpl implements PostService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + categoryId));
         return postRepository.findAllByCategory(category).stream()
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<PostDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
-        return postRepository.findAllByUser(user).stream().map(this::mapToDto).collect(Collectors.toList());
+        return postRepository.findAllByUser(user).stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -85,7 +87,7 @@ public class PostServiceImpl implements PostService {
                         tag.equals(p.getTag3()) ||
                         tag.equals(p.getTag4()) ||
                         tag.equals(p.getTag5()))
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -151,29 +153,5 @@ public class PostServiceImpl implements PostService {
                     post.setTag5(tag); break;
             }
         }
-    }
-
-    private PostDto mapToDto(Post post){
-        PostDto dto = new PostDto();
-        dto.setId(post.getId());
-        dto.setTitle(post.getTitle());
-        dto.setBody(post.getBody());
-        List<String> tags = new ArrayList<>();
-        tags.add(post.getTag1());
-        tags.add(post.getTag2());
-        tags.add(post.getTag3());
-        tags.add(post.getTag4());
-        tags.add(post.getTag5());
-        while (tags.remove(null));
-        dto.setTags(tags);
-        dto.setCreatedDate(post.getCreatedDate());
-        dto.setUpdatedDate(post.getUpdatedDate());
-        if(post.getUser() != null){
-            dto.setUserId(post.getUser().getId());
-        }
-        if(post.getCategory() != null){
-            dto.setCategoryId(post.getCategory().getId());
-        }
-        return dto;
     }
 }
