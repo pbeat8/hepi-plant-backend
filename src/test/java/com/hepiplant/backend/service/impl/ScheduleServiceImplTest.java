@@ -52,7 +52,7 @@ class ScheduleServiceImplTest {
 
     @BeforeAll
     public static void initializeVariables(){
-        plant = new Plant(1l,"name",LocalDateTime.now(),"location",null,null,null,null,null);
+        plant = new Plant(1l,"name",LocalDateTime.now(),"location", "photo", null,null,null,null,null);
 
     }
 

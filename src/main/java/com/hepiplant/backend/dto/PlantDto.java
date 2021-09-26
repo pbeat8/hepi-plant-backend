@@ -11,6 +11,7 @@ public class PlantDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime purchaseDate;
     private String location;
+    private String photo;
     private Long categoryId;
     private Long speciesId;
     private Long userId;
@@ -49,6 +50,14 @@ public class PlantDto {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public Long getCategoryId() {

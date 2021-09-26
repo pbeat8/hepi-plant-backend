@@ -46,6 +46,7 @@ public class PlantServiceImpl implements PlantService {
         plant.setName(plantDto.getName());
         plant.setPurchaseDate(plantDto.getPurchaseDate());
         plant.setLocation(plantDto.getLocation());
+        plant.setPhoto(plantDto.getPhoto());
         Schedule schedule = new Schedule();
         schedule.setPlant(plant);
         if(plantDto.getSpeciesId()!=null){
@@ -102,6 +103,9 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getLocation()!=null && !plantDto.getLocation().isEmpty()){
             plant.setLocation(plantDto.getLocation());
         }
+        if(plantDto.getPhoto()!=null && !plantDto.getPhoto().isEmpty()){
+            plant.setPhoto(plantDto.getPhoto());
+        }
         if(plantDto.getCategoryId()!=null && !plantDto.getCategoryId().equals(plant.getCategory().getId())){
             throw new ImmutableFieldException("Field Category in Plant is immutable!");
         }
@@ -134,6 +138,7 @@ public class PlantServiceImpl implements PlantService {
         dto.setName(plant.getName());
         dto.setPurchaseDate(plant.getPurchaseDate());
         dto.setLocation(plant.getLocation());
+        dto.setPhoto(plant.getPhoto());
         if(plant.getCategory()!=null) {
             dto.setCategoryId(plant.getCategory().getId());
         }
