@@ -2,6 +2,7 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.dto.ScheduleDto;
+import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.*;
 import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.InvalidBeanException;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.hepiplant.backend.entity.enums.Placement.BARDZO_JASNE;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,6 +59,7 @@ public class PlantServiceImplTest {
     private static Category category;
     private static Category category2;
     private static Species species;
+    private static SpeciesDto speciesDto;
     private static Schedule schedule;
     private static ScheduleDto scheduleDto;
     private static User user;
@@ -75,7 +76,16 @@ public class PlantServiceImplTest {
                 Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
         category2 = new Category(4L, "Category2", new ArrayList<>());
-        species = new Species(3L, "name", 3, 21,1,  BARDZO_JASNE, "soil", category);
+        species = new Species(3L, "name", 3, 21, 1, BARDZO_JASNE, "soil", category);
+        speciesDto = new SpeciesDto();
+        speciesDto.setId(schedule.getId());
+        speciesDto.setName(species.getName());
+        speciesDto.setWateringFrequency(species.getWateringFrequency());
+        speciesDto.setFertilizingFrequency(species.getFertilizingFrequency());
+        speciesDto.setMistingFrequency(species.getMistingFrequency());
+        speciesDto.setPlacement(species.getPlacement());
+        speciesDto.setSoil(species.getSoil());
+        speciesDto.setCategoryId(species.getCategory().getId());
         schedule = new Schedule(5L, plant2, 2, 21, 2);
         scheduleDto = new ScheduleDto();
         scheduleDto.setId(5L);
@@ -95,7 +105,7 @@ public class PlantServiceImplTest {
         dto.setLocation(plant.getLocation());
         dto.setPhoto(plant.getPhoto());
         dto.setCategoryId(category.getId());
-        dto.setSpeciesId(species.getId());
+        dto.setSpecies(speciesDto);
         dto.setUserId(user.getId());
         dto.setSchedule(scheduleDto);
 
@@ -105,7 +115,7 @@ public class PlantServiceImplTest {
     @Test
     public void shouldCreatePlantOk(){
         //given
-        given(speciesRepository.findById(dto.getSpeciesId())).willReturn(Optional.of(species));
+        given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
         given(scheduleRepository.save(any())).willAnswer(returnsFirstArg());
         given(plantRepository.save(plantArgumentCaptor.capture())).willAnswer(returnsFirstArg());
@@ -114,7 +124,7 @@ public class PlantServiceImplTest {
         PlantDto result = plantService.create(dto);
 
         //then
-        then(speciesRepository).should(times(1)).findById(eq(dto.getSpeciesId()));
+        then(speciesRepository).should(times(1)).findById(eq(dto.getSpecies().getId()));
         then(scheduleRepository).should(times(1)).save(any(Schedule.class));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(beanValidator).should(times(1)).validate(any());
@@ -124,7 +134,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getLocation(), result.getLocation());
         assertEquals(plant.getPhoto(), result.getPhoto());
         assertEquals(category.getId(), result.getCategoryId());
-        assertEquals(species.getId(), result.getSpeciesId());
+        assertEquals(species.getId(), result.getSpecies().getId());
         assertEquals(user.getId(), result.getUserId());
 
 
@@ -149,7 +159,7 @@ public class PlantServiceImplTest {
 
         //then
         assertThrows(EntityNotFoundException.class, () -> plantService.create(dto));
-        then(speciesRepository).should(atMostOnce()).findById(eq(dto.getSpeciesId()));
+        then(speciesRepository).should(atMostOnce()).findById(eq(dto.getSpecies().getId()));
         then(scheduleRepository).should(atMostOnce()).save(any(Schedule.class));
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
@@ -176,14 +186,14 @@ public class PlantServiceImplTest {
         //then
         assertThrows(EntityNotFoundException.class, () -> plantService.create(dto));
         then(userRepository).should(atMostOnce()).findById(eq(dto.getUserId()));
-        then(speciesRepository).should(atMostOnce()).findById(eq(dto.getSpeciesId()));
+        then(speciesRepository).should(atMostOnce()).findById(eq(dto.getSpecies().getId()));
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
 
     @Test
     public void shouldCreatePlantInvalidValuesThrowsException() {
         //given
-        given(speciesRepository.findById(dto.getSpeciesId())).willReturn(Optional.of(species));
+        given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 
@@ -192,7 +202,7 @@ public class PlantServiceImplTest {
         //then
         assertThrows(InvalidBeanException.class, () -> plantService.create(dto));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
-        then(speciesRepository).should(times(1)).findById(eq(dto.getSpeciesId()));
+        then(speciesRepository).should(times(1)).findById(eq(dto.getSpecies().getId()));
         then(beanValidator).should(times(1)).validate(any());
         then(plantRepository).should(times(0)).save(any(Plant.class));
     }
@@ -215,7 +225,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getLocation(), result.get(0).getLocation());
         assertEquals(plant.getPhoto(), result.get(0).getPhoto());
         assertEquals(category.getId(), result.get(0).getCategoryId());
-        assertEquals(species.getId(), result.get(0).getSpeciesId());
+        assertEquals(species.getId(), result.get(0).getSpecies().getId());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(scheduleDto.getFertilizingFrequency(), result.get(0).getSchedule().getFertilizingFrequency());
         assertEquals(scheduleDto.getWateringFrequency(), result.get(0).getSchedule().getWateringFrequency());
@@ -266,7 +276,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getLocation(), result.getLocation());
         assertEquals(plant.getPhoto(), result.getPhoto());
         assertEquals(category.getId(), result.getCategoryId());
-        assertEquals(species.getId(), result.getSpeciesId());
+        assertEquals(species.getId(), result.getSpecies().getId());
         assertEquals(user.getId(), result.getUserId());
         assertEquals(scheduleDto.getFertilizingFrequency(), result.getSchedule().getFertilizingFrequency());
         assertEquals(scheduleDto.getWateringFrequency(), result.getSchedule().getWateringFrequency());
@@ -294,7 +304,7 @@ public class PlantServiceImplTest {
         dto.setCategoryId(null);
 
         given(plantRepository.findById(plant.getId())).willReturn(Optional.of(plantToUpdate));
-        given(speciesRepository.findById(dto.getSpeciesId())).willReturn(Optional.of(species));
+        given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
         given(plantRepository.save(plantArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -309,7 +319,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getLocation(), result.getLocation());
         assertEquals(plant.getPhoto(), result.getPhoto());
         assertEquals(category.getId(), result.getCategoryId());
-        assertEquals(species.getId(), result.getSpeciesId());
+        assertEquals(species.getId(), result.getSpecies().getId());
 
         Plant captorValue = plantArgumentCaptor.getValue();
         assertEquals(plant.getName(), captorValue.getName());
@@ -345,7 +355,7 @@ public class PlantServiceImplTest {
 
 
         given(plantRepository.findById(plant.getId())).willReturn(Optional.of(plantToUpdate));
-        given(speciesRepository.findById(dto.getSpeciesId())).willReturn(Optional.of(species));
+        given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 
         //when

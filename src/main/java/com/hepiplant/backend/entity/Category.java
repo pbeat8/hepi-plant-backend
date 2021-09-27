@@ -7,9 +7,10 @@ import java.util.List;
 
 @Entity
 @Table(schema = "plants", name = "categories")
+@SequenceGenerator(name = "plants.categories_seq", allocationSize = 1)
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plants.categories_seq")
     private Long id;
     @Column(nullable = false, unique = true)
     private String name;

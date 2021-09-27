@@ -4,6 +4,7 @@ import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Species;
 import com.hepiplant.backend.exception.ImmutableFieldException;
+import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
 import com.hepiplant.backend.service.SpeciesService;
@@ -14,6 +15,8 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
@@ -31,7 +34,7 @@ public class SpeciesServiceImpl implements SpeciesService {
 
     @Override
     public List<SpeciesDto> getAll() {
-        return speciesRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return speciesRepository.findAll().stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
     }
 
     @Override
@@ -87,25 +90,5 @@ public class SpeciesServiceImpl implements SpeciesService {
         }
         speciesRepository.delete(species.get());
         return "Successfully deleted the species with id = "+ id;
-    }
-    private SpeciesDto mapToDto(Species species){
-        SpeciesDto dto = new SpeciesDto();
-        dto.setId(species.getId());
-        if(species.getName()!=null){
-            dto.setName(species.getName());
-        }
-        dto.setWateringFrequency(species.getWateringFrequency());
-        dto.setFertilizingFrequency(species.getFertilizingFrequency());
-        dto.setMistingFrequency(species.getMistingFrequency());
-        if(species.getPlacement()!=null){
-            dto.setPlacement(species.getPlacement());
-        }
-        if(species.getSoil()!=null){
-            dto.setSoil(species.getSoil());
-        }
-        if(species.getCategory()!=null){
-            dto.setCategoryId(species.getCategory().getId());
-        }
-        return dto;
     }
 }

@@ -7,6 +7,7 @@ import com.hepiplant.backend.entity.Schedule;
 import com.hepiplant.backend.entity.Species;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
+import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.PlantRepository;
 import com.hepiplant.backend.repository.ScheduleRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
@@ -20,6 +21,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
 public class PlantServiceImpl implements PlantService {
@@ -49,8 +52,8 @@ public class PlantServiceImpl implements PlantService {
         plant.setPhoto(plantDto.getPhoto());
         Schedule schedule = new Schedule();
         schedule.setPlant(plant);
-        if(plantDto.getSpeciesId()!=null){
-            Species species = speciesRepository.findById(plantDto.getSpeciesId()).orElseThrow(() -> new EntityNotFoundException("Species not found for id " + plantDto.getSpeciesId()));
+        if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
+            Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(() -> new EntityNotFoundException("Species not found for id " + plantDto.getSpecies().getId()));
             plant.setSpecies(species);
             plant.setCategory(species.getCategory());
             schedule.setWateringFrequency(species.getWateringFrequency());
@@ -68,15 +71,15 @@ public class PlantServiceImpl implements PlantService {
         }
         plant.setSchedule(schedule);
         beanValidator.validate(plant);
-        scheduleRepository.save(schedule);
         Plant savedPlant = plantRepository.save(plant);
+        scheduleRepository.save(schedule);
         return mapToDto(savedPlant);
     }
 
     @Override
     public List<PlantDto> getAll() {
         return plantRepository.findAll().stream()
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -84,7 +87,7 @@ public class PlantServiceImpl implements PlantService {
     public List<PlantDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
         return user.getPlantList().stream()
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -109,8 +112,8 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getCategoryId()!=null && !plantDto.getCategoryId().equals(plant.getCategory().getId())){
             throw new ImmutableFieldException("Field Category in Plant is immutable!");
         }
-        if(plantDto.getSpeciesId()!=null && (plant.getSpecies()==null || (plant.getSpecies().getId()!=null && !plantDto.getSpeciesId().equals(plant.getSpecies().getId())))){
-            Species species = speciesRepository.findById(plantDto.getSpeciesId()).orElseThrow(EntityNotFoundException::new);
+        if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
+            Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(EntityNotFoundException::new);
             plant.setSpecies(species);
             plant.setCategory(species.getCategory());
         }
@@ -130,36 +133,5 @@ public class PlantServiceImpl implements PlantService {
         }
         plantRepository.delete(plant.get());
         return "Successfully deleted the plant with id = "+ id;
-    }
-
-    private PlantDto mapToDto(Plant plant){
-        PlantDto dto = new PlantDto();
-        dto.setId(plant.getId());
-        dto.setName(plant.getName());
-        dto.setPurchaseDate(plant.getPurchaseDate());
-        dto.setLocation(plant.getLocation());
-        dto.setPhoto(plant.getPhoto());
-        if(plant.getCategory()!=null) {
-            dto.setCategoryId(plant.getCategory().getId());
-        }
-        if(plant.getSpecies()!=null) {
-            dto.setSpeciesId(plant.getSpecies().getId());
-        }
-        if(plant.getUser()!=null){
-            dto.setUserId(plant.getUser().getId());
-        }
-        if(plant.getSchedule() != null){
-            dto.setSchedule(mapToDto(plant.getSchedule()));
-        }
-        return dto;
-    }
-
-    private ScheduleDto mapToDto(Schedule schedule){
-        ScheduleDto dto = new ScheduleDto();
-        dto.setId(schedule.getId());
-        dto.setWateringFrequency(schedule.getWateringFrequency());
-        dto.setFertilizingFrequency(schedule.getFertilizingFrequency());
-        dto.setMistingFrequency(schedule.getMistingFrequency());
-        return dto;
     }
 }

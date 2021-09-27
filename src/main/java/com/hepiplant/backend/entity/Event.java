@@ -8,9 +8,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(schema = "plants", name = "events")
+@SequenceGenerator(name = "plants.events_seq", allocationSize = 1)
 public class Event {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plants.events_seq")
     private Long id;
     @NotBlank
     @Size(min=1, max=255)

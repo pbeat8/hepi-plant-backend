@@ -1,11 +1,11 @@
 package com.hepiplant.backend.service.impl;
 
-import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
+import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SalesOfferRepository;
 import com.hepiplant.backend.repository.UserRepository;
@@ -14,10 +14,11 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
 public class SalesOfferServiceImpl implements SalesOfferService {
@@ -60,7 +61,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     @Override
     public List<SalesOfferDto> getAll() {
         return salesOfferRepository.findAll().stream()
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -69,7 +70,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + categoryId));
         return salesOfferRepository.findAllByCategory(category).stream()
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -77,7 +78,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     public List<SalesOfferDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
         return salesOfferRepository.findAllByUser(user).stream()
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -87,7 +88,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                 .filter(p -> tag.equals(p.getTag1()) ||
                         tag.equals(p.getTag2()) ||
                         tag.equals(p.getTag3()))
-                .map(this::mapToDto)
+                .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -158,29 +159,5 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                     break;
             }
         }
-    }
-
-    private SalesOfferDto mapToDto(SalesOffer salesOffer){
-        SalesOfferDto dto = new SalesOfferDto();
-        dto.setId(salesOffer.getId());
-        dto.setTitle(salesOffer.getTitle());
-        dto.setBody(salesOffer.getBody());
-        dto.setLocation(salesOffer.getLocation());
-        dto.setPrice(salesOffer.getPrice());
-        List<String> tags = new ArrayList<>();
-        tags.add(salesOffer.getTag1());
-        tags.add(salesOffer.getTag2());
-        tags.add(salesOffer.getTag3());
-        while (tags.remove(null));
-        dto.setTags(tags);
-        dto.setCreatedDate(salesOffer.getCreatedDate());
-        dto.setUpdatedDate(salesOffer.getUpdatedDate());
-        if(salesOffer.getUser() != null){
-            dto.setUserId(salesOffer.getUser().getId());
-        }
-        if(salesOffer.getCategory() != null){
-            dto.setCategoryId(salesOffer.getCategory().getId());
-        }
-        return dto;
     }
 }
