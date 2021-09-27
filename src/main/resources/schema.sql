@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS plants.plants
 (
     id bigint NOT NULL,
     location character varying(255) COLLATE pg_catalog."default",
+    photo character varying(550) COLLATE pg_catalog."default",
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
     purchase_date timestamp without time zone,
     category_id bigint,
