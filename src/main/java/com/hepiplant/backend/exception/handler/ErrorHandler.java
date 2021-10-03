@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
+
 @ControllerAdvice
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = { ImmutableFieldException.class, InvalidBeanException.class })
+    @ExceptionHandler(value = { ImmutableFieldException.class,
+                                InvalidBeanException.class,
+                                EntityNotFoundException.class })
     protected ResponseEntity<Object> handleException(RuntimeException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
