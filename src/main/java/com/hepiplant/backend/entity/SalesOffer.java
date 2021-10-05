@@ -1,5 +1,6 @@
 package com.hepiplant.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,13 +11,14 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(schema = "forum", name = "sales_offers")
-@SequenceGenerator(name = "forum.sales_offers", allocationSize = 1)
+@SequenceGenerator(name = "forum.sales_offers_seq", allocationSize = 1)
 public class SalesOffer {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "forum.sales_offers")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "forum.sales_offers_seq")
     private Long id;
     @NotBlank
     @Size(min=1, max=255)
@@ -43,6 +45,9 @@ public class SalesOffer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+    @OneToMany(mappedBy = "salesOffer")
+    @JsonIgnore
+    private List<SalesOfferComment> commentList;
 
     public SalesOffer() {
     }
@@ -150,5 +155,13 @@ public class SalesOffer {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<SalesOfferComment> getComments() {
+        return commentList;
+    }
+
+    public void setComments(List<SalesOfferComment> commentList) {
+        this.commentList = commentList;
     }
 }
