@@ -3,23 +3,20 @@ package com.hepiplant.backend.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-public class PostDto {
+public class CommentDto {
 
     private Long id;
-    private String title;
     private String body;
-    private List<String> tags;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedDate;
     private Long userId;
-    private Long categoryId;
-    private List<CommentDto> comments;
+    private String username;
+    private Long postId;
 
-    public PostDto() {
+    public CommentDto() {
     }
 
     public Long getId() {
@@ -30,28 +27,12 @@ public class PostDto {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getBody() {
         return body;
     }
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -78,19 +59,19 @@ public class PostDto {
         this.userId = userId;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public List<CommentDto> getComments() {
-        return comments;
+    public Long getPostId() {
+        return postId;
     }
 
-    public void setComments(List<CommentDto> comments) {
-        this.comments = comments;
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 }
