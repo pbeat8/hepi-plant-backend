@@ -5,6 +5,7 @@ import com.hepiplant.backend.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DtoMapper {
 
@@ -70,6 +71,25 @@ public class DtoMapper {
         if(post.getCategory() != null){
             dto.setCategoryId(post.getCategory().getId());
         }
+        dto.setComments(post.getComments().stream()
+                .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList()));
+        return dto;
+    }
+
+    public static CommentDto mapToDto(PostComment postComment){
+        CommentDto dto = new CommentDto();
+        dto.setId(postComment.getId());
+        dto.setBody(postComment.getBody());
+        dto.setCreatedDate(postComment.getCreatedDate());
+        dto.setUpdatedDate(postComment.getUpdatedDate());
+        if(postComment.getUser() != null){
+            dto.setUserId(postComment.getUser().getId());
+            dto.setUsername(postComment.getUser().getUsername());
+        }
+        if(postComment.getPost() != null){
+            dto.setPostId(postComment.getPost().getId());
+        }
         return dto;
     }
 
@@ -93,6 +113,25 @@ public class DtoMapper {
         }
         if(salesOffer.getCategory() != null){
             dto.setCategoryId(salesOffer.getCategory().getId());
+        }
+        dto.setComments(salesOffer.getComments().stream()
+                .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList()));
+        return dto;
+    }
+
+    public static CommentDto mapToDto(SalesOfferComment salesOfferComment){
+        CommentDto dto = new CommentDto();
+        dto.setId(salesOfferComment.getId());
+        dto.setBody(salesOfferComment.getBody());
+        dto.setCreatedDate(salesOfferComment.getCreatedDate());
+        dto.setUpdatedDate(salesOfferComment.getUpdatedDate());
+        if(salesOfferComment.getUser() != null){
+            dto.setUserId(salesOfferComment.getUser().getId());
+            dto.setUsername(salesOfferComment.getUser().getUsername());
+        }
+        if(salesOfferComment.getSalesOffer() != null){
+            dto.setPostId(salesOfferComment.getSalesOffer().getId());
         }
         return dto;
     }

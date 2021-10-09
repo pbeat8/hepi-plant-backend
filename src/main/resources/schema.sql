@@ -122,7 +122,9 @@ ALTER TABLE plants.schedules OWNER to postgres;
 CREATE SCHEMA IF NOT EXISTS forum AUTHORIZATION postgres;
 
 CREATE SEQUENCE IF NOT EXISTS forum.posts_seq AS BIGINT;
-CREATE SEQUENCE IF NOT EXISTS forum.sales_offers AS BIGINT;
+CREATE SEQUENCE IF NOT EXISTS forum.sales_offers_seq AS BIGINT;
+CREATE SEQUENCE IF NOT EXISTS forum.post_comments_seq AS BIGINT;
+CREATE SEQUENCE IF NOT EXISTS forum.sales_offer_comments_seq AS BIGINT;
 
 CREATE TABLE IF NOT EXISTS forum.posts
 (
@@ -177,3 +179,45 @@ CREATE TABLE IF NOT EXISTS forum.sales_offers
 )
 TABLESPACE pg_default;
 ALTER TABLE forum.sales_offers OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS forum.post_comments
+(
+    id bigint NOT NULL,
+    body character varying(255) COLLATE pg_catalog."default",
+    created_date timestamp without time zone,
+    updated_date timestamp without time zone,
+    post_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    CONSTRAINT post_comments_pkey PRIMARY KEY (id),
+    CONSTRAINT fkijnwr3brs8vaosl80jg9rp8uc FOREIGN KEY (post_id)
+       REFERENCES forum.posts (id) MATCH SIMPLE
+       ON UPDATE NO ACTION
+       ON DELETE NO ACTION,
+    CONSTRAINT fk5lidm6cqbc7u4xhqpxm899qme FOREIGN KEY (user_id)
+        REFERENCES users.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+ALTER TABLE forum.post_comments OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS forum.sales_offer_comments
+(
+    id bigint NOT NULL,
+    body character varying(255) COLLATE pg_catalog."default",
+    created_date timestamp without time zone,
+    updated_date timestamp without time zone,
+    sales_offer_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    CONSTRAINT sales_offer_comments_pkey PRIMARY KEY (id),
+    CONSTRAINT fkijnwr3brs2vaosl80jg9rp8uc FOREIGN KEY (sales_offer_id)
+       REFERENCES forum.posts (id) MATCH SIMPLE
+       ON UPDATE NO ACTION
+       ON DELETE NO ACTION,
+    CONSTRAINT fk5lidm6cqbc1u4xhqpxm899qme FOREIGN KEY (user_id)
+        REFERENCES users.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+ALTER TABLE forum.sales_offer_comments OWNER to postgres;

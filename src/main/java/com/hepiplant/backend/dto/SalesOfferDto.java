@@ -20,6 +20,7 @@ public class SalesOfferDto {
     private LocalDateTime updatedDate;
     private Long userId;
     private Long categoryId;
+    private List<CommentDto> comments;
 
     public SalesOfferDto() {
     }
@@ -102,5 +103,13 @@ public class SalesOfferDto {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public List<CommentDto> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDto> comments) {
+        this.comments = comments;
     }
 }

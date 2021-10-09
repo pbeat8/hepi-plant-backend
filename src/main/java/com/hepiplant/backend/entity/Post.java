@@ -1,5 +1,6 @@
 package com.hepiplant.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(schema = "forum", name = "posts")
@@ -39,6 +41,9 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+    @OneToMany(mappedBy = "post")
+    @JsonIgnore
+    private List<PostComment> commentList;
 
     public Post() {
     }
@@ -146,5 +151,13 @@ public class Post {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<PostComment> getComments() {
+        return commentList;
+    }
+
+    public void setComments(List<PostComment> commentList) {
+        this.commentList = commentList;
     }
 }
