@@ -14,6 +14,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -126,6 +127,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                     .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + salesOfferDto.getCategoryId()));
             salesOffer.setCategory(category);
         }
+        salesOffer.setComments(new ArrayList<>());
         beanValidator.validate(salesOffer);
         SalesOffer savedSalesOffer = salesOfferRepository.save(salesOffer);
         return mapToDto(savedSalesOffer);

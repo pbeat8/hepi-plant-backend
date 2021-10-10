@@ -15,6 +15,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +53,7 @@ public class PostServiceImpl implements PostService {
         Category category = categoryRepository.findById(postDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + postDto.getCategoryId()));
         post.setCategory(category);
+        post.setComments(new ArrayList<>());
         beanValidator.validate(post);
         Post savedPost = postRepository.save(post);
         return mapToDto(savedPost);
