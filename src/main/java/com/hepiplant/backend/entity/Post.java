@@ -30,6 +30,7 @@ public class Post {
     private String tag3;
     private String tag4;
     private String tag5;
+    private String photo;
     @CreationTimestamp
     private LocalDateTime createdDate;
     @UpdateTimestamp
@@ -48,7 +49,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(Long id, String title, String body, String tag1, String tag2, String tag3, String tag4, String tag5, User user, Category category) {
+    public Post(Long id, String title, String body, String tag1, String tag2, String tag3, String tag4, String tag5, String photo, User user, Category category) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -57,6 +58,7 @@ public class Post {
         this.tag3 = tag3;
         this.tag4 = tag4;
         this.tag5 = tag5;
+        this.photo = photo;
         this.user = user;
         this.category = category;
     }
@@ -119,6 +121,14 @@ public class Post {
 
     public void setTag5(String tag5) {
         this.tag5 = tag5;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public LocalDateTime getCreatedDate() {

@@ -67,7 +67,7 @@ public class PlantServiceImplTest {
 
     @BeforeAll
     public static void initializeVariables(){
-        Plant plant2 = new Plant(1l,"name",null,"location", "photo", null,null,null,null,null);
+        Plant plant2 = new Plant(1l,"name",null,"location", null, null,null,null,null,null);
         ArrayList<Plant> plants = new ArrayList<Plant>();
         plants.add(plant2);
         user = new User(1L, "username1", "p@ssw0rd", "email@gmail.com",
@@ -97,7 +97,7 @@ public class PlantServiceImplTest {
 
     @BeforeEach
     public void initializePlant(){
-        plant = new Plant(1l,"name",null,"location", "photo", category,species,user,null,schedule);
+        plant = new Plant(1l,"name",null,"location", null, category,species,user,null,schedule);
         dto = new PlantDto();
         dto.setId(plant.getId());
         dto.setName(plant.getName());

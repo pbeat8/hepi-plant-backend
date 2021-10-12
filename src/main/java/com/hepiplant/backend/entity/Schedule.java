@@ -13,7 +13,7 @@ public class Schedule {
     @Column(name = "id")
     private Long id;
     @NotNull
-    @Min(value = 1, message = "Watering frequency should be greater than 0")
+    @Min(value = 0, message = "Watering frequency should be greater or equals 0")
     private int wateringFrequency;
     @Min(value = 0, message = "Fertilizing frequency should be greater or equals  0")
     private int fertilizingFrequency;

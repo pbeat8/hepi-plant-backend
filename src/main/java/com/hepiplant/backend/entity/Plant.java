@@ -24,7 +24,6 @@ public class Plant {
     @NotBlank
     @Size(min=1, max=255)
     private String location;
-
     private String photo;
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;

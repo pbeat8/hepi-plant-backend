@@ -45,6 +45,7 @@ public class PostServiceImpl implements PostService {
         post.setTitle(postDto.getTitle());
         post.setBody(postDto.getBody());
         addTagsToPost(post, postDto.getTags());
+        post.setPhoto(postDto.getPhoto());
         // not null
         User user = userRepository.findById(postDto.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found for id " + postDto.getUserId()));
@@ -112,6 +113,9 @@ public class PostServiceImpl implements PostService {
         }
         if(postDto.getTags() != null && !postDto.getTags().isEmpty()){
             addTagsToPost(post, postDto.getTags());
+        }
+        if(postDto.getPhoto() !=null){
+            post.setPhoto(postDto.getPhoto());
         }
         if(postDto.getUserId() != null){
             throw new ImmutableFieldException("Cannot change User for Post!");

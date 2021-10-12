@@ -69,6 +69,7 @@ public class PlantServiceImpl implements PlantService {
             schedule.setFertilizingFrequency(plantDto.getSchedule().getFertilizingFrequency());
             schedule.setMistingFrequency(plantDto.getSchedule().getMistingFrequency());
         }
+
         plant.setSchedule(schedule);
         beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);

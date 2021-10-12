@@ -66,7 +66,7 @@ class PostServiceImplTest {
 
     @BeforeEach
     public void initializePost(){
-        post = new Post(1L, "Post 1", "Body 1", "tag1", "tag2", "tag3", null, null, user, category);
+        post = new Post(1L, "Post 1", "Body 1", "tag1", "tag2", "tag3", null, null, "photo", user, category);
         dto = new PostDto();
         dto.setTitle(post.getTitle());
         dto.setBody(post.getBody());

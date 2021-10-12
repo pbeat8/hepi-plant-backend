@@ -44,6 +44,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         salesOffer.setTitle(salesOfferDto.getTitle());
         salesOffer.setBody(salesOfferDto.getBody());
         addTagsToSalesOffer(salesOffer, salesOfferDto.getTags());
+        salesOffer.setPhoto(salesOfferDto.getPhoto());
         salesOffer.setLocation(salesOfferDto.getLocation());
         salesOffer.setPrice(salesOfferDto.getPrice());
         // not null
@@ -118,6 +119,9 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         }
         if(salesOfferDto.getTags() != null && !salesOfferDto.getTags().isEmpty()){
             addTagsToSalesOffer(salesOffer, salesOfferDto.getTags());
+        }
+        if(salesOfferDto.getPhoto()!=null){
+            salesOffer.setPhoto(salesOfferDto.getPhoto());
         }
         if(salesOfferDto.getUserId() != null){
             throw new ImmutableFieldException("Cannot change User for Sales offer!");
