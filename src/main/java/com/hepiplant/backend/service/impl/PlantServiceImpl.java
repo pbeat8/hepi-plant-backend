@@ -1,6 +1,7 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.PlantDto;
+import com.hepiplant.backend.dto.ScheduleDto;
 import com.hepiplant.backend.entity.Plant;
 import com.hepiplant.backend.entity.Schedule;
 import com.hepiplant.backend.entity.Species;
@@ -48,6 +49,7 @@ public class PlantServiceImpl implements PlantService {
         plant.setName(plantDto.getName());
         plant.setPurchaseDate(plantDto.getPurchaseDate());
         plant.setLocation(plantDto.getLocation());
+        plant.setPhoto(plantDto.getPhoto());
         Schedule schedule = new Schedule();
         schedule.setPlant(plant);
         if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
@@ -67,6 +69,7 @@ public class PlantServiceImpl implements PlantService {
             schedule.setFertilizingFrequency(plantDto.getSchedule().getFertilizingFrequency());
             schedule.setMistingFrequency(plantDto.getSchedule().getMistingFrequency());
         }
+
         plant.setSchedule(schedule);
         beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);
@@ -103,6 +106,9 @@ public class PlantServiceImpl implements PlantService {
         }
         if(plantDto.getLocation()!=null && !plantDto.getLocation().isEmpty()){
             plant.setLocation(plantDto.getLocation());
+        }
+        if(plantDto.getPhoto()!=null && !plantDto.getPhoto().isEmpty()){
+            plant.setPhoto(plantDto.getPhoto());
         }
         if(plantDto.getCategoryId()!=null && !plantDto.getCategoryId().equals(plant.getCategory().getId())){
             throw new ImmutableFieldException("Field Category in Plant is immutable!");

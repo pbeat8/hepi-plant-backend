@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS plants.plants
 (
     id bigint NOT NULL,
     location character varying(255) COLLATE pg_catalog."default",
+    photo character varying(10485760) COLLATE pg_catalog."default",
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
     purchase_date timestamp without time zone,
     category_id bigint,
@@ -135,6 +136,7 @@ CREATE TABLE IF NOT EXISTS forum.posts
     tag3 character varying(255) COLLATE pg_catalog."default",
     tag4 character varying(255) COLLATE pg_catalog."default",
     tag5 character varying(255) COLLATE pg_catalog."default",
+    photo character varying(255) COLLATE pg_catalog."default",
     title character varying(255) COLLATE pg_catalog."default",
     updated_date timestamp without time zone,
     category_id bigint,
@@ -162,6 +164,7 @@ CREATE TABLE IF NOT EXISTS forum.sales_offers
     tag1 character varying(255) COLLATE pg_catalog."default",
     tag2 character varying(255) COLLATE pg_catalog."default",
     tag3 character varying(255) COLLATE pg_catalog."default",
+    photo character varying(255) COLLATE pg_catalog."default",
     title character varying(255) COLLATE pg_catalog."default",
     updated_date timestamp without time zone,
     category_id bigint,

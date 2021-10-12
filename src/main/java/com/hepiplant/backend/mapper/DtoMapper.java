@@ -35,6 +35,7 @@ public class DtoMapper {
         dto.setName(plant.getName());
         dto.setPurchaseDate(plant.getPurchaseDate());
         dto.setLocation(plant.getLocation());
+        dto.setPhoto(plant.getPhoto());
         if(plant.getCategory() != null) {
             dto.setCategoryId(plant.getCategory().getId());
         }
@@ -63,6 +64,7 @@ public class DtoMapper {
         tags.add(post.getTag5());
         while (tags.remove(null));
         dto.setTags(tags);
+        dto.setPhoto(post.getPhoto());
         dto.setCreatedDate(post.getCreatedDate());
         dto.setUpdatedDate(post.getUpdatedDate());
         if(post.getUser() != null){
@@ -106,6 +108,7 @@ public class DtoMapper {
         tags.add(salesOffer.getTag3());
         while (tags.remove(null));
         dto.setTags(tags);
+        dto.setPhoto(salesOffer.getPhoto());
         dto.setCreatedDate(salesOffer.getCreatedDate());
         dto.setUpdatedDate(salesOffer.getUpdatedDate());
         if(salesOffer.getUser() != null){

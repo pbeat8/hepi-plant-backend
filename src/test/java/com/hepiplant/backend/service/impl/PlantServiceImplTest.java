@@ -66,8 +66,8 @@ public class PlantServiceImplTest {
     private static User user2;
 
     @BeforeAll
-    public static void initializeVariables() {
-        Plant plant2 = new Plant(1l, "name", null, "location", null, null, null, null, null);
+    public static void initializeVariables(){
+        Plant plant2 = new Plant(1l,"name",null,"location", null, null,null,null,null,null);
         ArrayList<Plant> plants = new ArrayList<Plant>();
         plants.add(plant2);
         user = new User(1L, "username1", "p@ssw0rd", "email@gmail.com",
@@ -96,13 +96,14 @@ public class PlantServiceImplTest {
     }
 
     @BeforeEach
-    public void initializePlant() {
-        plant = new Plant(1l, "name", null, "location", category, species, user, null, schedule);
+    public void initializePlant(){
+        plant = new Plant(1l,"name",null,"location", null, category,species,user,null,schedule);
         dto = new PlantDto();
         dto.setId(plant.getId());
         dto.setName(plant.getName());
         dto.setPurchaseDate(plant.getPurchaseDate());
         dto.setLocation(plant.getLocation());
+        dto.setPhoto(plant.getPhoto());
         dto.setCategoryId(category.getId());
         dto.setSpecies(speciesDto);
         dto.setUserId(user.getId());
@@ -112,7 +113,7 @@ public class PlantServiceImplTest {
 
     //CREATE tests
     @Test
-    public void shouldCreatePlantOk() {
+    public void shouldCreatePlantOk(){
         //given
         given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
@@ -131,6 +132,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getName(), result.getName());
         assertEquals(plant.getPurchaseDate(), result.getPurchaseDate());
         assertEquals(plant.getLocation(), result.getLocation());
+        assertEquals(plant.getPhoto(), result.getPhoto());
         assertEquals(category.getId(), result.getCategoryId());
         assertEquals(species.getId(), result.getSpecies().getId());
         assertEquals(user.getId(), result.getUserId());
@@ -140,6 +142,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getName(), captorValue.getName());
         assertEquals(plant.getPurchaseDate(), captorValue.getPurchaseDate());
         assertEquals(plant.getLocation(), captorValue.getLocation());
+        assertEquals(plant.getPhoto(), captorValue.getPhoto());
         assertEquals(category, captorValue.getCategory());
         assertEquals(species, captorValue.getSpecies());
         assertEquals(user, captorValue.getUser());
@@ -149,7 +152,7 @@ public class PlantServiceImplTest {
     }
 
     @Test
-    public void shouldCreateUserDoesNotExistThrowsException() {
+    public void shouldCreateUserDoesNotExistThrowsException(){
         //given
 
         //when
@@ -162,7 +165,7 @@ public class PlantServiceImplTest {
     }
 
     @Test
-    public void shouldCreateSpeciesDoesNotExistThrowsException() {
+    public void shouldCreateSpeciesDoesNotExistThrowsException(){
         //given
 
         //when
@@ -175,7 +178,7 @@ public class PlantServiceImplTest {
     }
 
     @Test
-    public void shouldCreateScheduleDoesNotExistThrowsException() {
+    public void shouldCreateScheduleDoesNotExistThrowsException(){
         //given
 
         //when
@@ -207,7 +210,7 @@ public class PlantServiceImplTest {
     // GET ALL tests
 
     @Test
-    public void shouldGetAllPlantsOk() {
+    public void shouldGetAllPlantsOk(){
         //given
         given(plantRepository.findAll()).willReturn(List.of(plant));
 
@@ -220,6 +223,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getName(), result.get(0).getName());
         assertEquals(plant.getPurchaseDate(), result.get(0).getPurchaseDate());
         assertEquals(plant.getLocation(), result.get(0).getLocation());
+        assertEquals(plant.getPhoto(), result.get(0).getPhoto());
         assertEquals(category.getId(), result.get(0).getCategoryId());
         assertEquals(species.getId(), result.get(0).getSpecies().getId());
         assertEquals(user.getId(), result.get(0).getUserId());
@@ -229,7 +233,7 @@ public class PlantServiceImplTest {
     }
 
     @Test
-    public void shouldGetAllPlantEmptyListOk() {
+    public void shouldGetAllPlantEmptyListOk(){
         //given
         given(plantRepository.findAll()).willReturn(List.of());
 
@@ -270,6 +274,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getName(), result.getName());
         assertEquals(plant.getPurchaseDate(), result.getPurchaseDate());
         assertEquals(plant.getLocation(), result.getLocation());
+        assertEquals(plant.getPhoto(), result.getPhoto());
         assertEquals(category.getId(), result.getCategoryId());
         assertEquals(species.getId(), result.getSpecies().getId());
         assertEquals(user.getId(), result.getUserId());
@@ -279,7 +284,7 @@ public class PlantServiceImplTest {
     }
 
     @Test
-    public void shouldGetPlantByIdPostDoesNotExistThrowsException() {
+    public void shouldGetPlantByIdPostDoesNotExistThrowsException(){
         //given
         given(plantRepository.findById(plant.getId())).willReturn(Optional.empty());
 
@@ -312,6 +317,7 @@ public class PlantServiceImplTest {
         assertEquals(plant.getName(), result.getName());
         assertEquals(plant.getPurchaseDate(), result.getPurchaseDate());
         assertEquals(plant.getLocation(), result.getLocation());
+        assertEquals(plant.getPhoto(), result.getPhoto());
         assertEquals(category.getId(), result.getCategoryId());
         assertEquals(species.getId(), result.getSpecies().getId());
 
@@ -319,12 +325,13 @@ public class PlantServiceImplTest {
         assertEquals(plant.getName(), captorValue.getName());
         assertEquals(plant.getPurchaseDate(), captorValue.getPurchaseDate());
         assertEquals(plant.getLocation(), captorValue.getLocation());
+        assertEquals(plant.getPhoto(), captorValue.getPhoto());
         assertEquals(category, captorValue.getCategory());
         assertEquals(species, captorValue.getSpecies());
     }
 
     @Test
-    public void shouldUpdatePlantDoesNotExistThrowsException() {
+    public void shouldUpdatePlantDoesNotExistThrowsException(){
         //given
         dto.setUserId(null);
         dto.setCategoryId(null);
@@ -340,7 +347,7 @@ public class PlantServiceImplTest {
     }
 
     @Test
-    public void shouldUpdatePlantInvalidValuesThrowsException() {
+    public void shouldUpdatePlantInvalidValuesThrowsException(){
         //given
         Plant plantToUpdate = new Plant();
         dto.setUserId(null);
@@ -363,7 +370,7 @@ public class PlantServiceImplTest {
 
     // DELETE tests
     @Test
-    public void shouldDeletePlantOk() {
+    public void shouldDeletePlantOk(){
         //given
         given(plantRepository.findById(plant.getId())).willReturn(Optional.of(plant));
 
@@ -377,7 +384,7 @@ public class PlantServiceImplTest {
     }
 
     @Test
-    public void shouldDeletePlantDoesNotExistThrowsException() {
+    public void shouldDeletePlantDoesNotExistThrowsException(){
         //given
         given(plantRepository.findById(plant.getId())).willReturn(Optional.empty());
 
@@ -389,4 +396,5 @@ public class PlantServiceImplTest {
         then(plantRepository).should(times(0)).delete(any());
         assertTrue(result.contains("No plant"));
     }
+
 }

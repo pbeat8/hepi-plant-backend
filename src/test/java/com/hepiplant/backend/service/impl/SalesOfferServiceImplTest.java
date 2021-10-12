@@ -68,7 +68,7 @@ class SalesOfferServiceImplTest {
 
     @BeforeEach
     public void initializeSalesOffer(){
-        salesOffer = new SalesOffer(1L,"Title 1", "Body 1","Wroclaw", BigDecimal.valueOf(23.88), "tag1", "tag2", null, user, category);
+        salesOffer = new SalesOffer(1L,"Title 1", "Body 1","Wroclaw", BigDecimal.valueOf(23.88), "tag1", "tag2", null, "photo", user, category);
         dto = new SalesOfferDto();
         dto.setTitle(salesOffer.getTitle());
         dto.setBody(salesOffer.getBody());

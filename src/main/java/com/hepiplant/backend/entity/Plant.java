@@ -24,6 +24,7 @@ public class Plant {
     @NotBlank
     @Size(min=1, max=255)
     private String location;
+    private String photo;
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,11 +42,12 @@ public class Plant {
     public Plant() {
     }
 
-    public Plant(Long id, String name, LocalDateTime purchaseDate, String location, Category category, Species species, User user, List<Event> eventList, Schedule schedule) {
+    public Plant(Long id, String name, LocalDateTime purchaseDate, String location, String photo, Category category, Species species, User user, List<Event> eventList, Schedule schedule) {
         this.id = id;
         this.name = name;
         this.purchaseDate = purchaseDate;
         this.location = location;
+        this.photo = photo;
         this.category = category;
         this.species = species;
         this.user = user;
@@ -83,6 +85,14 @@ public class Plant {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public Category getCategory() {

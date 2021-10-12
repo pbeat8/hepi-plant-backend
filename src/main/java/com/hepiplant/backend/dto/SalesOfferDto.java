@@ -14,6 +14,7 @@ public class SalesOfferDto {
     private String location;
     private BigDecimal price;
     private List<String> tags;
+    private String photo;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -71,6 +72,14 @@ public class SalesOfferDto {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public LocalDateTime getCreatedDate() {

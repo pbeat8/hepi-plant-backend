@@ -34,6 +34,7 @@ public class SalesOffer {
     private String tag1;
     private String tag2;
     private String tag3;
+    private String photo;
     @CreationTimestamp
     private LocalDateTime createdDate;
     @UpdateTimestamp
@@ -52,7 +53,7 @@ public class SalesOffer {
     public SalesOffer() {
     }
 
-    public SalesOffer(Long id, String title, String body, String location, BigDecimal price, String tag1, String tag2, String tag3, User user, Category category) {
+    public SalesOffer(Long id, String title, String body, String location, BigDecimal price, String tag1, String tag2, String tag3, String photo, User user, Category category) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -61,6 +62,7 @@ public class SalesOffer {
         this.tag1 = tag1;
         this.tag2 = tag2;
         this.tag3 = tag3;
+        this.photo = photo;
         this.user = user;
         this.category = category;
     }
@@ -123,6 +125,14 @@ public class SalesOffer {
 
     public void setTag3(String tag3) {
         this.tag3 = tag3;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public LocalDateTime getCreatedDate() {

@@ -51,7 +51,7 @@ public class EventServiceImplTest {
 
     @BeforeAll
     public static void initializeVariables(){
-        plant = new Plant(1L, "Name", null, "location", null, null, null, new ArrayList<>(), null);
+        plant = new Plant(1L, "Name", null, "location", null, null, null, null, new ArrayList<>(), null);
     }
     @BeforeEach
     public void initializeEvent(){
