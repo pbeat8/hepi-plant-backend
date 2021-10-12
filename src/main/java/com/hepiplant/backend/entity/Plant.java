@@ -21,7 +21,6 @@ public class Plant {
     private String name;
     @PastOrPresent
     private LocalDateTime purchaseDate;
-    @NotBlank
     @Size(min=1, max=255)
     private String location;
     private String photo;
