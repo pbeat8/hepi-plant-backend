@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS plants.plants
 (
     id bigint NOT NULL,
     location character varying(255) COLLATE pg_catalog."default",
-    photo character varying(10485760) COLLATE pg_catalog."default",
+    photo character varying(255) COLLATE pg_catalog."default",
     name character varying(255) COLLATE pg_catalog."default" NOT NULL,
     purchase_date timestamp without time zone,
     category_id bigint,
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS forum.sales_offer_comments
     user_id bigint NOT NULL,
     CONSTRAINT sales_offer_comments_pkey PRIMARY KEY (id),
     CONSTRAINT fkijnwr3brs2vaosl80jg9rp8uc FOREIGN KEY (sales_offer_id)
-       REFERENCES forum.posts (id) MATCH SIMPLE
+       REFERENCES forum.sales_offers (id) MATCH SIMPLE
        ON UPDATE NO ACTION
        ON DELETE NO ACTION,
     CONSTRAINT fk5lidm6cqbc1u4xhqpxm899qme FOREIGN KEY (user_id)

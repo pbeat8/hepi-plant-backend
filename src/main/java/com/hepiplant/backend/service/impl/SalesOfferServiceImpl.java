@@ -55,6 +55,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         Category category = categoryRepository.findById(salesOfferDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + salesOfferDto.getCategoryId()));
         salesOffer.setCategory(category);
+        salesOffer.setComments(new ArrayList<>());
         beanValidator.validate(salesOffer);
         SalesOffer savedSalesOffer = salesOfferRepository.save(salesOffer);
         return mapToDto(savedSalesOffer);
@@ -131,7 +132,6 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                     .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + salesOfferDto.getCategoryId()));
             salesOffer.setCategory(category);
         }
-        salesOffer.setComments(new ArrayList<>());
         beanValidator.validate(salesOffer);
         SalesOffer savedSalesOffer = salesOfferRepository.save(salesOffer);
         return mapToDto(savedSalesOffer);
