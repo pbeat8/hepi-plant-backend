@@ -78,7 +78,7 @@ public class PlantServiceImplTest {
         category2 = new Category(4L, "Category2", new ArrayList<>());
         species = new Species(3L, "name", 3, 21, 1, BARDZO_JASNE, "soil", category);
         speciesDto = new SpeciesDto();
-        speciesDto.setId(schedule.getId());
+        speciesDto.setId(species.getId());
         speciesDto.setName(species.getName());
         speciesDto.setWateringFrequency(species.getWateringFrequency());
         speciesDto.setFertilizingFrequency(species.getFertilizingFrequency());

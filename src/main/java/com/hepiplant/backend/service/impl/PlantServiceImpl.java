@@ -121,6 +121,9 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getUserId()!=null && !plantDto.getUserId().equals(plant.getUser().getId())){
             throw new ImmutableFieldException("Field User in Plant is immutable!");
         }
+        if(plantDto.getPurchaseDate()!=null){
+            plant.setPurchaseDate(plantDto.getPurchaseDate());
+        }
         beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);
         return mapToDto(savedPlant);
