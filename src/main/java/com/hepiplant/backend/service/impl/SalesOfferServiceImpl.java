@@ -43,7 +43,9 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         SalesOffer salesOffer = new SalesOffer();
         salesOffer.setTitle(salesOfferDto.getTitle());
         salesOffer.setBody(salesOfferDto.getBody());
-        addTagsToSalesOffer(salesOffer, salesOfferDto.getTags());
+        if(salesOfferDto.getTags()!=null){
+            addTagsToSalesOffer(salesOffer, salesOfferDto.getTags());
+        }
         salesOffer.setPhoto(salesOfferDto.getPhoto());
         salesOffer.setLocation(salesOfferDto.getLocation());
         salesOffer.setPrice(salesOfferDto.getPrice());
@@ -55,6 +57,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         Category category = categoryRepository.findById(salesOfferDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + salesOfferDto.getCategoryId()));
         salesOffer.setCategory(category);
+        salesOffer.setComments(new ArrayList<>());
         beanValidator.validate(salesOffer);
         SalesOffer savedSalesOffer = salesOfferRepository.save(salesOffer);
         return mapToDto(savedSalesOffer);
