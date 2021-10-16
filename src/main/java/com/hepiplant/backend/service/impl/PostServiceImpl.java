@@ -15,11 +15,14 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.hepiplant.backend.helper.Utils.convertToLocalDate;
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
@@ -61,10 +64,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAll() {
-        return postRepository.findAll().stream()
-                .map(DtoMapper::mapToDto)
-                .collect(Collectors.toList());
+    public List<PostDto> getAll(Date startDate, Date endDate) {
+        if (startDate == null || endDate == null){ // todo maybe change
+            return postRepository.findAll().stream()
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList());
+        } else {
+            return postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)).stream()
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override

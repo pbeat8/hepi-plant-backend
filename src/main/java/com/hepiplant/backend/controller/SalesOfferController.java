@@ -2,10 +2,15 @@ package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.service.SalesOfferService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+
+import static com.hepiplant.backend.helper.Utils.convertToLocalDate;
 
 @RestController
 @RequestMapping(path = "/salesoffers")
@@ -23,8 +28,9 @@ public class SalesOfferController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SalesOfferDto>> getSalesOffers(){
-        return ResponseEntity.ok().body(salesOfferService.getAll());
+    public ResponseEntity<List<SalesOfferDto>> getSalesOffers(@RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+                                                              @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+        return ResponseEntity.ok().body(salesOfferService.getAll(startDate, endDate));
     }
 
     @GetMapping("/category/{categoryId}")

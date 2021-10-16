@@ -2,10 +2,14 @@ package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.service.PostService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+
+import static com.hepiplant.backend.helper.Utils.convertToLocalDate;
 
 @RestController
 @RequestMapping(path = "/posts")
@@ -23,8 +27,9 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getPosts(){
-        return ResponseEntity.ok().body(postService.getAll());
+    public ResponseEntity<List<PostDto>> getPosts(@RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
+                                                  @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
+        return ResponseEntity.ok().body(postService.getAll(startDate, endDate));
     }
 
     @GetMapping("/category/{categoryId}")
