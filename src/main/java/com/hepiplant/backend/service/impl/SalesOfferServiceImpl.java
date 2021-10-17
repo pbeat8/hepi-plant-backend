@@ -15,10 +15,12 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.hepiplant.backend.helper.Utils.convertToLocalDate;
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
@@ -64,10 +66,16 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     }
 
     @Override
-    public List<SalesOfferDto> getAll() {
-        return salesOfferRepository.findAll().stream()
-                .map(DtoMapper::mapToDto)
-                .collect(Collectors.toList());
+    public List<SalesOfferDto> getAll(Date startDate, Date endDate) {
+        if (startDate == null || endDate == null) { // todo maybe change
+            return salesOfferRepository.findAll().stream()
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList());
+        } else {
+            return salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)).stream()
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override

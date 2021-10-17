@@ -172,7 +172,7 @@ class SalesOfferServiceImplTest {
         given(salesOfferRepository.findAll()).willReturn(List.of(salesOffer));
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAll();
+        List<SalesOfferDto> result = salesOfferService.getAll(null, null);
 
         //then
         then(salesOfferRepository).should(times(1)).findAll();
@@ -194,7 +194,7 @@ class SalesOfferServiceImplTest {
         given(salesOfferRepository.findAll()).willReturn(List.of());
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAll();
+        List<SalesOfferDto> result = salesOfferService.getAll(null, null);
 
         //then
         then(salesOfferRepository).should(times(1)).findAll();

@@ -167,7 +167,7 @@ class PostServiceImplTest {
         given(postRepository.findAll()).willReturn(List.of(post));
 
         //when
-        List<PostDto> result = postService.getAll();
+        List<PostDto> result = postService.getAll(null, null);
 
         //then
         then(postRepository).should(times(1)).findAll();
@@ -188,7 +188,7 @@ class PostServiceImplTest {
         given(postRepository.findAll()).willReturn(List.of());
 
         //when
-        List<PostDto> result = postService.getAll();
+        List<PostDto> result = postService.getAll(null, null);
 
         //then
         then(postRepository).should(times(1)).findAll();

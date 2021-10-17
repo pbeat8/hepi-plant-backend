@@ -3,11 +3,12 @@ package com.hepiplant.backend.service;
 
 import com.hepiplant.backend.dto.SalesOfferDto;
 
+import java.util.Date;
 import java.util.List;
 
 public interface SalesOfferService {
     SalesOfferDto create(SalesOfferDto salesOfferDto);
-    List<SalesOfferDto> getAll();
+    List<SalesOfferDto> getAll(Date startDate, Date endDate);
     List<SalesOfferDto> getAllByCategory(Long categoryId);
     List<SalesOfferDto> getAllByUser(Long userId);
     List<SalesOfferDto> getAllByTag(String tag);
