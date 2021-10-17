@@ -1,4 +1,4 @@
-package com.hepiplant.backend.service.impl;
+package com.hepiplant.backend.service.security;
 
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.repository.UserRepository;

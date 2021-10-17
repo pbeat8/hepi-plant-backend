@@ -1,4 +1,4 @@
-package com.hepiplant.backend.service.impl;
+package com.hepiplant.backend.service.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

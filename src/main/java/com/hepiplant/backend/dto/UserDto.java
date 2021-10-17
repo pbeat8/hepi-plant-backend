@@ -1,7 +1,5 @@
 package com.hepiplant.backend.dto;
 
-import com.hepiplant.backend.entity.Role;
-
 import java.util.Set;
 
 public class UserDto {

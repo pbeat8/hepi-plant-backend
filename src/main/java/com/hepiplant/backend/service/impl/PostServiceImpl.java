@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 
 @Service
 public class PostServiceImpl implements PostService {

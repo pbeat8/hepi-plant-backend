@@ -2,7 +2,7 @@ package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.AuthenticationRequestDto;
 import com.hepiplant.backend.dto.AuthenticationResponseDto;
-import com.hepiplant.backend.service.impl.JwtService;
+import com.hepiplant.backend.service.security.JwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

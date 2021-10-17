@@ -1,7 +1,7 @@
 package com.hepiplant.backend.configuration.security;
 
 import com.hepiplant.backend.filter.JwtRequestFilter;
-import com.hepiplant.backend.service.impl.UserDetailsServiceImpl;
+import com.hepiplant.backend.service.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

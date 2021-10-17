@@ -1,6 +1,6 @@
 package com.hepiplant.backend.filter;
 
-import com.hepiplant.backend.service.impl.JwtService;
+import com.hepiplant.backend.service.security.JwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
