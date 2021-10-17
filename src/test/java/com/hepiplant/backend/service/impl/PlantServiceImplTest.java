@@ -4,7 +4,6 @@ import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.dto.ScheduleDto;
 import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.*;
-import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.*;
 import com.hepiplant.backend.validator.BeanValidator;
@@ -78,7 +77,7 @@ public class PlantServiceImplTest {
         category2 = new Category(4L, "Category2", new ArrayList<>());
         species = new Species(3L, "name", 3, 21, 1, BARDZO_JASNE, "soil", category);
         speciesDto = new SpeciesDto();
-        speciesDto.setId(schedule.getId());
+        speciesDto.setId(species.getId());
         speciesDto.setName(species.getName());
         speciesDto.setWateringFrequency(species.getWateringFrequency());
         speciesDto.setFertilizingFrequency(species.getFertilizingFrequency());

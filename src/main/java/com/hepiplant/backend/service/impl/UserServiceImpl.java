@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -80,8 +81,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDto.getEmail());
         }
         if(userDto.getRoles()!=null) {
-            Set<Role> roles = user.getRoles();
-            roles.clear();
+            Set<Role> roles = new HashSet<>();
             for (String roleName : userDto.getRoles()){
                 Role role = roleRepository.findByName(roleName);
                 roles.add(role);

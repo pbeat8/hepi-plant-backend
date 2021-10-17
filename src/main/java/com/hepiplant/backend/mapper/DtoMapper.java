@@ -73,9 +73,11 @@ public class DtoMapper {
         if(post.getCategory() != null){
             dto.setCategoryId(post.getCategory().getId());
         }
-        dto.setComments(post.getComments().stream()
-                .map(DtoMapper::mapToDto)
-                .collect(Collectors.toList()));
+        if(post.getComments() != null) {
+            dto.setComments(post.getComments().stream()
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList()));
+        }
         return dto;
     }
 
@@ -117,9 +119,11 @@ public class DtoMapper {
         if(salesOffer.getCategory() != null){
             dto.setCategoryId(salesOffer.getCategory().getId());
         }
-        dto.setComments(salesOffer.getComments().stream()
-                .map(DtoMapper::mapToDto)
-                .collect(Collectors.toList()));
+        if(salesOffer.getComments() != null) {
+            dto.setComments(salesOffer.getComments().stream()
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList()));
+        }
         return dto;
     }
 
