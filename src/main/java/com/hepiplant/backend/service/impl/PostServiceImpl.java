@@ -46,7 +46,9 @@ public class PostServiceImpl implements PostService {
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setBody(postDto.getBody());
-        addTagsToPost(post, postDto.getTags());
+        if(postDto.getTags()!=null) {
+            addTagsToPost(post, postDto.getTags());
+        }
         post.setPhoto(postDto.getPhoto());
         // not null
         User user = userRepository.findById(postDto.getUserId())
