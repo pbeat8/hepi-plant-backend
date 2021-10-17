@@ -60,7 +60,7 @@ class PostServiceImplTest {
     @BeforeAll
     public static void initializeVariables(){
         user = new User(1L, "username1", "uId1", "email@gmail.com",
-                Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
     }
 

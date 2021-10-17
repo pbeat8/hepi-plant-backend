@@ -29,3 +29,7 @@ INSERT INTO plants.species(id, fertilizing_frequency, misting_frequency, name, p
     (20, 14, 4, 'Pilea', 'JASNE', 'Przepuszczalna', 4, 1),
     (21, 21, 0, 'Caladium', 'JASNE', 'Przepuszczalna', 3, 1),
     (22, 14, 0, 'Alokazja', 'POLCIENISTE', 'Przepuszczalna', 7, 1) ON CONFLICT DO NOTHING;
+
+INSERT INTO users.roles (id, name) VALUES
+    (1, 'ROLE_ADMIN'),
+    (2, 'ROLE_USER') ON CONFLICT DO NOTHING;

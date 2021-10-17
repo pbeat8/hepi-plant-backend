@@ -3,6 +3,7 @@ package com.hepiplant.backend.controller;
 import com.hepiplant.backend.dto.UserDto;
 import com.hepiplant.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,19 +20,26 @@ public class UserController {
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto){
         return ResponseEntity.ok().body(userService.add(userDto));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserDto>> getUsers(){
         return ResponseEntity.ok().body(userService.getAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
         return  ResponseEntity.ok().body(userService.getById(id));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto userDto){
         return ResponseEntity.ok().body(userService.update(id, userDto));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id){
         return ResponseEntity.ok().body(userService.delete(id));

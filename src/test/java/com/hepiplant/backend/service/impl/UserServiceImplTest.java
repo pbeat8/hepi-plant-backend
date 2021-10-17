@@ -1,6 +1,7 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.UserDto;
+import com.hepiplant.backend.entity.Role;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.InvalidBeanException;
@@ -19,6 +20,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -47,12 +49,12 @@ class UserServiceImplTest {
     @BeforeEach
     public void initializeUser(){
 
-        user = new User(1L, "username 1", "uid 1", "password 1", Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        user = new User(1L, "username 1", "uid 1", "password 1", null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         dto = new UserDto();
         dto.setUsername(user.getUsername());
         dto.setUid(user.getUid());
         dto.setEmail(user.getEmail());
-        dto.setPermission(user.getPermission());
+        dto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
 
     }
 
@@ -71,7 +73,7 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(),result.get(0).getUsername());
         assertEquals(user.getUid(),result.get(0).getUid());
         assertEquals(user.getEmail(),result.get(0).getEmail());
-        assertEquals(user.getPermission(), result.get(0).getPermission());
+        assertEquals(user.getRoles(), result.get(0).getRoles());
     }
 
     @Test
@@ -101,7 +103,7 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(),result.getUsername());
         assertEquals(user.getUid(),result.getUid());
         assertEquals(user.getEmail(),result.getEmail());
-        assertEquals(user.getPermission(), result.getPermission());
+        assertEquals(user.getRoles(), result.getRoles());
     }
 
     @Test
@@ -131,13 +133,13 @@ class UserServiceImplTest {
         then(userRepository).should(times(1)).save(any(User.class));
         assertEquals(user.getUsername(),result.getUsername());
         assertEquals(user.getUid(),result.getUid());
-        assertEquals(user.getPermission(),result.getPermission());
+        assertEquals(user.getRoles(),result.getRoles());
         assertEquals(user.getEmail(),result.getEmail());
 
         User captorValue = userArgumentCaptor.getValue();
         assertEquals(user.getUsername(),captorValue.getUsername());
         assertEquals(user.getUid(),captorValue.getUid());
-        assertEquals(user.getPermission(),captorValue.getPermission());
+        assertEquals(user.getRoles(),captorValue.getRoles());
         assertEquals(user.getEmail(),captorValue.getEmail());
 
     }
@@ -155,7 +157,7 @@ class UserServiceImplTest {
         then(userRepository).should(times(0)).save(any(User.class));
         assertEquals(user.getUsername(),result.getUsername());
         assertEquals(user.getUid(),result.getUid());
-        assertEquals(user.getPermission(),result.getPermission());
+        assertEquals(user.getRoles(),result.getRoles());
         assertEquals(user.getEmail(),result.getEmail());
 
     }
@@ -187,12 +189,12 @@ class UserServiceImplTest {
         then(userRepository).should(times(1)).findById(user.getId());
         then(beanValidator).should(times(1)).validate(any());
         assertEquals(user.getUsername(),result.getUsername());
-        assertEquals(user.getPermission(),result.getPermission());
+        assertEquals(user.getRoles(),result.getRoles());
         assertEquals(user.getEmail(),result.getEmail());
 
         User captorValue = userArgumentCaptor.getValue();
         assertEquals(user.getUsername(),captorValue.getUsername());
-        assertEquals(user.getPermission(),captorValue.getPermission());
+        assertEquals(user.getRoles(),captorValue.getRoles());
         assertEquals(user.getEmail(),captorValue.getEmail());
     }
 

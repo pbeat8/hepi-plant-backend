@@ -172,7 +172,7 @@ public class DtoMapper {
         dto.setUsername(user.getUsername());
         dto.setUid(user.getUid());
         dto.setEmail(user.getEmail());
-        dto.setPermission(user.getPermission());
+        dto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
         return dto;
     }
 }
