@@ -4,7 +4,6 @@ import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.dto.ScheduleDto;
 import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.*;
-import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.*;
 import com.hepiplant.backend.validator.BeanValidator;
@@ -71,14 +70,14 @@ public class PlantServiceImplTest {
         ArrayList<Plant> plants = new ArrayList<Plant>();
         plants.add(plant2);
         user = new User(1L, "username1", "p@ssw0rd", "email@gmail.com",
-                Permission.USER, plants, new ArrayList<>(), new ArrayList<>());
+                null, plants, new ArrayList<>(), new ArrayList<>());
         user2 = new User(2L, "username2", "p@ssw0rd2", "email2@gmail.com",
-                Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
         category2 = new Category(4L, "Category2", new ArrayList<>());
         species = new Species(3L, "name", 3, 21, 1, BARDZO_JASNE, "soil", category);
         speciesDto = new SpeciesDto();
-        speciesDto.setId(schedule.getId());
+        speciesDto.setId(species.getId());
         speciesDto.setName(species.getName());
         speciesDto.setWateringFrequency(species.getWateringFrequency());
         speciesDto.setFertilizingFrequency(species.getFertilizingFrequency());

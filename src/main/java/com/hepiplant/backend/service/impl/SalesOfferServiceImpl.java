@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.helper.Utils.convertToLocalDate;
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 
 @Service
 public class SalesOfferServiceImpl implements SalesOfferService {

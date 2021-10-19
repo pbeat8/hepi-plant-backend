@@ -1,6 +1,6 @@
 package com.hepiplant.backend.dto;
 
-import com.hepiplant.backend.entity.enums.Permission;
+import java.util.Set;
 
 public class UserDto {
 
@@ -8,7 +8,7 @@ public class UserDto {
     private String username;
     private String uid;
     private String email;
-    private Permission permission;
+    private Set<String> roles;
 
     public UserDto() {
     }
@@ -45,11 +45,11 @@ public class UserDto {
         this.email = email;
     }
 
-    public Permission getPermission() {
-        return permission;
+    public Set<String> getRoles() {
+        return roles;
     }
 
-    public void setPermission(Permission permission) {
-        this.permission = permission;
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 }

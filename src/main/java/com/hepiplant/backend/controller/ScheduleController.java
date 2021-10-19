@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//todo add @PreAuthorize
+
 @RestController
 @RequestMapping(path = "/schedules")
 public class ScheduleController {
