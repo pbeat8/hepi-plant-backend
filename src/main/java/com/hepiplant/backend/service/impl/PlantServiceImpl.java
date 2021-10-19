@@ -1,7 +1,6 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.PlantDto;
-import com.hepiplant.backend.dto.ScheduleDto;
 import com.hepiplant.backend.entity.Plant;
 import com.hepiplant.backend.entity.Schedule;
 import com.hepiplant.backend.entity.Species;

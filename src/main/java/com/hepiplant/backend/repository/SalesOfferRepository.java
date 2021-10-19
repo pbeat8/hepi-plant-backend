@@ -6,11 +6,14 @@ import com.hepiplant.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface SalesOfferRepository extends JpaRepository<SalesOffer, Long> {
+
     List<SalesOffer> findAllByCategory(Category category);
     List<SalesOffer> findAllByUser(User user);
-    //public Optional<Species> findByPlacement();
+    List<SalesOffer> findAllByCreatedDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
 }

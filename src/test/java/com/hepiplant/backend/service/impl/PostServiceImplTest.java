@@ -4,7 +4,6 @@ import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.User;
-import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.CategoryRepository;
@@ -60,7 +59,7 @@ class PostServiceImplTest {
     @BeforeAll
     public static void initializeVariables(){
         user = new User(1L, "username1", "uId1", "email@gmail.com",
-                Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
     }
 
@@ -167,7 +166,7 @@ class PostServiceImplTest {
         given(postRepository.findAll()).willReturn(List.of(post));
 
         //when
-        List<PostDto> result = postService.getAll();
+        List<PostDto> result = postService.getAll(null, null);
 
         //then
         then(postRepository).should(times(1)).findAll();
@@ -188,7 +187,7 @@ class PostServiceImplTest {
         given(postRepository.findAll()).willReturn(List.of());
 
         //when
-        List<PostDto> result = postService.getAll();
+        List<PostDto> result = postService.getAll(null, null);
 
         //then
         then(postRepository).should(times(1)).findAll();

@@ -1,12 +1,11 @@
 package com.hepiplant.backend.entity;
 
-import com.hepiplant.backend.entity.enums.Permission;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(schema = "users", name="users")
@@ -19,14 +18,18 @@ public class User {
     @Size(min=1, max=50)
     private String username;
     @NotBlank
-    @Size(min=1, max=50)
+    @Size(min=1, max=255)
     @Column(unique = true)
     private String uid;
     @NotBlank
     @Email
+    @Column(unique = true)
     private String email;
-    @Enumerated(EnumType.STRING)
-    private Permission permission;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(schema = "users", name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
     @OneToMany(mappedBy = "user")
     private List<Plant> plantList;
     @OneToMany(mappedBy = "user")
@@ -37,13 +40,13 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String uId, String email, Permission permission,
+    public User(Long id, String username, String uId, String email, Set<Role> roles,
                 List<Plant> plantList, List<Post> postList, List<SalesOffer> salesOfferList) {
         this.id = id;
         this.username = username;
         this.uid = uId;
         this.email = email;
-        this.permission = permission;
+        this.roles = roles;
         this.plantList = plantList;
         this.postList = postList;
         this.salesOfferList = salesOfferList;
@@ -105,12 +108,11 @@ public class User {
         this.email = email;
     }
 
-    public Permission getPermission() {
-        return permission;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setPermission(Permission permission) {
-        this.permission = permission;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
-
 }

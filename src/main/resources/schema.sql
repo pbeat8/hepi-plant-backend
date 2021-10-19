@@ -2,21 +2,45 @@
 CREATE SCHEMA IF NOT EXISTS users AUTHORIZATION postgres;
 
 CREATE SEQUENCE IF NOT EXISTS users.users_seq AS BIGINT;
+CREATE SEQUENCE IF NOT EXISTS users.roles_seq AS BIGINT;
+
+CREATE TABLE IF NOT EXISTS users.roles
+(
+    id bigint NOT NULL,
+    name character varying(50) COLLATE pg_catalog."default",
+    CONSTRAINT roles_pkey PRIMARY KEY (id)
+)
+TABLESPACE pg_default;
+ALTER TABLE users.roles OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS users.users
 (
     id bigint NOT NULL,
-    email character varying(255) COLLATE pg_catalog."default",
-    permission character varying(255) COLLATE pg_catalog."default",
-    u_id character varying(50) COLLATE pg_catalog."default",
+    email character varying(255) UNIQUE NOT NULL COLLATE pg_catalog."default",
     username character varying(50) COLLATE pg_catalog."default",
-    uid character varying(50) COLLATE pg_catalog."default",
+    uid character varying(255) COLLATE pg_catalog."default",
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT uk_efqukogbk7i0poucwoy2qie74 UNIQUE (uid)
 )
 TABLESPACE pg_default;
 ALTER TABLE users.users OWNER to postgres;
 
+CREATE TABLE IF NOT EXISTS users.user_role
+(
+    user_id bigint NOT NULL,
+    role_id bigint NOT NULL,
+    CONSTRAINT user_role_pkey PRIMARY KEY (user_id, role_id),
+    CONSTRAINT fkaaftlgxa90nmuunajoxgbl316 FOREIGN KEY (user_id)
+        REFERENCES users.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fkbbftlgxa90nmuunajoxgbl316 FOREIGN KEY (role_id)
+            REFERENCES users.roles (id) MATCH SIMPLE
+            ON UPDATE NO ACTION
+            ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+ALTER TABLE users.user_role OWNER to postgres;
 
 -- PLANTS SCHEMA --
 CREATE SCHEMA IF NOT EXISTS plants AUTHORIZATION postgres;

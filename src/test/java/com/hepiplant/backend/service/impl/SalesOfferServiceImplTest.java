@@ -5,7 +5,6 @@ import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.User;
-import com.hepiplant.backend.entity.enums.Permission;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.CategoryRepository;
@@ -62,7 +61,7 @@ class SalesOfferServiceImplTest {
     @BeforeAll
     public static void initializeVariables(){
         user = new User(1L, "username1", "uId1", "email@gmail.com",
-                Permission.USER, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
     }
 
@@ -172,7 +171,7 @@ class SalesOfferServiceImplTest {
         given(salesOfferRepository.findAll()).willReturn(List.of(salesOffer));
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAll();
+        List<SalesOfferDto> result = salesOfferService.getAll(null, null);
 
         //then
         then(salesOfferRepository).should(times(1)).findAll();
@@ -194,7 +193,7 @@ class SalesOfferServiceImplTest {
         given(salesOfferRepository.findAll()).willReturn(List.of());
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAll();
+        List<SalesOfferDto> result = salesOfferService.getAll(null, null);
 
         //then
         then(salesOfferRepository).should(times(1)).findAll();
