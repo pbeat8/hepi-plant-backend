@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+import static com.hepiplant.backend.helper.Utils.convertToLocalDate;
+
 @RestController
 @RequestMapping(path = "/posts")
 public class PostController {
