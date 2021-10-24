@@ -2,6 +2,7 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
+import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
@@ -14,10 +15,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
@@ -69,10 +67,12 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     public List<SalesOfferDto> getAll(Date startDate, Date endDate) {
         if (startDate == null || endDate == null) { // todo maybe change
             return salesOfferRepository.findAll().stream()
+                    .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
         } else {
             return salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)).stream()
+                    .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
         }
@@ -83,6 +83,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + categoryId));
         return salesOfferRepository.findAllByCategory(category).stream()
+                .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -91,6 +92,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     public List<SalesOfferDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
         return salesOfferRepository.findAllByUser(user).stream()
+                .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -101,6 +103,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                 .filter(p -> tag.equals(p.getTag1()) ||
                         tag.equals(p.getTag2()) ||
                         tag.equals(p.getTag3()))
+                .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }

@@ -4,6 +4,7 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
+import com.hepiplant.backend.entity.PostComment;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
@@ -15,10 +16,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
@@ -68,10 +66,12 @@ public class PostServiceImpl implements PostService {
     public List<PostDto> getAll(Date startDate, Date endDate) {
         if (startDate == null || endDate == null){ // todo maybe change
             return postRepository.findAll().stream()
+                    .sorted(Comparator.comparing(Post::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
         } else {
             return postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)).stream()
+                    .sorted(Comparator.comparing(Post::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
         }
@@ -82,6 +82,7 @@ public class PostServiceImpl implements PostService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + categoryId));
         return postRepository.findAllByCategory(category).stream()
+                .sorted(Comparator.comparing(Post::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -89,7 +90,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
-        return postRepository.findAllByUser(user).stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
+        return postRepository.findAllByUser(user).stream()
+                .sorted(Comparator.comparing(Post::getCreatedDate))
+                .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -100,6 +104,7 @@ public class PostServiceImpl implements PostService {
                         tag.equals(p.getTag3()) ||
                         tag.equals(p.getTag4()) ||
                         tag.equals(p.getTag5()))
+                .sorted(Comparator.comparing(Post::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
