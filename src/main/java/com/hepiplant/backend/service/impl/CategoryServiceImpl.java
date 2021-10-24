@@ -9,6 +9,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> getAll() {
         return categoryRepository.findAll().stream()
+                .sorted(Comparator.comparing(Category::getId))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }

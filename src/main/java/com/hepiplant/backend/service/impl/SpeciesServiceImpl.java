@@ -2,6 +2,7 @@ package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.Category;
+import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.Species;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
@@ -12,6 +13,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +36,10 @@ public class SpeciesServiceImpl implements SpeciesService {
 
     @Override
     public List<SpeciesDto> getAll() {
-        return speciesRepository.findAll().stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
+        return speciesRepository.findAll().stream()
+                .sorted(Comparator.comparing(Species::getId))
+                .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
