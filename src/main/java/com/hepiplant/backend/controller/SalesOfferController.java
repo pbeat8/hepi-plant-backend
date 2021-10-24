@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-import static com.hepiplant.backend.helper.Utils.convertToLocalDate;
-
 @RestController
 @RequestMapping(path = "/salesoffers")
 public class SalesOfferController {

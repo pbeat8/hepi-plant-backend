@@ -22,6 +22,18 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
+    private static final String[] AUTH_WHITELIST = {
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
+
     public WebSecurityConfiguration(UserDetailsServiceImpl userDetailsService, JwtRequestFilter jwtRequestFilter) {
         super();
         this.userDetailsService = userDetailsService;
@@ -36,15 +48,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .mvcMatchers(HttpMethod.POST, "/authenticate", "/users").permitAll()
                 .anyRequest().authenticated()
-//                .mvcMatchers(HttpMethod.GET, "/api/products/{id:^[0-9]*$}", "/index",
-//                        "/showGetProduct", "/getProduct", "/productDetails").hasAnyRole("USER", "ADMIN")
-//                .mvcMatchers(HttpMethod.GET, "/showCreateProduct", "/createProduct", "/createResponse").hasRole("ADMIN")
-//                .mvcMatchers(HttpMethod.POST, "/getProduct").hasAnyRole("USER", "ADMIN")
-//                .mvcMatchers(HttpMethod.POST, "/api/products", "/saveProduct").hasRole("ADMIN")
-//                .mvcMatchers("/", "/login", "/showReg", "/registerUser").permitAll()
-//                .anyRequest().denyAll()
                 .and().csrf().disable()
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
