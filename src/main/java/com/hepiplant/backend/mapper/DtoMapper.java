@@ -5,6 +5,7 @@ import com.hepiplant.backend.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DtoMapper {
@@ -56,14 +57,9 @@ public class DtoMapper {
         dto.setId(post.getId());
         dto.setTitle(post.getTitle());
         dto.setBody(post.getBody());
-        List<String> tags = new ArrayList<>();
-        tags.add(post.getTag1());
-        tags.add(post.getTag2());
-        tags.add(post.getTag3());
-        tags.add(post.getTag4());
-        tags.add(post.getTag5());
-        while (tags.remove(null));
-        dto.setTags(tags);
+        if(post.getTags() != null){
+            dto.setTags(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()));
+        }
         dto.setPhoto(post.getPhoto());
         dto.setCreatedDate(post.getCreatedDate());
         dto.setUpdatedDate(post.getUpdatedDate());
@@ -104,12 +100,10 @@ public class DtoMapper {
         dto.setBody(salesOffer.getBody());
         dto.setLocation(salesOffer.getLocation());
         dto.setPrice(salesOffer.getPrice());
-        List<String> tags = new ArrayList<>();
-        tags.add(salesOffer.getTag1());
-        tags.add(salesOffer.getTag2());
-        tags.add(salesOffer.getTag3());
-        while (tags.remove(null));
-        dto.setTags(tags);
+        if(salesOffer.getTags()!=null){
+            dto.setTags(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()));
+        }
+
         dto.setPhoto(salesOffer.getPhoto());
         dto.setCreatedDate(salesOffer.getCreatedDate());
         dto.setUpdatedDate(salesOffer.getUpdatedDate());
@@ -179,4 +173,14 @@ public class DtoMapper {
         dto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
         return dto;
     }
+
+    public static TagDto mapToDto(Tag tag){
+        TagDto dto = new TagDto();
+        dto.setId(tag.getId());
+        dto.setName(tag.getName().toLowerCase());
+        dto.setPosts(tag.getPosts().stream().map(Post::getId).collect(Collectors.toSet()));
+        dto.setSalesOffer(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
+        return dto;
+    }
+
 }

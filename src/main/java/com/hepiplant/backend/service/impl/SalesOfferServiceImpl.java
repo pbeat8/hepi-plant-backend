@@ -3,21 +3,17 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
+import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
-import com.hepiplant.backend.repository.CategoryRepository;
-import com.hepiplant.backend.repository.SalesOfferRepository;
-import com.hepiplant.backend.repository.UserRepository;
+import com.hepiplant.backend.repository.*;
 import com.hepiplant.backend.service.SalesOfferService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
@@ -32,12 +28,14 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final BeanValidator beanValidator;
+    private TagRepository tagRepository;
 
-    public SalesOfferServiceImpl(SalesOfferRepository salesOfferRepository, CategoryRepository categoryRepository, UserRepository userRepository, BeanValidator beanValidator) {
+    public SalesOfferServiceImpl(SalesOfferRepository salesOfferRepository, CategoryRepository categoryRepository, UserRepository userRepository, BeanValidator beanValidator, TagRepository tagRepository) {
         this.salesOfferRepository = salesOfferRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.beanValidator = beanValidator;
+        this.tagRepository = tagRepository;
     }
 
     @Override
@@ -46,7 +44,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         salesOffer.setTitle(salesOfferDto.getTitle());
         salesOffer.setBody(salesOfferDto.getBody());
         if(salesOfferDto.getTags()!=null){
-            addTagsToSalesOffer(salesOffer, salesOfferDto.getTags());
+            addTagsToSalesOffer(salesOffer, salesOfferDto);
         }
         salesOffer.setPhoto(salesOfferDto.getPhoto());
         salesOffer.setLocation(salesOfferDto.getLocation());
@@ -97,10 +95,14 @@ public class SalesOfferServiceImpl implements SalesOfferService {
 
     @Override
     public List<SalesOfferDto> getAllByTag(String tag) {
+        Optional<Tag> tags = tagRepository.findByName(tag);
+        if(tags.isPresent())
         return salesOfferRepository.findAll().stream()
-                .filter(p -> tag.equals(p.getTag1()) ||
-                        tag.equals(p.getTag2()) ||
-                        tag.equals(p.getTag3()))
+                .filter(p -> p.getTags().contains(tags.get()))
+                .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList());
+        else return salesOfferRepository.findAll().stream()
+                .filter(p -> p.getTags().contains(""))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -129,7 +131,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
             salesOffer.setPrice(salesOfferDto.getPrice());
         }
         if(salesOfferDto.getTags() != null && !salesOfferDto.getTags().isEmpty()){
-            addTagsToSalesOffer(salesOffer, salesOfferDto.getTags());
+            addTagsToSalesOffer(salesOffer, salesOfferDto);
         }
         if(salesOfferDto.getPhoto()!=null){
             salesOffer.setPhoto(salesOfferDto.getPhoto());
@@ -157,23 +159,20 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         return "Successfully deleted the sales offer with id = "+ id;
     }
 
-    private void addTagsToSalesOffer(SalesOffer salesOffer, List<String> tags) {
-        for (int i = 0; i < TAGS_AMOUNT; i++) {
-            String tag = null;
-            if (i < tags.size()) {
-                tag = tags.get(i);
-            }
-            switch (i) {
-                case 0:
-                    salesOffer.setTag1(tag);
-                    break;
-                case 1:
-                    salesOffer.setTag2(tag);
-                    break;
-                case 2:
-                    salesOffer.setTag3(tag);
-                    break;
+    private void addTagsToSalesOffer(SalesOffer salesOffer, SalesOfferDto salesOfferDto) {
+        Set<Tag> tags=new HashSet<>();;
+        for(String tagName : salesOfferDto.getTags()){
+            Optional<Tag> tag = tagRepository.findByName(tagName.toLowerCase());
+            if(tag.isPresent()) tags.add(tag.get());
+            else{
+                Tag newTag = new Tag();
+                newTag.setName(tagName.toLowerCase());
+                newTag.setSalesOffers(Set.of(salesOffer));
+                beanValidator.validate(newTag);
+                Tag savedTag = tagRepository.save(newTag);
+                tags.add(savedTag);
             }
         }
+        salesOffer.setTags(tags);
     }
 }

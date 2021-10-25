@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class PostDto {
 
     private Long id;
     private String title;
     private String body;
-    private List<String> tags;
+    private Set<String> tags;
     private String photo;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
@@ -47,11 +48,11 @@ public class PostDto {
         this.body = body;
     }
 
-    public List<String> getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(Set<String> tags) {
         this.tags = tags;
     }
 

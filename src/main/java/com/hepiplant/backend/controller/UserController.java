@@ -27,13 +27,13 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAll());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
         return  ResponseEntity.ok().body(userService.getById(id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> update(@PathVariable Long id, @RequestBody UserDto userDto){
         return ResponseEntity.ok().body(userService.update(id, userDto));

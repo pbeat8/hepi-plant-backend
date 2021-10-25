@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(schema = "forum", name = "sales_offers")
@@ -31,9 +32,7 @@ public class SalesOffer {
     private String location;
     @PositiveOrZero
     private BigDecimal price;
-    private String tag1;
-    private String tag2;
-    private String tag3;
+
     private String photo;
     @CreationTimestamp
     private LocalDateTime createdDate;
@@ -49,22 +48,25 @@ public class SalesOffer {
     @OneToMany(mappedBy = "salesOffer")
     @JsonIgnore
     private List<SalesOfferComment> commentList;
+    @ManyToMany
+    @JoinTable(schema = "forum", name = "salesOffer_tag",
+            joinColumns = @JoinColumn(name = "salesOffer_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags;
 
     public SalesOffer() {
     }
 
-    public SalesOffer(Long id, String title, String body, String location, BigDecimal price, String tag1, String tag2, String tag3, String photo, User user, Category category) {
+    public SalesOffer(Long id, String title, String body, String location, BigDecimal price, String photo, User user, Category category, Set<Tag> tags) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.location = location;
         this.price = price;
-        this.tag1 = tag1;
-        this.tag2 = tag2;
-        this.tag3 = tag3;
         this.photo = photo;
         this.user = user;
         this.category = category;
+        this.tags = tags;
     }
 
     public Long getId() {
@@ -101,30 +103,6 @@ public class SalesOffer {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public String getTag1() {
-        return tag1;
-    }
-
-    public void setTag1(String tag1) {
-        this.tag1 = tag1;
-    }
-
-    public String getTag2() {
-        return tag2;
-    }
-
-    public void setTag2(String tag2) {
-        this.tag2 = tag2;
-    }
-
-    public String getTag3() {
-        return tag3;
-    }
-
-    public void setTag3(String tag3) {
-        this.tag3 = tag3;
     }
 
     public String getPhoto() {
@@ -173,5 +151,13 @@ public class SalesOffer {
 
     public void setComments(List<SalesOfferComment> commentList) {
         this.commentList = commentList;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }

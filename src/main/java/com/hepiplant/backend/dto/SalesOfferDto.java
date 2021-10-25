@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class SalesOfferDto {
 
@@ -13,7 +14,7 @@ public class SalesOfferDto {
     private String body;
     private String location;
     private BigDecimal price;
-    private List<String> tags;
+    private Set<String> tags;
     private String photo;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
@@ -66,11 +67,11 @@ public class SalesOfferDto {
         this.price = price;
     }
 
-    public List<String> getTags() {
+    public Set<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(Set<String> tags) {
         this.tags = tags;
     }
 

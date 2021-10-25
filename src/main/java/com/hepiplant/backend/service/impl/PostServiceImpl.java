@@ -4,21 +4,20 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
+import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.PostRepository;
+import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.PostService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
@@ -32,12 +31,14 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
     private final BeanValidator beanValidator;
 
-    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, BeanValidator beanValidator) {
+    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, TagRepository tagRepository, BeanValidator beanValidator) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.tagRepository = tagRepository;
         this.beanValidator = beanValidator;
     }
 
@@ -46,9 +47,6 @@ public class PostServiceImpl implements PostService {
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setBody(postDto.getBody());
-        if(postDto.getTags()!=null) {
-            addTagsToPost(post, postDto.getTags());
-        }
         post.setPhoto(postDto.getPhoto());
         // not null
         User user = userRepository.findById(postDto.getUserId())
@@ -59,6 +57,9 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + postDto.getCategoryId()));
         post.setCategory(category);
         post.setComments(new ArrayList<>());
+        if(postDto.getTags()!=null) {
+            addTagsToPost(post, postDto);
+        }
         beanValidator.validate(post);
         Post savedPost = postRepository.save(post);
         return mapToDto(savedPost);
@@ -94,12 +95,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getAllByTag(String tag) {
+        Optional<Tag> tags = tagRepository.findByName(tag);
+        if(tags.isPresent())
         return postRepository.findAll().stream()
-                .filter(p -> tag.equals(p.getTag1()) ||
-                        tag.equals(p.getTag2()) ||
-                        tag.equals(p.getTag3()) ||
-                        tag.equals(p.getTag4()) ||
-                        tag.equals(p.getTag5()))
+                .filter(p -> p.getTags().contains(tags.get()))
+                .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList());
+        else return postRepository.findAll().stream()
+                .filter(p -> p.getTags().contains(""))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -122,7 +125,7 @@ public class PostServiceImpl implements PostService {
             post.setBody(postDto.getBody());
         }
         if(postDto.getTags() != null && !postDto.getTags().isEmpty()){
-            addTagsToPost(post, postDto.getTags());
+            addTagsToPost(post, postDto);
         }
         if(postDto.getPhoto() !=null){
             post.setPhoto(postDto.getPhoto());
@@ -150,24 +153,21 @@ public class PostServiceImpl implements PostService {
         return "Successfully deleted the post with id = "+ id;
     }
 
-    private void addTagsToPost(Post post, List<String> tags) {
-        for(int i = 0; i<TAGS_AMOUNT; i++){
-            String tag = null;
-            if(i < tags.size()){
-                tag = tags.get(i);
-            }
-            switch (i){
-                case 0:
-                    post.setTag1(tag); break;
-                case 1:
-                    post.setTag2(tag); break;
-                case 2:
-                    post.setTag3(tag); break;
-                case 3:
-                    post.setTag4(tag); break;
-                case 4:
-                    post.setTag5(tag); break;
+    private void addTagsToPost(Post post, PostDto postDto) {
+        Set<Tag> tags=new HashSet<>();
+        for(String tagName : postDto.getTags()){
+            Optional<Tag> tag = tagRepository.findByName(tagName.toLowerCase());
+            if(tag.isPresent()) tags.add(tag.get());
+            else{
+                Tag newTag = new Tag();
+                newTag.setName(tagName.toLowerCase());
+                newTag.setPosts(Set.of(post));
+                beanValidator.validate(newTag);
+                Tag savedTag = tagRepository.save(newTag);
+                tags.add(savedTag);
+
             }
         }
+        post.setTags(tags);
     }
 }

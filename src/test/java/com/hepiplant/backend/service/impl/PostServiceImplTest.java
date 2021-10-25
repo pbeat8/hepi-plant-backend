@@ -3,11 +3,13 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
+import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.PostRepository;
+import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,9 +23,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -43,6 +44,8 @@ class PostServiceImplTest {
     @Mock
     private UserRepository userRepository;
     @Mock
+    private TagRepository tagRepository;
+    @Mock
     private BeanValidator beanValidator;
 
     @Captor
@@ -55,21 +58,26 @@ class PostServiceImplTest {
     private PostDto dto;
     private static User user;
     private static Category category;
+    private static Tag tag;
+    private static Set<Tag> tags;
 
     @BeforeAll
     public static void initializeVariables(){
         user = new User(1L, "username1", "uId1", "email@gmail.com",
                 null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
+        tag = new Tag(1L,"tag1");
+        tags = new HashSet<>();
+        tags.add(tag);
     }
 
     @BeforeEach
     public void initializePost(){
-        post = new Post(1L, "Post 1", "Body 1", "tag1", "tag2", "tag3", null, null, "photo", user, category);
+        post = new Post(1L, "Post 1", "Body 1", "photo", user, category, tags);
         dto = new PostDto();
         dto.setTitle(post.getTitle());
         dto.setBody(post.getBody());
-        dto.setTags(List.of(post.getTag1(), post.getTag2(), post.getTag3()));
+        dto.setTags(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()));
         dto.setUserId(user.getId());
         dto.setCategoryId(category.getId());
     }
@@ -81,6 +89,7 @@ class PostServiceImplTest {
         //given
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
         given(postRepository.save(postArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -89,25 +98,20 @@ class PostServiceImplTest {
         //then
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(times(1)).findByName(eq((String) dto.getTags().toArray()[0]));
         then(beanValidator).should(times(1)).validate(any());
         then(postRepository).should(times(1)).save(any(Post.class));
         assertEquals(post.getTitle(), result.getTitle());
         assertEquals(post.getBody(), result.getBody());
-        assertEquals(3, result.getTags().size());
-        assertEquals(post.getTag1(), result.getTags().get(0));
-        assertEquals(post.getTag2(), result.getTags().get(1));
-        assertEquals(post.getTag3(), result.getTags().get(2));
+        assertEquals(1, result.getTags().size());
+        assertEquals(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.getTags());
         assertEquals(user.getId(), result.getUserId());
         assertEquals(category.getId(), result.getCategoryId());
 
         Post captorValue = postArgumentCaptor.getValue();
         assertEquals(post.getTitle(), captorValue.getTitle());
         assertEquals(post.getBody(), captorValue.getBody());
-        assertEquals(post.getTag1(), captorValue.getTag1());
-        assertEquals(post.getTag2(), captorValue.getTag2());
-        assertEquals(post.getTag3(), captorValue.getTag3());
-        assertEquals(post.getTag4(), captorValue.getTag4());
-        assertEquals(post.getTag5(), captorValue.getTag5());
+        assertEquals(post.getTags(), captorValue.getTags());
         assertEquals(user, captorValue.getUser());
         assertEquals(category, captorValue.getCategory());
     }
@@ -173,10 +177,8 @@ class PostServiceImplTest {
         assertEquals(1, result.size());
         assertEquals(post.getTitle(), result.get(0).getTitle());
         assertEquals(post.getBody(), result.get(0).getBody());
-        assertEquals(3, result.get(0).getTags().size());
-        assertEquals(post.getTag1(), result.get(0).getTags().get(0));
-        assertEquals(post.getTag2(), result.get(0).getTags().get(1));
-        assertEquals(post.getTag3(), result.get(0).getTags().get(2));
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(category.getId(), result.get(0).getCategoryId());
     }
@@ -200,19 +202,19 @@ class PostServiceImplTest {
     public void shouldGetAllPostsByTagOk(){
         //given
         given(postRepository.findAll()).willReturn(List.of(post));
+        given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
 
         //when
-        List<PostDto> result = postService.getAllByTag(post.getTag1());
+        List<PostDto> result = postService.getAllByTag((String) post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()).toArray()[0]);
 
         //then
         then(postRepository).should(times(1)).findAll();
+        then(tagRepository).should(times(1)).findByName((String) dto.getTags().toArray()[0]);
         assertEquals(1, result.size());
         assertEquals(post.getTitle(), result.get(0).getTitle());
         assertEquals(post.getBody(), result.get(0).getBody());
-        assertEquals(3, result.get(0).getTags().size());
-        assertEquals(post.getTag1(), result.get(0).getTags().get(0));
-        assertEquals(post.getTag2(), result.get(0).getTags().get(1));
-        assertEquals(post.getTag3(), result.get(0).getTags().get(2));
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(category.getId(), result.get(0).getCategoryId());
     }
@@ -221,12 +223,14 @@ class PostServiceImplTest {
     public void shouldGetAllPostsByTagEmptyListOk(){
         //given
         given(postRepository.findAll()).willReturn(List.of(post));
+        given(tagRepository.findByName(anyString())).willReturn(Optional.empty());
 
         //when
         List<PostDto> result = postService.getAllByTag("someTag");
 
         //then
         then(postRepository).should(times(1)).findAll();
+        then(tagRepository).should(times(1)).findByName(anyString());
         assertEquals(0, result.size());
     }
 
@@ -245,10 +249,8 @@ class PostServiceImplTest {
         assertEquals(1, result.size());
         assertEquals(post.getTitle(), result.get(0).getTitle());
         assertEquals(post.getBody(), result.get(0).getBody());
-        assertEquals(3, result.get(0).getTags().size());
-        assertEquals(post.getTag1(), result.get(0).getTags().get(0));
-        assertEquals(post.getTag2(), result.get(0).getTags().get(1));
-        assertEquals(post.getTag3(), result.get(0).getTags().get(2));
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(category.getId(), result.get(0).getCategoryId());
     }
@@ -296,10 +298,8 @@ class PostServiceImplTest {
         assertEquals(1, result.size());
         assertEquals(post.getTitle(), result.get(0).getTitle());
         assertEquals(post.getBody(), result.get(0).getBody());
-        assertEquals(3, result.get(0).getTags().size());
-        assertEquals(post.getTag1(), result.get(0).getTags().get(0));
-        assertEquals(post.getTag2(), result.get(0).getTags().get(1));
-        assertEquals(post.getTag3(), result.get(0).getTags().get(2));
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(category.getId(), result.get(0).getCategoryId());
     }
@@ -345,10 +345,8 @@ class PostServiceImplTest {
         then(postRepository).should(times(1)).findById(post.getId());
         assertEquals(post.getTitle(), result.getTitle());
         assertEquals(post.getBody(), result.getBody());
-        assertEquals(3, result.getTags().size());
-        assertEquals(post.getTag1(), result.getTags().get(0));
-        assertEquals(post.getTag2(), result.getTags().get(1));
-        assertEquals(post.getTag3(), result.getTags().get(2));
+        assertEquals(1, result.getTags().size());
+        assertEquals(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.getTags());
         assertEquals(user.getId(), result.getUserId());
         assertEquals(category.getId(), result.getCategoryId());
     }
@@ -371,9 +369,9 @@ class PostServiceImplTest {
         //given
         Post postToUpdate = new Post();
         dto.setUserId(null);
-
         given(postRepository.findById(post.getId())).willReturn(Optional.of(postToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        given(tagRepository.findByName(anyString())).willReturn(Optional.of(tag));
         given(postRepository.save(postArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -386,20 +384,14 @@ class PostServiceImplTest {
         then(postRepository).should(times(1)).save(any(Post.class));
         assertEquals(post.getTitle(), result.getTitle());
         assertEquals(post.getBody(), result.getBody());
-        assertEquals(3, result.getTags().size());
-        assertEquals(post.getTag1(), result.getTags().get(0));
-        assertEquals(post.getTag2(), result.getTags().get(1));
-        assertEquals(post.getTag3(), result.getTags().get(2));
+        assertEquals(1, result.getTags().size());
+        assertEquals(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.getTags());
         assertEquals(category.getId(), result.getCategoryId());
 
         Post captorValue = postArgumentCaptor.getValue();
         assertEquals(post.getTitle(), captorValue.getTitle());
         assertEquals(post.getBody(), captorValue.getBody());
-        assertEquals(post.getTag1(), captorValue.getTag1());
-        assertEquals(post.getTag2(), captorValue.getTag2());
-        assertEquals(post.getTag3(), captorValue.getTag3());
-        assertEquals(post.getTag4(), captorValue.getTag4());
-        assertEquals(post.getTag5(), captorValue.getTag5());
+        assertEquals(post.getTags(), captorValue.getTags());
         assertEquals(category, captorValue.getCategory());
     }
 
@@ -457,9 +449,9 @@ class PostServiceImplTest {
         //given
         Post postToUpdate = new Post();
         dto.setUserId(null);
-
         given(postRepository.findById(post.getId())).willReturn(Optional.of(postToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 
         //when
@@ -468,6 +460,7 @@ class PostServiceImplTest {
         assertThrows(InvalidBeanException.class, () -> postService.update(post.getId(), dto));
         then(postRepository).should(times(1)).findById(post.getId());
         then(categoryRepository).should(atMostOnce()).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(atMostOnce()).findByName(eq((String)dto.getTags().toArray()[0]));
         then(beanValidator).should(times(1)).validate(any());
         then(postRepository).should(times(0)).save(any(Post.class));
     }
