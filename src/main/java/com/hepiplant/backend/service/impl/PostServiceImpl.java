@@ -2,6 +2,7 @@ package com.hepiplant.backend.service.impl;
 
 
 import com.hepiplant.backend.dto.PostDto;
+import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.Tag;
@@ -13,6 +14,7 @@ import com.hepiplant.backend.repository.PostRepository;
 import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.PostService;
+import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
@@ -33,13 +35,15 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final BeanValidator beanValidator;
+    private final TagService tagService;
 
-    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, TagRepository tagRepository, BeanValidator beanValidator) {
+    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, TagRepository tagRepository, BeanValidator beanValidator, TagService tagService) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.beanValidator = beanValidator;
+        this.tagService = tagService;
     }
 
     @Override
@@ -163,9 +167,14 @@ public class PostServiceImpl implements PostService {
                 newTag.setName(tagName.toLowerCase());
                 newTag.setPosts(Set.of(post));
                 beanValidator.validate(newTag);
-                Tag savedTag = tagRepository.save(newTag);
-                tags.add(savedTag);
-
+                TagDto savedTag = tagService.add(mapToDto(newTag));
+                if(savedTag!=null){
+                    Tag newTag2 = new Tag();
+                    newTag2.setId(savedTag.getId());
+                    newTag2.setName(savedTag.getName().toLowerCase().trim());
+                    newTag2.setPosts(Set.of(post));
+                    tags.add(newTag2);
+                }
             }
         }
         post.setTags(tags);

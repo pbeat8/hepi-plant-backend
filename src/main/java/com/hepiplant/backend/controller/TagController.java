@@ -19,6 +19,7 @@ public class TagController {
         this.tagService = tagService;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PostMapping
     public ResponseEntity<TagDto> addTag(@RequestBody TagDto tagDto){
         return ResponseEntity.ok().body(tagService.add(tagDto));

@@ -41,6 +41,12 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public TagDto getById(Long id) {
+        Tag tag = tagRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Tag not found for id "+id));
+        return mapToDto(tag);
+    }
+
+    @Override
     public TagDto getByName(String name) {
         Tag tag = tagRepository.findByName(name.toLowerCase()).orElseThrow(() -> new EntityNotFoundException("Tag not found for name "+name));
         return mapToDto(tag);
@@ -48,24 +54,34 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto add(TagDto tagDto) {
-        Optional<Tag> optionalTag = tagRepository.findByName(tagDto.getName());
+        Optional<Tag> optionalTag = tagRepository.findByName(tagDto.getName().toLowerCase().trim());
         if(optionalTag.isPresent())
             return mapToDto(optionalTag.get());
         Tag tag = new Tag();
         tag.setId(tagDto.getId());
         tag.setName(tagDto.getName().toLowerCase().trim());
-        Set<Post> posts=null;
-        for (Long id: tagDto.getPosts()) {
-            Post post = postRepository.findById(id).get();
-            if(post!=null) posts.add(post);
+        if(tagDto.getPosts()!=null){
+            Set<Post> posts=null;
+            for (Long id: tagDto.getPosts()) {
+                if(id!=null){
+                    Post post = postRepository.findById(id).get();
+                    if(post!=null) posts.add(post);
+                }
+
+            }
+            tag.setPosts(posts);
         }
-        tag.setPosts(posts);
-        Set<SalesOffer> salesOffers=null;
-        for (Long id: tagDto.getSalesOffer()) {
-            SalesOffer salesOffer = salesOfferRepository.findById(id).get();
-            if(salesOffer!=null) salesOffers.add(salesOffer);
+        if(tagDto.getSalesOffer()!=null){
+            Set<SalesOffer> salesOffers=null;
+            for (Long id: tagDto.getSalesOffer()) {
+                if(id!=null){
+                    SalesOffer salesOffer = salesOfferRepository.findById(id).get();
+                    if(salesOffer!=null) salesOffers.add(salesOffer);
+                }
+
+            }
+            tag.setSalesOffers(salesOffers);
         }
-        tag.setSalesOffers(salesOffers);
 
         beanValidator.validate(tag);
         Tag savedTag = tagRepository.save(tag);

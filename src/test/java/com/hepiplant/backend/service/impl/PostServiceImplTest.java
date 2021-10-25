@@ -1,6 +1,7 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.PostDto;
+import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.Tag;
@@ -60,15 +61,19 @@ class PostServiceImplTest {
     private static Category category;
     private static Tag tag;
     private static Set<Tag> tags;
+    private static TagDto tagDto;
 
     @BeforeAll
     public static void initializeVariables(){
         user = new User(1L, "username1", "uId1", "email@gmail.com",
                 null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
-        tag = new Tag(1L,"tag1");
+        tag = new Tag(1L,"tag1",new HashSet<>(),new HashSet<>());
         tags = new HashSet<>();
         tags.add(tag);
+        tagDto = new TagDto();
+        tagDto.setId(tag.getId());
+        tagDto.setName(tag.getName());
     }
 
     @BeforeEach
@@ -415,7 +420,6 @@ class PostServiceImplTest {
         //given
         Post postToUpdate = new Post();
         dto.setUserId(null);
-
         given(postRepository.findById(post.getId())).willReturn(Optional.of(postToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.empty());
 

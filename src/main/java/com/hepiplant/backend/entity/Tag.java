@@ -24,18 +24,20 @@ public class Tag {
     private Set<Post> posts;
 
     @ManyToMany
-    @JoinTable(schema = "forum", name = "salesOffer_tag",
+    @JoinTable(schema = "forum", name = "sales_offer_tag",
             joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "salesOffer_id"))
+            inverseJoinColumns = @JoinColumn(name = "sales_offer_id"))
     private Set<SalesOffer> salesOffers;
 
 
     public Tag() {
     }
 
-    public Tag(Long id, String name) {
+    public Tag(Long id, String name, Set<Post> posts, Set<SalesOffer> salesOffers) {
         this.id = id;
         this.name = name;
+        this.posts = posts;
+        this.salesOffers = salesOffers;
     }
 
     public Long getId() {

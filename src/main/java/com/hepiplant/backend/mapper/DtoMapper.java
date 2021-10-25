@@ -177,9 +177,11 @@ public class DtoMapper {
     public static TagDto mapToDto(Tag tag){
         TagDto dto = new TagDto();
         dto.setId(tag.getId());
-        dto.setName(tag.getName().toLowerCase());
-        dto.setPosts(tag.getPosts().stream().map(Post::getId).collect(Collectors.toSet()));
-        dto.setSalesOffer(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
+        dto.setName(tag.getName().toLowerCase().trim());
+        if(tag.getPosts()!=null)
+            dto.setPosts(tag.getPosts().stream().map(Post::getId).collect(Collectors.toSet()));
+        if(dto.getSalesOffer()!=null)
+            dto.setSalesOffer(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
         return dto;
     }
 

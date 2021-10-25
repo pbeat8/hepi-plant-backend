@@ -1,6 +1,7 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.SalesOfferDto;
+import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.Tag;
@@ -9,6 +10,7 @@ import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.*;
 import com.hepiplant.backend.service.SalesOfferService;
+import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
@@ -29,13 +31,15 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     private final UserRepository userRepository;
     private final BeanValidator beanValidator;
     private TagRepository tagRepository;
+    private final TagService tagService;
 
-    public SalesOfferServiceImpl(SalesOfferRepository salesOfferRepository, CategoryRepository categoryRepository, UserRepository userRepository, BeanValidator beanValidator, TagRepository tagRepository) {
+    public SalesOfferServiceImpl(SalesOfferRepository salesOfferRepository, CategoryRepository categoryRepository, UserRepository userRepository, BeanValidator beanValidator, TagRepository tagRepository, TagService tagService) {
         this.salesOfferRepository = salesOfferRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.beanValidator = beanValidator;
         this.tagRepository = tagRepository;
+        this.tagService = tagService;
     }
 
     @Override
@@ -169,8 +173,14 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                 newTag.setName(tagName.toLowerCase());
                 newTag.setSalesOffers(Set.of(salesOffer));
                 beanValidator.validate(newTag);
-                Tag savedTag = tagRepository.save(newTag);
-                tags.add(savedTag);
+                TagDto savedTag = tagService.add(mapToDto(newTag));
+                if(savedTag!=null){
+                    Tag newTag2 = new Tag();
+                    newTag2.setId(savedTag.getId());
+                    newTag2.setName(savedTag.getName().toLowerCase().trim());
+                    newTag2.setSalesOffers(Set.of(salesOffer));
+                    tags.add(newTag2);
+                }
             }
         }
         salesOffer.setTags(tags);

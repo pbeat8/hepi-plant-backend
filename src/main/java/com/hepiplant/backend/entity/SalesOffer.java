@@ -49,8 +49,8 @@ public class SalesOffer {
     @JsonIgnore
     private List<SalesOfferComment> commentList;
     @ManyToMany
-    @JoinTable(schema = "forum", name = "salesOffer_tag",
-            joinColumns = @JoinColumn(name = "salesOffer_id"),
+    @JoinTable(schema = "forum", name = "sales_offer_tag",
+            joinColumns = @JoinColumn(name = "sales_offer_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 

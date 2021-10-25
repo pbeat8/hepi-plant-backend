@@ -8,6 +8,7 @@ import java.util.List;
 public interface TagService {
 
     List<TagDto> getAll();
+    TagDto getById(Long id);
     TagDto getByName(String name);
     TagDto add(TagDto tagDto);
     String delete(Long id);
