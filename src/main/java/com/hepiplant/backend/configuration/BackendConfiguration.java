@@ -3,6 +3,7 @@ package com.hepiplant.backend.configuration;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
@@ -16,20 +17,30 @@ import javax.sql.DataSource;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 
 @Configuration
 @EnableSwagger2
 public class BackendConfiguration {
 
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
+    @Value("${spring.datasource.driverClassName}")
+    private String driverClassName;
 
     @Bean
     public DataSource dataSource() {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(dbUrl);
-        return new HikariDataSource(config);
+        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+        try {
+            URI dbUri = new URI(System.getenv("DATABASE_URL"));
+            dataSourceBuilder.driverClassName(driverClassName);
+            dataSourceBuilder.url("jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath());
+            dataSourceBuilder.username(dbUri.getUserInfo().split(":")[0]);
+            dataSourceBuilder.password(dbUri.getUserInfo().split(":")[1]);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return dataSourceBuilder.build();
     }
 
     @Bean
