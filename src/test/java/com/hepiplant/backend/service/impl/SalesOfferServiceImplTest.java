@@ -4,12 +4,15 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
+import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SalesOfferRepository;
+import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
+import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,9 +26,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -45,7 +47,11 @@ class SalesOfferServiceImplTest {
     @Mock
     private UserRepository userRepository;
     @Mock
+    private TagRepository tagRepository;
+    @Mock
     private BeanValidator beanValidator;
+    @Mock
+    private TagService tagService;
 
     @Captor
     private ArgumentCaptor<SalesOffer> salesOfferArgumentCaptor;
@@ -57,23 +63,28 @@ class SalesOfferServiceImplTest {
     private SalesOfferDto dto;
     private static User user;
     private static Category category;
+    private static Tag tag;
+    private static Set<Tag> tags;
 
     @BeforeAll
     public static void initializeVariables(){
         user = new User(1L, "username1", "uId1", "email@gmail.com",
                 null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
+        tag = new Tag(1L,"tag1",new HashSet<>(),new HashSet<>());
+        tags =new HashSet<>();
+        tags.add(tag);
     }
 
     @BeforeEach
     public void initializeSalesOffer(){
-        salesOffer = new SalesOffer(1L,"Title 1", "Body 1","Wroclaw", BigDecimal.valueOf(23.88), "tag1", "tag2", null, "photo", user, category);
+        salesOffer = new SalesOffer(1L,"Title 1", "Body 1","Wroclaw", BigDecimal.valueOf(23.88),"photo", user, category,tags);
         dto = new SalesOfferDto();
         dto.setTitle(salesOffer.getTitle());
         dto.setBody(salesOffer.getBody());
         dto.setLocation(salesOffer.getLocation());
         dto.setPrice(salesOffer.getPrice());
-        dto.setTags(List.of(salesOffer.getTag1(), salesOffer.getTag2()));
+        dto.setTags(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()));
         dto.setUserId(user.getId());
         dto.setCategoryId(category.getId());
     }
@@ -85,6 +96,7 @@ class SalesOfferServiceImplTest {
         //given
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
         given(salesOfferRepository.save(salesOfferArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -93,15 +105,15 @@ class SalesOfferServiceImplTest {
         //then
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(times(1)).findByName(eq((String) dto.getTags().toArray()[0]));
         then(beanValidator).should(times(1)).validate(any());
         then(salesOfferRepository).should(times(1)).save(any(SalesOffer.class));
         assertEquals(salesOffer.getTitle(), result.getTitle());
         assertEquals(salesOffer.getBody(), result.getBody());
         assertEquals(salesOffer.getLocation(), result.getLocation());
         assertEquals(salesOffer.getPrice(), result.getPrice());
-        assertEquals(2, result.getTags().size());
-        assertEquals(salesOffer.getTag1(), result.getTags().get(0));
-        assertEquals(salesOffer.getTag2(), result.getTags().get(1));
+        assertEquals(1, result.getTags().size());
+        assertEquals(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.getTags());
         assertEquals(user.getId(), result.getUserId());
         assertEquals(category.getId(), result.getCategoryId());
 
@@ -110,9 +122,8 @@ class SalesOfferServiceImplTest {
         assertEquals(salesOffer.getBody(), captorValue.getBody());
         assertEquals(salesOffer.getLocation(), captorValue.getLocation());
         assertEquals(salesOffer.getPrice(), captorValue.getPrice());
-        assertEquals(salesOffer.getTag1(), captorValue.getTag1());
-        assertEquals(salesOffer.getTag2(), captorValue.getTag2());
-        assertEquals(salesOffer.getTag3(), captorValue.getTag3());
+        assertEquals(salesOffer.getTags(), captorValue.getTags());
+
         assertEquals(user, captorValue.getUser());
         assertEquals(category, captorValue.getCategory());
     }
@@ -128,6 +139,7 @@ class SalesOfferServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> salesOfferService.create(dto));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(categoryRepository).should(atMostOnce()).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(atMostOnce()).save(tag);
         then(salesOfferRepository).should(times(0)).save(any(SalesOffer.class));
     }
 
@@ -143,6 +155,7 @@ class SalesOfferServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> salesOfferService.create(dto));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(atMostOnce()).save(tag);
         then(salesOfferRepository).should(times(0)).save(any(SalesOffer.class));
     }
 
@@ -151,6 +164,7 @@ class SalesOfferServiceImplTest {
         //given
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 
         //when
@@ -159,6 +173,7 @@ class SalesOfferServiceImplTest {
         assertThrows(InvalidBeanException.class, () -> salesOfferService.create(dto));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(times(1)).findByName((String) dto.getTags().toArray()[0]);
         then(beanValidator).should(times(1)).validate(any());
         then(salesOfferRepository).should(times(0)).save(any(SalesOffer.class));
     }
@@ -180,9 +195,8 @@ class SalesOfferServiceImplTest {
         assertEquals(salesOffer.getBody(), result.get(0).getBody());
         assertEquals(salesOffer.getLocation(), result.get(0).getLocation());
         assertEquals(salesOffer.getPrice(), result.get(0).getPrice());
-        assertEquals(2, result.get(0).getTags().size());
-        assertEquals(salesOffer.getTag1(), result.get(0).getTags().get(0));
-        assertEquals(salesOffer.getTag2(), result.get(0).getTags().get(1));
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(category.getId(), result.get(0).getCategoryId());
     }
@@ -217,9 +231,8 @@ class SalesOfferServiceImplTest {
         assertEquals(salesOffer.getBody(), result.get(0).getBody());
         assertEquals(salesOffer.getLocation(), result.get(0).getLocation());
         assertEquals(salesOffer.getPrice(), result.get(0).getPrice());
-        assertEquals(2, result.get(0).getTags().size());
-        assertEquals(salesOffer.getTag1(), result.get(0).getTags().get(0));
-        assertEquals(salesOffer.getTag2(), result.get(0).getTags().get(1));
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(category.getId(), result.get(0).getCategoryId());
     }
@@ -268,9 +281,8 @@ class SalesOfferServiceImplTest {
         assertEquals(salesOffer.getBody(), result.get(0).getBody());
         assertEquals(salesOffer.getLocation(), result.get(0).getLocation());
         assertEquals(salesOffer.getPrice(), result.get(0).getPrice());
-        assertEquals(2, result.get(0).getTags().size());
-        assertEquals(salesOffer.getTag1(), result.get(0).getTags().get(0));
-        assertEquals(salesOffer.getTag2(), result.get(0).getTags().get(1));
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(category.getId(), result.get(0).getCategoryId());
     }
@@ -308,20 +320,21 @@ class SalesOfferServiceImplTest {
     public void shouldGetAllSalesOffersByTagOk(){
         //given
         given(salesOfferRepository.findAll()).willReturn(List.of(salesOffer));
+        given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAllByTag(salesOffer.getTag1());
+        List<SalesOfferDto> result = salesOfferService.getAllByTag((String) salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()).toArray()[0]);
 
         //then
+        then(tagRepository).should(times(1)).findByName((String) dto.getTags().toArray()[0]);
         then(salesOfferRepository).should(times(1)).findAll();
         assertEquals(1, result.size());
         assertEquals(salesOffer.getTitle(), result.get(0).getTitle());
         assertEquals(salesOffer.getBody(), result.get(0).getBody());
         assertEquals(salesOffer.getLocation(), result.get(0).getLocation());
         assertEquals(salesOffer.getPrice(), result.get(0).getPrice());
-        assertEquals(2, result.get(0).getTags().size());
-        assertEquals(salesOffer.getTag1(), result.get(0).getTags().get(0));
-        assertEquals(salesOffer.getTag2(), result.get(0).getTags().get(1));
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
         assertEquals(user.getId(), result.get(0).getUserId());
         assertEquals(category.getId(), result.get(0).getCategoryId());
     }
@@ -355,9 +368,8 @@ class SalesOfferServiceImplTest {
         assertEquals(salesOffer.getBody(), result.getBody());
         assertEquals(salesOffer.getLocation(), result.getLocation());
         assertEquals(salesOffer.getPrice(), result.getPrice());
-        assertEquals(2, result.getTags().size());
-        assertEquals(salesOffer.getTag1(), result.getTags().get(0));
-        assertEquals(salesOffer.getTag2(), result.getTags().get(1));
+        assertEquals(1, result.getTags().size());
+        assertEquals(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.getTags());
         assertEquals(user.getId(), result.getUserId());
         assertEquals(category.getId(), result.getCategoryId());
     }
@@ -381,9 +393,9 @@ class SalesOfferServiceImplTest {
         //given
         SalesOffer salesOfferToUpdate = new SalesOffer();
         dto.setUserId(null);
-
         given(salesOfferRepository.findById(salesOffer.getId())).willReturn(Optional.of(salesOfferToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
         given(salesOfferRepository.save(salesOfferArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -392,15 +404,15 @@ class SalesOfferServiceImplTest {
         //then
         then(salesOfferRepository).should(times(1)).findById(salesOffer.getId());
         then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(times(1)).findByName(eq((String) dto.getTags().toArray()[0]));
         then(beanValidator).should(times(1)).validate(any());
         then(salesOfferRepository).should(times(1)).save(any(SalesOffer.class));
         assertEquals(salesOffer.getTitle(), result.getTitle());
         assertEquals(salesOffer.getBody(), result.getBody());
         assertEquals(salesOffer.getLocation(), result.getLocation());
         assertEquals(salesOffer.getPrice(), result.getPrice());
-        assertEquals(2, result.getTags().size());
-        assertEquals(salesOffer.getTag1(), result.getTags().get(0));
-        assertEquals(salesOffer.getTag2(), result.getTags().get(1));
+        assertEquals(1, result.getTags().size());
+        assertEquals(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.getTags());
         assertEquals(category.getId(), result.getCategoryId());
 
         SalesOffer captorValue = salesOfferArgumentCaptor.getValue();
@@ -408,9 +420,7 @@ class SalesOfferServiceImplTest {
         assertEquals(salesOffer.getBody(), captorValue.getBody());
         assertEquals(salesOffer.getLocation(), captorValue.getLocation());
         assertEquals(salesOffer.getPrice(), captorValue.getPrice());
-        assertEquals(salesOffer.getTag1(), captorValue.getTag1());
-        assertEquals(salesOffer.getTag2(), captorValue.getTag2());
-        assertEquals(salesOffer.getTag3(), captorValue.getTag3());
+        assertEquals(salesOffer.getTags(), captorValue.getTags());
         assertEquals(category, captorValue.getCategory());
     }
 
@@ -469,9 +479,9 @@ class SalesOfferServiceImplTest {
         //given
         SalesOffer salesOfferToUpdate = new SalesOffer();
         dto.setUserId(null);
-
         given(salesOfferRepository.findById(salesOffer.getId())).willReturn(Optional.of(salesOfferToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 
         //when
@@ -480,6 +490,7 @@ class SalesOfferServiceImplTest {
         assertThrows(InvalidBeanException.class, () -> salesOfferService.update(salesOffer.getId(), dto));
         then(salesOfferRepository).should(times(1)).findById(salesOffer.getId());
         then(categoryRepository).should(atMostOnce()).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(atMostOnce()).findByName(eq((String) dto.getTags().toArray()[0]));
         then(beanValidator).should(times(1)).validate(any());
         then(salesOfferRepository).should(times(0)).save(any(SalesOffer.class));
     }

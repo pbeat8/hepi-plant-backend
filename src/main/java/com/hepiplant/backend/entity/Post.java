@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(schema = "forum", name = "posts")
@@ -25,11 +26,6 @@ public class Post {
     @NotBlank
     @Size(min=1, max=255) // todo we will need to make it bigger later
     private String body;
-    private String tag1;
-    private String tag2;
-    private String tag3;
-    private String tag4;
-    private String tag5;
     private String photo;
     @CreationTimestamp
     private LocalDateTime createdDate;
@@ -46,21 +42,23 @@ public class Post {
     @JsonIgnore
     private List<PostComment> commentList;
 
+    @ManyToMany
+    @JoinTable(schema = "forum", name = "post_tag",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private Set<Tag> tags;
+
     public Post() {
     }
 
-    public Post(Long id, String title, String body, String tag1, String tag2, String tag3, String tag4, String tag5, String photo, User user, Category category) {
+    public Post(Long id, String title, String body, String photo, User user, Category category, Set<Tag> tags) {
         this.id = id;
         this.title = title;
         this.body = body;
-        this.tag1 = tag1;
-        this.tag2 = tag2;
-        this.tag3 = tag3;
-        this.tag4 = tag4;
-        this.tag5 = tag5;
         this.photo = photo;
         this.user = user;
         this.category = category;
+        this.tags = tags;
     }
 
     public Long getId() {
@@ -81,46 +79,6 @@ public class Post {
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public String getTag1() {
-        return tag1;
-    }
-
-    public void setTag1(String tag1) {
-        this.tag1 = tag1;
-    }
-
-    public String getTag2() {
-        return tag2;
-    }
-
-    public void setTag2(String tag2) {
-        this.tag2 = tag2;
-    }
-
-    public String getTag3() {
-        return tag3;
-    }
-
-    public void setTag3(String tag3) {
-        this.tag3 = tag3;
-    }
-
-    public String getTag4() {
-        return tag4;
-    }
-
-    public void setTag4(String tag4) {
-        this.tag4 = tag4;
-    }
-
-    public String getTag5() {
-        return tag5;
-    }
-
-    public void setTag5(String tag5) {
-        this.tag5 = tag5;
     }
 
     public String getPhoto() {
@@ -169,5 +127,12 @@ public class Post {
 
     public void setComments(List<PostComment> commentList) {
         this.commentList = commentList;
+    }
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }

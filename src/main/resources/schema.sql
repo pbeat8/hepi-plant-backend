@@ -150,6 +150,16 @@ CREATE SEQUENCE IF NOT EXISTS forum.sales_offers_seq AS BIGINT;
 CREATE SEQUENCE IF NOT EXISTS forum.post_comments_seq AS BIGINT;
 CREATE SEQUENCE IF NOT EXISTS forum.sales_offer_comments_seq AS BIGINT;
 
+CREATE TABLE IF NOT EXISTS forum.tags
+(
+    id bigint NOT NULL,
+    name character varying(255) UNIQUE NOT NULL COLLATE pg_catalog."default",
+    CONSTRAINT tags_pkey PRIMARY KEY (id),
+    CONSTRAINT tg_efqukogbk7i0poucwoy2qie74 UNIQUE (name)
+)
+TABLESPACE pg_default;
+ALTER TABLE forum.tags OWNER to postgres;
+
 CREATE TABLE IF NOT EXISTS forum.posts
 (
     id bigint NOT NULL,
@@ -247,3 +257,40 @@ CREATE TABLE IF NOT EXISTS forum.sales_offer_comments
 )
 TABLESPACE pg_default;
 ALTER TABLE forum.sales_offer_comments OWNER to postgres;
+
+
+CREATE TABLE IF NOT EXISTS forum.post_tag
+(
+    post_id bigint NOT NULL,
+    tag_id bigint NOT NULL,
+    CONSTRAINT post_tag_pkey PRIMARY KEY (post_id, tag_id),
+    CONSTRAINT fkpsftlgxa90nmuunajoxgbl316 FOREIGN KEY (post_id)
+        REFERENCES forum.posts (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fktgtlgxa90nmuunajoxgbl316 FOREIGN KEY (tag_id)
+            REFERENCES forum.tags (id) MATCH SIMPLE
+            ON UPDATE NO ACTION
+            ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+ALTER TABLE forum.post_tag OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS forum.sales_offer_tag
+(
+    sales_offer_id bigint NOT NULL,
+    tag_id bigint NOT NULL,
+    CONSTRAINT salesOffer_tag_pkey PRIMARY KEY (sales_offer_id, tag_id),
+    CONSTRAINT fksoftlgxa10nmuunajoxgbl316 FOREIGN KEY (sales_offer_id)
+        REFERENCES forum.sales_offers (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fktgtlgxa10nmuunajoxgbl316 FOREIGN KEY (tag_id)
+            REFERENCES forum.tags (id) MATCH SIMPLE
+            ON UPDATE NO ACTION
+            ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+ALTER TABLE forum.sales_offer_tag OWNER to postgres;
+
+CREATE SEQUENCE IF NOT EXISTS forum.tags_seq AS BIGINT;
