@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS users.roles
     CONSTRAINT roles_pkey PRIMARY KEY (id)
 )
 TABLESPACE pg_default;
-ALTER TABLE users.roles OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS users.users
 (
@@ -23,7 +22,6 @@ CREATE TABLE IF NOT EXISTS users.users
     CONSTRAINT uk_efqukogbk7i0poucwoy2qie74 UNIQUE (uid)
 )
 TABLESPACE pg_default;
-ALTER TABLE users.users OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS users.user_role
 (
@@ -40,7 +38,6 @@ CREATE TABLE IF NOT EXISTS users.user_role
             ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE users.user_role OWNER to postgres;
 
 -- PLANTS SCHEMA --
 CREATE SCHEMA IF NOT EXISTS plants;
@@ -59,7 +56,6 @@ CREATE TABLE IF NOT EXISTS plants.categories
     CONSTRAINT uk_t8o6pivur7nn124jehx7cygw5 UNIQUE (name)
 )
 TABLESPACE pg_default;
-ALTER TABLE plants.categories OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS plants.species
 (
@@ -79,7 +75,6 @@ CREATE TABLE IF NOT EXISTS plants.species
         ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE plants.species OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS plants.plants
 (
@@ -106,7 +101,6 @@ CREATE TABLE IF NOT EXISTS plants.plants
         ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE plants.plants OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS plants.events
 (
@@ -123,7 +117,6 @@ CREATE TABLE IF NOT EXISTS plants.events
         ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE plants.events OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS plants.schedules
 (
@@ -139,7 +132,6 @@ CREATE TABLE IF NOT EXISTS plants.schedules
         ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE plants.schedules OWNER to postgres;
 
 
 -- FORUM SCHEMA --
@@ -158,7 +150,6 @@ CREATE TABLE IF NOT EXISTS forum.tags
     CONSTRAINT tg_efqukogbk7i0poucwoy2qie74 UNIQUE (name)
 )
 TABLESPACE pg_default;
-ALTER TABLE forum.tags OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS forum.posts
 (
@@ -186,7 +177,6 @@ CREATE TABLE IF NOT EXISTS forum.posts
         ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE forum.posts OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS forum.sales_offers
 (
@@ -214,7 +204,6 @@ CREATE TABLE IF NOT EXISTS forum.sales_offers
         ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE forum.sales_offers OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS forum.post_comments
 (
@@ -235,7 +224,6 @@ CREATE TABLE IF NOT EXISTS forum.post_comments
         ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE forum.post_comments OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS forum.sales_offer_comments
 (
@@ -256,7 +244,6 @@ CREATE TABLE IF NOT EXISTS forum.sales_offer_comments
         ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE forum.sales_offer_comments OWNER to postgres;
 
 
 CREATE TABLE IF NOT EXISTS forum.post_tag
@@ -274,7 +261,6 @@ CREATE TABLE IF NOT EXISTS forum.post_tag
             ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE forum.post_tag OWNER to postgres;
 
 CREATE TABLE IF NOT EXISTS forum.sales_offer_tag
 (
@@ -291,6 +277,5 @@ CREATE TABLE IF NOT EXISTS forum.sales_offer_tag
             ON DELETE NO ACTION
 )
 TABLESPACE pg_default;
-ALTER TABLE forum.sales_offer_tag OWNER to postgres;
 
 CREATE SEQUENCE IF NOT EXISTS forum.tags_seq AS BIGINT;
