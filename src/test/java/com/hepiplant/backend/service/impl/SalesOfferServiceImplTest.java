@@ -12,6 +12,7 @@ import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SalesOfferRepository;
 import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
+import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,8 @@ class SalesOfferServiceImplTest {
     private TagRepository tagRepository;
     @Mock
     private BeanValidator beanValidator;
+    @Mock
+    private TagService tagService;
 
     @Captor
     private ArgumentCaptor<SalesOffer> salesOfferArgumentCaptor;
@@ -136,6 +139,7 @@ class SalesOfferServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> salesOfferService.create(dto));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(categoryRepository).should(atMostOnce()).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(atMostOnce()).save(tag);
         then(salesOfferRepository).should(times(0)).save(any(SalesOffer.class));
     }
 
@@ -151,6 +155,7 @@ class SalesOfferServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> salesOfferService.create(dto));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(tagRepository).should(atMostOnce()).save(tag);
         then(salesOfferRepository).should(times(0)).save(any(SalesOffer.class));
     }
 

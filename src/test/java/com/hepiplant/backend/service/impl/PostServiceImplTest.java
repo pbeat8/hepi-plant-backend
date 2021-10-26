@@ -12,6 +12,7 @@ import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.PostRepository;
 import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
+import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,8 @@ class PostServiceImplTest {
     private TagRepository tagRepository;
     @Mock
     private BeanValidator beanValidator;
+    @Mock
+    private TagService tagService;
 
     @Captor
     private ArgumentCaptor<Post> postArgumentCaptor;
@@ -422,6 +425,7 @@ class PostServiceImplTest {
         dto.setUserId(null);
         given(postRepository.findById(post.getId())).willReturn(Optional.of(postToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.empty());
+//        given(tagService.add(tagDto)).willReturn(tagDto);
 
         //when
 
@@ -429,6 +433,7 @@ class PostServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> postService.update(post.getId(), dto));
         then(postRepository).should(times(1)).findById(post.getId());
         then(categoryRepository).should(atMostOnce()).findById(eq(dto.getCategoryId()));
+//        then(tagRepository).should(atMostOnce()).save(tag);
         then(postRepository).should(times(0)).save(any(Post.class));
     }
 
