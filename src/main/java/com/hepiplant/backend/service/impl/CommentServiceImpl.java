@@ -10,6 +10,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,6 +76,7 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found for id " + postId));
         return post.getComments().stream()
+                .sorted(Comparator.comparing(PostComment::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -84,6 +86,7 @@ public class CommentServiceImpl implements CommentService {
         SalesOffer salesOffer = salesOfferRepository.findById(salesOfferId)
                 .orElseThrow(() -> new EntityNotFoundException("Sales offer not found for id " + salesOfferId));
         return salesOffer.getComments().stream()
+                .sorted(Comparator.comparing(SalesOfferComment::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }

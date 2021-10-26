@@ -3,6 +3,7 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Category;
+import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
@@ -71,10 +72,12 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     public List<SalesOfferDto> getAll(Date startDate, Date endDate) {
         if (startDate == null || endDate == null) { // todo maybe change
             return salesOfferRepository.findAll().stream()
+                    .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
         } else {
             return salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)).stream()
+                    .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
         }
@@ -85,6 +88,7 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + categoryId));
         return salesOfferRepository.findAllByCategory(category).stream()
+                .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -103,10 +107,12 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         if(tags.isPresent())
         return salesOfferRepository.findAll().stream()
                 .filter(p -> p.getTags().contains(tags.get()))
+                .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
         else return salesOfferRepository.findAll().stream()
                 .filter(p -> p.getTags().contains(""))
+                .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }

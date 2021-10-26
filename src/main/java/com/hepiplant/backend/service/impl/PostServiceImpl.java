@@ -5,6 +5,7 @@ import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
+import com.hepiplant.backend.entity.PostComment;
 import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
@@ -73,10 +74,12 @@ public class PostServiceImpl implements PostService {
     public List<PostDto> getAll(Date startDate, Date endDate) {
         if (startDate == null || endDate == null){ // todo maybe change
             return postRepository.findAll().stream()
+                    .sorted(Comparator.comparing(Post::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
         } else {
             return postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)).stream()
+                    .sorted(Comparator.comparing(Post::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
         }
@@ -87,6 +90,7 @@ public class PostServiceImpl implements PostService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + categoryId));
         return postRepository.findAllByCategory(category).stream()
+                .sorted(Comparator.comparing(Post::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -94,7 +98,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
-        return postRepository.findAllByUser(user).stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
+        return postRepository.findAllByUser(user).stream()
+                .sorted(Comparator.comparing(Post::getCreatedDate))
+                .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -107,6 +114,7 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
         else return postRepository.findAll().stream()
                 .filter(p -> p.getTags().contains(""))
+                .sorted(Comparator.comparing(Post::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
