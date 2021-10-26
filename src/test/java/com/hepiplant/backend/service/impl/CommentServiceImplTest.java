@@ -3,6 +3,7 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.CommentDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.*;
+import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.*;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,10 +26,11 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -76,12 +79,12 @@ public class CommentServiceImplTest {
         postComment = new PostComment(1L,"body", LocalDateTime.now(),LocalDateTime.now(),post,user);
         salesOfferComment = new SalesOfferComment(1L,"body",LocalDateTime.now(),LocalDateTime.now(),salesOffer,user);
         dto = new CommentDto();
-        dto.setBody(salesOfferComment.getBody());
-        dto.setCreatedDate(salesOfferComment.getCreatedDate());
-        dto.setUpdatedDate(salesOfferComment.getUpdatedDate());
-        dto.setPostId(salesOfferComment.getId());
+        dto.setBody(postComment.getBody());
+        dto.setCreatedDate(postComment.getCreatedDate());
+        dto.setUpdatedDate(postComment.getUpdatedDate());
+        dto.setPostId(postComment.getId());
         dto.setUsername(user.getUsername());
-        dto.setId(1L);
+        dto.setId(postComment.getId());
         dto.setUserId(user.getId());
     }
 
@@ -100,12 +103,41 @@ public class CommentServiceImplTest {
         then(userRepository).should(times(1)).findById(dto.getUserId());
         then(beanValidator).should(times(1)).validate(any());
         then(postCommentRepository).should(times(1)).save(any(PostComment.class));
-        assertEquals(postComment.getId(),result.getId());
         assertEquals(postComment.getBody(),result.getBody());
-        assertEquals(postComment.getCreatedDate(),result.getCreatedDate());
-        assertEquals(postComment.getUpdatedDate(),result.getUpdatedDate());
         assertEquals(postComment.getUser().getId(),result.getUserId());
         assertEquals(postComment.getUser().getUsername(),result.getUsername());
         assertEquals(postComment.getPost().getId(),result.getPostId());
+    }
+
+    @Test
+    public void shouldCreatePostCommentUserDoesNotExistThrowsException(){
+        //given
+        given(postRepository.findById(dto.getPostId())).willReturn(Optional.of(post));
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.empty());
+
+        //when
+
+        //then
+        assertThrows(EntityNotFoundException.class, () -> commentService.createPostComment(dto));
+        then(postRepository).should(times(1)).findById(dto.getPostId());
+        then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
+        then(postCommentRepository).should(times(0)).save(any(PostComment.class));
+    }
+
+    @Test
+    public void shouldCreatePostCommentInvalidValuesThrowsException(){
+        //given
+        given(postRepository.findById(dto.getPostId())).willReturn(Optional.of(post));
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+        doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
+
+        //when
+
+        //then
+        assertThrows(InvalidBeanException.class, () -> commentService.createPostComment(dto));
+        then(postRepository).should(times(1)).findById(dto.getPostId());
+        then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
+        then(beanValidator).should(times(1)).validate(any());
+        then(postCommentRepository).should(times(0)).save(any(PostComment.class));
     }
 }

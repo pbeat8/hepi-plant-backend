@@ -58,7 +58,6 @@ public class TagServiceImpl implements TagService {
         if(optionalTag.isPresent())
             return mapToDto(optionalTag.get());
         Tag tag = new Tag();
-        tag.setId(tagDto.getId());
         tag.setName(tagDto.getName().toLowerCase().trim());
         if(tagDto.getPosts()!=null){
             Set<Post> posts=null;
