@@ -1,13 +1,14 @@
 package com.hepiplant.backend.service.impl;
 
+import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.Category;
-import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.Species;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
+import com.hepiplant.backend.service.PlantService;
 import com.hepiplant.backend.service.SpeciesService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,14 @@ public class SpeciesServiceImpl implements SpeciesService {
     private final SpeciesRepository speciesRepository;
     private final CategoryRepository categoryRepository;
     private final BeanValidator beanValidator;
+    private final PlantService plantService;
 
-    public SpeciesServiceImpl(SpeciesRepository speciesRepository, CategoryRepository categoryRepository, BeanValidator beanValidator) {
+    public SpeciesServiceImpl(SpeciesRepository speciesRepository, CategoryRepository categoryRepository, BeanValidator beanValidator, PlantService plantService) {
 
         this.speciesRepository = speciesRepository;
         this.categoryRepository = categoryRepository;
         this.beanValidator = beanValidator;
+        this.plantService = plantService;
     }
 
     @Override
@@ -93,6 +96,10 @@ public class SpeciesServiceImpl implements SpeciesService {
         if(species.isEmpty()){
             return "No species with id = " + id;
         }
+        List<PlantDto> plants = plantService.getAll();
+        plants.stream()
+                .filter(p -> p.getSpecies().getId()==id)
+                .forEach(p -> p.setSpecies(null));
         speciesRepository.delete(species.get());
         return "Successfully deleted the species with id = "+ id;
     }

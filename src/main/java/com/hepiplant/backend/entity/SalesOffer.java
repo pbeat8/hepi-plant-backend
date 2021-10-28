@@ -45,7 +45,7 @@ public class SalesOffer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-    @OneToMany(mappedBy = "salesOffer")
+    @OneToMany(mappedBy = "salesOffer", orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<SalesOfferComment> commentList;
     @ManyToMany
