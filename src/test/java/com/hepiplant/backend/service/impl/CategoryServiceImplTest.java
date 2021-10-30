@@ -44,6 +44,10 @@ public class CategoryServiceImplTest {
     @BeforeEach
     public void initializeCategory(){
         category = new Category(1L, "Category", new ArrayList<>());
+        category.setPlantList(new ArrayList<>());
+        category.setSpeciesList(new ArrayList<>());
+        category.setPostList(new ArrayList<>());
+        category.setSalesOfferList(new ArrayList<>());
         dto = new CategoryDto();
         dto.setId(category.getId());
         dto.setName(category.getName());
