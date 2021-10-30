@@ -15,8 +15,13 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
     @OneToMany(mappedBy = "category")
-    @JsonIgnore
     private List<Species> speciesList;
+    @OneToMany(mappedBy = "category")
+    private List<Plant> plantList;
+    @OneToMany(mappedBy = "category")
+    private List<Post> postList;
+    @OneToMany(mappedBy = "category")
+    private List<SalesOffer> salesOfferList;
 
     public Category() {
     }
@@ -45,5 +50,29 @@ public class Category {
 
     public void setSpeciesList(List<Species> speciesList) {
         this.speciesList = speciesList;
+    }
+
+    public List<Plant> getPlantList() {
+        return plantList;
+    }
+
+    public void setPlantList(List<Plant> plantList) {
+        this.plantList = plantList;
+    }
+
+    public List<Post> getPostList() {
+        return postList;
+    }
+
+    public void setPostList(List<Post> postList) {
+        this.postList = postList;
+    }
+
+    public List<SalesOffer> getSalesOfferList() {
+        return salesOfferList;
+    }
+
+    public void setSalesOfferList(List<SalesOffer> salesOfferList) {
+        this.salesOfferList = salesOfferList;
     }
 }
