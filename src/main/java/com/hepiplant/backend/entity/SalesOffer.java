@@ -25,14 +25,13 @@ public class SalesOffer {
     @Size(min=1, max=255)
     private String title;
     @NotBlank
-    @Size(min=1, max=255) // todo we will need to make it bigger later
+    @Size(min=1, max=255)
     private String body;
     @NotBlank
     @Size(min=1, max=255)
     private String location;
     @PositiveOrZero
     private BigDecimal price;
-
     private String photo;
     @CreationTimestamp
     private LocalDateTime createdDate;
@@ -45,7 +44,7 @@ public class SalesOffer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-    @OneToMany(mappedBy = "salesOffer")
+    @OneToMany(mappedBy = "salesOffer", orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<SalesOfferComment> commentList;
     @ManyToMany

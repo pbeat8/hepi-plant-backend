@@ -38,7 +38,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<PostComment> commentList;
 

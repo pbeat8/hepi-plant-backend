@@ -3,13 +3,15 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Category;
-import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
-import com.hepiplant.backend.repository.*;
+import com.hepiplant.backend.repository.CategoryRepository;
+import com.hepiplant.backend.repository.SalesOfferRepository;
+import com.hepiplant.backend.repository.TagRepository;
+import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.SalesOfferService;
 import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
@@ -31,10 +33,15 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final BeanValidator beanValidator;
-    private TagRepository tagRepository;
+    private final TagRepository tagRepository;
     private final TagService tagService;
 
-    public SalesOfferServiceImpl(SalesOfferRepository salesOfferRepository, CategoryRepository categoryRepository, UserRepository userRepository, BeanValidator beanValidator, TagRepository tagRepository, TagService tagService) {
+    public SalesOfferServiceImpl(final SalesOfferRepository salesOfferRepository,
+                                 final CategoryRepository categoryRepository,
+                                 final UserRepository userRepository,
+                                 final BeanValidator beanValidator,
+                                 final TagRepository tagRepository,
+                                 final TagService tagService) {
         this.salesOfferRepository = salesOfferRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;

@@ -5,7 +5,9 @@ import com.hepiplant.backend.entity.Role;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
+import com.hepiplant.backend.repository.PostCommentRepository;
 import com.hepiplant.backend.repository.RoleRepository;
+import com.hepiplant.backend.repository.SalesOfferCommentRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.UserService;
 import com.hepiplant.backend.validator.BeanValidator;
@@ -28,15 +30,21 @@ public class UserServiceImpl implements UserService {
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PostCommentRepository postCommentRepository;
+    private final SalesOfferCommentRepository salesOfferCommentRepository;
     private final BeanValidator beanValidator;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           BeanValidator beanValidator,
-                           PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(final UserRepository userRepository,
+                           final RoleRepository roleRepository,
+                           final PostCommentRepository postCommentRepository,
+                           final SalesOfferCommentRepository salesOfferCommentRepository,
+                           final BeanValidator beanValidator,
+                           final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.postCommentRepository = postCommentRepository;
+        this.salesOfferCommentRepository = salesOfferCommentRepository;
         this.beanValidator = beanValidator;
         this.passwordEncoder = passwordEncoder;
     }
@@ -99,6 +107,12 @@ public class UserServiceImpl implements UserService {
         if(user.isEmpty()){
             return "No user with id = " + id;
         }
+        postCommentRepository.findAll().stream()
+                .filter(c -> c.getUser().getId().equals(id))
+                .forEach(postCommentRepository::delete);
+        salesOfferCommentRepository.findAll().stream()
+                .filter(c -> c.getUser().getId().equals(id))
+                .forEach(salesOfferCommentRepository::delete);
         userRepository.delete(user.get());
         return "Successfully deleted the user with id = "+ id;
     }
