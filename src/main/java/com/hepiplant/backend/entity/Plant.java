@@ -33,9 +33,9 @@ public class Plant {
     @JoinColumn(name="user_id")
     @NotNull
     private User user;
-    @OneToMany(mappedBy = "plant")
+    @OneToMany(mappedBy = "plant", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Event> eventList;
-    @OneToOne(mappedBy = "plant")
+    @OneToOne(mappedBy = "plant", cascade = CascadeType.REMOVE)
     private Schedule schedule;
 
     public Plant() {

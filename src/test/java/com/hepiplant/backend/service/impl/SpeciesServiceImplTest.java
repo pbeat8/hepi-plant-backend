@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +59,7 @@ class SpeciesServiceImplTest {
     public void initializeSpecies(){
 
         species = new Species(1L, "species 1", 5, 21, 0, Placement.BARDZO_JASNE, "soil 1", category);
+        species.setPlantList(new ArrayList<>());
         dto = new SpeciesDto();
         dto.setName(species.getName());
         dto.setWateringFrequency(species.getWateringFrequency());

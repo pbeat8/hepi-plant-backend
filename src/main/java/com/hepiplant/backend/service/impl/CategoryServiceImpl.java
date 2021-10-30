@@ -21,7 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final BeanValidator beanValidator;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, BeanValidator beanValidator) {
+    public CategoryServiceImpl(final CategoryRepository categoryRepository, final BeanValidator beanValidator) {
         this.categoryRepository = categoryRepository;
         this.beanValidator = beanValidator;
     }
@@ -65,9 +65,18 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> category = categoryRepository.findById(id);
         if(category.isEmpty())
         {
-            return "No category with id = "+id;
+            return "No category with id = " + id;
         }
-        categoryRepository.delete(category.get());
+        Category categoryValue = category.get();
+        categoryValue.getPlantList()
+                .forEach(p -> p.setCategory(null));
+        categoryValue.getSpeciesList()
+                .forEach(p -> p.setCategory(null));
+        categoryValue.getPostList()
+                .forEach(p -> p.setCategory(null));
+        categoryValue.getSalesOfferList()
+                .forEach(p -> p.setCategory(null));
+        categoryRepository.delete(categoryValue);
         return "Successfully deleted the category with id = "+id;
     }
 }

@@ -81,7 +81,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public String delete(Long id) {
-
         Optional<Schedule> schedule = scheduleRepository.findById(id);
         if(schedule.isEmpty()){
             return "No schedule with id = "+id;

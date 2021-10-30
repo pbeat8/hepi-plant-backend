@@ -21,3 +21,6 @@ https://github.com/druczak1999/Hepi-Plant-ZPI
 
 Find swagger here:
 http://localhost:8080/swagger-ui/
+
+Test Coverage Report:
+https://drive.google.com/file/d/1VvH4eA7TxtwTvR31scnu3x8bpqL-JgiC/view?usp=sharing

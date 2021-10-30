@@ -22,11 +22,13 @@ import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 @Service
 public class EventServiceImpl implements EventService {
 
-    private EventRepository eventRepository;
-    private PlantRepository plantRepository;
+    private final EventRepository eventRepository;
+    private final PlantRepository plantRepository;
     private final BeanValidator beanValidator;
 
-    public EventServiceImpl(EventRepository eventRepository, PlantRepository plantRepository, BeanValidator beanValidator) {
+    public EventServiceImpl(final EventRepository eventRepository,
+                            final PlantRepository plantRepository,
+                            final BeanValidator beanValidator) {
         this.eventRepository = eventRepository;
         this.plantRepository = plantRepository;
         this.beanValidator = beanValidator;
