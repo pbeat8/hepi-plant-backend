@@ -96,11 +96,10 @@ public class SpeciesServiceImpl implements SpeciesService {
         if(species.isEmpty()){
             return "No species with id = " + id;
         }
-        List<PlantDto> plants = plantService.getAll();
-        plants.stream()
-                .filter(p -> p.getSpecies().getId()==id)
+        Species speciesValue = species.get();
+        speciesValue.getPlantList()
                 .forEach(p -> p.setSpecies(null));
-        speciesRepository.delete(species.get());
-        return "Successfully deleted the species with id = "+ id;
+        speciesRepository.delete(speciesValue);
+        return "Successfully deleted the species with id = " + id;
     }
 }

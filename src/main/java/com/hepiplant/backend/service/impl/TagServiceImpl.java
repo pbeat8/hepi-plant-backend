@@ -1,11 +1,9 @@
 package com.hepiplant.backend.service.impl;
 
-import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.Tag;
-import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.PostRepository;
 import com.hepiplant.backend.repository.SalesOfferRepository;
@@ -19,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 
 @Service
@@ -94,13 +93,12 @@ public class TagServiceImpl implements TagService {
         if(tag.isEmpty()){
             return "No tag with id = " + id;
         }
-        List<Post> posts = postRepository.findAll();
-        posts.stream().filter(p -> p.getTags().contains(tag))
-                .forEach(p -> p.getTags().remove(tag));
-        List<SalesOffer> salesOffers = salesOfferRepository.findAll();
-        salesOffers.stream().filter(s -> s.getTags().contains(tag))
-                .forEach(s -> s.getTags().remove(tag));
-        tagRepository.delete(tag.get());
+        Tag tagValue = tag.get();
+        tagValue.getPosts()
+            .forEach(p -> p.getTags().remove(tag));
+        tagValue.getSalesOffers()
+            .forEach(s -> s.getTags().remove(tag));
+        tagRepository.delete(tagValue);
         return "Successfully deleted the tag with id = "+ id;
     }
 }

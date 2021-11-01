@@ -32,9 +32,11 @@ public class PlantServiceImpl implements PlantService {
     private final ScheduleRepository scheduleRepository;
     private final BeanValidator beanValidator;
 
-    public PlantServiceImpl(PlantRepository plantRepository, SpeciesRepository speciesRepository,
-                            UserRepository userRepository, ScheduleRepository scheduleRepository,
-                            BeanValidator beanValidator) {
+    public PlantServiceImpl(final PlantRepository plantRepository,
+                            final SpeciesRepository speciesRepository,
+                            final UserRepository userRepository,
+                            final ScheduleRepository scheduleRepository,
+                            final BeanValidator beanValidator) {
         this.plantRepository = plantRepository;
         this.speciesRepository = speciesRepository;
         this.userRepository = userRepository;

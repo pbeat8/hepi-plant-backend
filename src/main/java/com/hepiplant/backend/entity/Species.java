@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(schema = "plants", name = "species")
@@ -36,6 +37,8 @@ public class Species {
     @JoinColumn(name = "category_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Category category;
+    @OneToMany(mappedBy = "species")
+    private List<Plant> plantList;
 
     public Species() {
     }
@@ -110,5 +113,13 @@ public class Species {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<Plant> getPlantList() {
+        return plantList;
+    }
+
+    public void setPlantList(List<Plant> plantList) {
+        this.plantList = plantList;
     }
 }
