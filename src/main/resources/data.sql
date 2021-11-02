@@ -1,10 +1,11 @@
 INSERT INTO plants.categories(id, name) VALUES
-	(1, 'Rośliny ozdobne z liści'),
-	(2, 'Rośliny ozdobne z kwiatów'),
-	(3, 'Rośliny pnące i zwisające'),
-	(4, 'Oplątwy'),
-	(5, 'Sukulenty'),
-	(6, 'Kaktusy') ON CONFLICT DO NOTHING;
+	(1, 'Brak'),
+	(2, 'Rośliny ozdobne z liści'),
+	(3, 'Rośliny ozdobne z kwiatów'),
+	(4, 'Rośliny pnące i zwisające'),
+	(5, 'Oplątwy'),
+	(6, 'Sukulenty'),
+	(7, 'Kaktusy') ON CONFLICT DO NOTHING;
 
 INSERT INTO plants.species(id, fertilizing_frequency, misting_frequency, name, placement, soil, watering_frequency, category_id) VALUES
     (1, 0, 0, 'Brak', null, null, 0, null),
