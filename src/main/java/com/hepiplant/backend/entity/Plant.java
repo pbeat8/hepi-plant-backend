@@ -21,7 +21,7 @@ public class Plant {
     private String name;
     @PastOrPresent
     private LocalDateTime purchaseDate;
-    @Size(min=1, max=255)
+    @Size(min=0, max=255)
     private String location;
     private String photo;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,7 +33,7 @@ public class Plant {
     @JoinColumn(name="user_id")
     @NotNull
     private User user;
-    @OneToMany(mappedBy = "plant", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "plant", cascade = CascadeType.REMOVE)
     private List<Event> eventList;
     @OneToOne(mappedBy = "plant", cascade = CascadeType.REMOVE)
     private Schedule schedule;

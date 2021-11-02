@@ -22,8 +22,10 @@ public class DtoMapper {
         dto.setEventDescription(event.getEventDescription());
         dto.setEventDate(event.getEventDate());
         dto.setDone(event.isDone());
-        if (event.getPlant() != null)
+        if (event.getPlant() != null){
             dto.setPlantId(event.getPlant().getId());
+            dto.setPlantName(event.getPlant().getName());
+        }
         return dto;
     }
 
