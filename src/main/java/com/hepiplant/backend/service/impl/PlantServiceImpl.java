@@ -167,6 +167,7 @@ public class PlantServiceImpl implements PlantService {
         List<Event> eventList = new ArrayList<Event>();
         for (Event event: eventRepository.findAll()
                 .stream().filter(e -> e.getPlant().getId().equals(plant.getId()))
+                .filter(e -> !e.isDone())
                 .collect(Collectors.toList())) {
             eventRepository.delete(event);
         }
