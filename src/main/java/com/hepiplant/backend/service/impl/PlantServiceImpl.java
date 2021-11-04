@@ -23,18 +23,26 @@ import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 @Service
 public class PlantServiceImpl implements PlantService {
 
+    public static final String WATERING = "Podlewanie";
+    public static final String WATERING_PLANT = "Podlewanie rośliny o nazwie";
+    public static final String MISTING = "Zraszanie";
+    public static final String MISTING_PLANT = "Zraszanie rośliny o nazwie";
+    public static final String FERTILIZATING = "Nawożenie";
+    public static final String FERRTILIZATING_PLANT = "Nawożenie rośliny o nazwie";
     private final PlantRepository plantRepository;
     private final SpeciesRepository speciesRepository;
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final EventRepository eventRepository;
     private final BeanValidator beanValidator;
+    
 
     public PlantServiceImpl(final PlantRepository plantRepository,
                             final SpeciesRepository speciesRepository,
                             final UserRepository userRepository,
                             final ScheduleRepository scheduleRepository,
-                            EventRepository eventRepository, final BeanValidator beanValidator) {
+                            final EventRepository eventRepository,
+                            final BeanValidator beanValidator) {
         this.plantRepository = plantRepository;
         this.speciesRepository = speciesRepository;
         this.userRepository = userRepository;
@@ -51,10 +59,6 @@ public class PlantServiceImpl implements PlantService {
         plant.setLocation(plantDto.getLocation());
         plant.setPhoto(plantDto.getPhoto());
         Schedule schedule = new Schedule();
-        Event eventW = new Event();
-        Event eventF = new Event();
-        Event eventM = new Event();
-        List<Event> eventList = new ArrayList<Event>();
         schedule.setPlant(plant);
         if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
             Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(() -> new EntityNotFoundException("Species not found for id " + plantDto.getSpecies().getId()));
@@ -68,40 +72,23 @@ public class PlantServiceImpl implements PlantService {
             User user = userRepository.findById(plantDto.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found for id " + plantDto.getUserId()));
             plant.setUser(user);
         }
+        Event eventW = new Event();
+        Event eventF = new Event();
+        Event eventM = new Event();
         if(plantDto.getSchedule()!=null){
-            schedule.setWateringFrequency(plantDto.getSchedule().getWateringFrequency());
-            schedule.setFertilizingFrequency(plantDto.getSchedule().getFertilizingFrequency());
-            schedule.setMistingFrequency(plantDto.getSchedule().getMistingFrequency());
-            if(schedule.getWateringFrequency()>0){
-                eventW.setDone(false);
-                eventW.setEventDate(LocalDateTime.now().plusDays(schedule.getWateringFrequency()));
-                eventW.setEventName("Podlewanie");
-                eventW.setEventDescription("Podlewanie rośliny o nazwie"+plant.getName());
-                eventW.setPlant(plant);
-                eventList.add(eventW);
+            if(plantDto.getSchedule().getWateringFrequency()>0){
+                eventW= addNewEvent(plant,  WATERING,WATERING_PLANT, plantDto.getSchedule().getWateringFrequency());
             }
-            if(schedule.getMistingFrequency()>0){
-                eventM.setDone(false);
-                eventM.setEventDate(LocalDateTime.now().plusDays(schedule.getMistingFrequency()));
-                eventM.setEventName("Zraszanie");
-                eventM.setEventDescription("Zraszanie rośliny o nazwie"+plant.getName());
-                eventM.setPlant(plant);
-                eventList.add(eventM);
+            if(plantDto.getSchedule().getMistingFrequency()>0){
+                eventM = addNewEvent(plant, MISTING,MISTING_PLANT, plantDto.getSchedule().getMistingFrequency());
             }
-            if(schedule.getFertilizingFrequency()>0){
-                eventF.setDone(false);
-                eventF.setEventDate(LocalDateTime.now().plusDays(schedule.getFertilizingFrequency()));
-                eventF.setEventName("Nawożenie");
-                eventF.setEventDescription("Nawożenie rośliny o nazwie"+plant.getName());
-                eventF.setPlant(plant);
-                eventList.add(eventF);
+            if(plantDto.getSchedule().getFertilizingFrequency()>0){
+                eventF = addNewEvent(plant, FERTILIZATING,FERRTILIZATING_PLANT, plantDto.getSchedule().getFertilizingFrequency());
             }
         }
 
         plant.setSchedule(schedule);
 
-        if(eventList.size()>0)
-            plant.setEventList(eventList);
         beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);
         scheduleRepository.save(schedule);
@@ -161,46 +148,28 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getPurchaseDate()!=null){
             plant.setPurchaseDate(plantDto.getPurchaseDate());
         }
-        Event eventW = new Event();
-        Event eventF = new Event();
-        Event eventM = new Event();
-        List<Event> eventList = new ArrayList<Event>();
+
         for (Event event: eventRepository.findAll()
                 .stream().filter(e -> e.getPlant().getId().equals(plant.getId()))
                 .filter(e -> !e.isDone())
                 .collect(Collectors.toList())) {
             eventRepository.delete(event);
         }
-
+        Event eventW = new Event();
+        Event eventF = new Event();
+        Event eventM = new Event();
         if(plantDto.getSchedule()!=null){
             if(plantDto.getSchedule().getWateringFrequency()>0){
-                eventW.setDone(false);
-                eventW.setEventDate(LocalDateTime.now().plusDays(plantDto.getSchedule().getWateringFrequency()));
-                eventW.setEventName("Podlewanie");
-                eventW.setEventDescription("Podlewanie rośliny o nazwie"+plant.getName());
-                eventW.setPlant(plant);
-                eventList.add(eventW);
+                eventW= addNewEvent(plant,  WATERING,WATERING_PLANT, plantDto.getSchedule().getWateringFrequency());
             }
             if(plantDto.getSchedule().getMistingFrequency()>0){
-                eventM.setDone(false);
-                eventM.setEventDate(LocalDateTime.now().plusDays(plantDto.getSchedule().getMistingFrequency()));
-                eventM.setEventName("Zraszanie");
-                eventM.setEventDescription("Zraszanie rośliny o nazwie"+plant.getName());
-                eventM.setPlant(plant);
-                eventList.add(eventM);
+                eventM = addNewEvent(plant, MISTING,MISTING_PLANT, plantDto.getSchedule().getMistingFrequency());
             }
             if(plantDto.getSchedule().getFertilizingFrequency()>0){
-                eventF.setDone(false);
-                eventF.setEventDate(LocalDateTime.now().plusDays(plantDto.getSchedule().getFertilizingFrequency()));
-                eventF.setEventName("Nawożenie");
-                eventF.setEventDescription("Nawożenie rośliny o nazwie"+plant.getName());
-                eventF.setPlant(plant);
-                eventList.add(eventF);
+                eventF = addNewEvent(plant, FERTILIZATING,FERRTILIZATING_PLANT, plantDto.getSchedule().getFertilizingFrequency());
             }
         }
 
-        if(eventList.size()>0)
-            plant.setEventList(eventList);
         beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);
         if(plantDto.getSchedule().getWateringFrequency()>0)
@@ -210,6 +179,16 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getSchedule().getFertilizingFrequency()>0)
             eventRepository.save(eventF);
         return mapToDto(savedPlant);
+    }
+
+    private Event addNewEvent(Plant plant, String name, String longName, int days) {
+        Event event = new Event();
+        event.setDone(false);
+        event.setEventDate(LocalDateTime.now().plusDays(days));
+        event.setEventName(name);
+        event.setEventDescription(longName+plant.getName());
+        event.setPlant(plant);
+        return event;
     }
 
     @Override

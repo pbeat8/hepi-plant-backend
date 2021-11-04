@@ -31,7 +31,8 @@ public class EventServiceImpl implements EventService {
 
     public EventServiceImpl(final EventRepository eventRepository,
                             final PlantRepository plantRepository,
-                            final UserRepository userRepository, final BeanValidator beanValidator) {
+                            final UserRepository userRepository,
+                            final BeanValidator beanValidator) {
         this.eventRepository = eventRepository;
         this.plantRepository = plantRepository;
         this.userRepository = userRepository;
