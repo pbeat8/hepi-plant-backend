@@ -80,10 +80,11 @@ public class SpeciesServiceImpl implements SpeciesService {
         if(speciesDto.getPlacement()!=null)
             species.setPlacement(speciesDto.getPlacement());
         if(speciesDto.getSoil()!=null){
-            throw new ImmutableFieldException("Field Soil in Species is immutable!");
+            species.setSoil(speciesDto.getSoil());
         }
         if(speciesDto.getCategoryId()!=null){
-            throw new ImmutableFieldException("Field Category in Species is immutable!");
+            Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id " + speciesDto.getCategoryId()));
+            species.setCategory(category);
         }
         beanValidator.validate(species);
         Species savedSpecies = speciesRepository.save(species);
