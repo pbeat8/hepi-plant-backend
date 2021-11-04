@@ -8,7 +8,7 @@ INSERT INTO plants.categories(id, name) VALUES
 	(7, 'Kaktusy') ON CONFLICT DO NOTHING;
 
 INSERT INTO plants.species(id, fertilizing_frequency, misting_frequency, name, placement, soil, watering_frequency, category_id) VALUES
-    (1, 0, 0, 'Brak', null, null, 0, null),
+    (1, 0, 0, 'Brak', null, null, 0, 1),
 	(2, 14, 4, 'Aglaonema', 'JASNE', 'Bardzo kwaśna', 4, 1),
     (3, 30, 10, 'Aloes', 'JASNE', 'Uniwersalna', 7, 5),
     (4, 10, 0, 'Bonsai', 'POLCIENISTE', 'Uniwersalna', 2, 1),
