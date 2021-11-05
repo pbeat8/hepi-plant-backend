@@ -24,11 +24,11 @@ import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 public class PlantServiceImpl implements PlantService {
 
     public static final String WATERING = "Podlewanie";
-    public static final String WATERING_PLANT = "Podlewanie rośliny o nazwie";
+    public static final String WATERING_PLANT = "Podlewanie rośliny o nazwie ";
     public static final String MISTING = "Zraszanie";
-    public static final String MISTING_PLANT = "Zraszanie rośliny o nazwie";
+    public static final String MISTING_PLANT = "Zraszanie rośliny o nazwie ";
     public static final String FERTILIZATING = "Nawożenie";
-    public static final String FERRTILIZATING_PLANT = "Nawożenie rośliny o nazwie";
+    public static final String FERRTILIZATING_PLANT = "Nawożenie rośliny o nazwie ";
     private final PlantRepository plantRepository;
     private final SpeciesRepository speciesRepository;
     private final UserRepository userRepository;
