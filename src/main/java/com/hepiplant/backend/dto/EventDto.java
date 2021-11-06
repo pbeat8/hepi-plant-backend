@@ -13,6 +13,7 @@ public class EventDto {
     private LocalDateTime eventDate;
     private boolean isDone;
     private Long plantId;
+    private String plantName;
 
     public Long getId() { return id; }
 
@@ -56,5 +57,13 @@ public class EventDto {
 
     public void setDone(boolean done) {
         isDone = done;
+    }
+
+    public String getPlantName() {
+        return plantName;
+    }
+
+    public void setPlantName(String plantName) {
+        this.plantName = plantName;
     }
 }

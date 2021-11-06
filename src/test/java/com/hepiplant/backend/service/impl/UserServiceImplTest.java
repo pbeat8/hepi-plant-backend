@@ -4,7 +4,9 @@ import com.hepiplant.backend.dto.UserDto;
 import com.hepiplant.backend.entity.Role;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.InvalidBeanException;
+import com.hepiplant.backend.repository.PostCommentRepository;
 import com.hepiplant.backend.repository.RoleRepository;
+import com.hepiplant.backend.repository.SalesOfferCommentRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +44,10 @@ class UserServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private RoleRepository roleRepository;
+    @Mock
+    private PostCommentRepository postCommentRepository;
+    @Mock
+    private SalesOfferCommentRepository salesOfferCommentRepository;
     @Mock
     private BeanValidator beanValidator;
     @Mock
@@ -233,6 +239,8 @@ class UserServiceImplTest {
     void shouldDeleteUserOk() {
         //given
         given(userRepository.findById(user.getId())).willReturn(java.util.Optional.of(user));
+        given(postCommentRepository.findAll()).willReturn(new ArrayList<>());
+        given(salesOfferCommentRepository.findAll()).willReturn(new ArrayList<>());
 
         //when
         String result = userService.delete(user.getId());

@@ -8,6 +8,9 @@ https://docs.google.com/document/d/1hSKlijJq7Kb15CtqrB4JJpfYuXZH7sL4NJLkmJNNd-w/
 Working schedule:
 https://docs.google.com/document/d/1Xbgc2BDEDuK0rGWrnrSTpJa6sixCzOIw0X6WsLtagbE/edit?usp=sharing
 
+Task management:
+https://sharing.clickup.com/b/h/4-42387370-2/a595abe1ef2cae8
+
 Initial database design:
 https://drive.google.com/file/d/1zR1mA8wiC9vrhOWbqT9VzD5W30iCqanz/view?usp=sharing
 
@@ -21,3 +24,6 @@ https://github.com/druczak1999/Hepi-Plant-ZPI
 
 Find swagger here:
 http://localhost:8080/swagger-ui/
+
+Test Coverage Report:
+https://drive.google.com/file/d/1VvH4eA7TxtwTvR31scnu3x8bpqL-JgiC/view?usp=sharing

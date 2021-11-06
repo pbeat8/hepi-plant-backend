@@ -1,8 +1,10 @@
 package com.hepiplant.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hepiplant.backend.entity.Event;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PlantDto {
 
@@ -16,6 +18,7 @@ public class PlantDto {
     private SpeciesDto species;
     private Long userId;
     private ScheduleDto schedule;
+    private List<EventDto> events;
 
     public PlantDto() {
     }
@@ -92,4 +95,11 @@ public class PlantDto {
         this.schedule = schedule;
     }
 
+    public List<EventDto> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<EventDto> events) {
+        this.events = events;
+    }
 }
