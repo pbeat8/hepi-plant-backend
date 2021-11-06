@@ -4,10 +4,12 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.EventDto;
 import com.hepiplant.backend.entity.Event;
 import com.hepiplant.backend.entity.Plant;
+import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.EventRepository;
 import com.hepiplant.backend.repository.PlantRepository;
+import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.EventService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
@@ -24,13 +26,16 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final PlantRepository plantRepository;
+    private final UserRepository userRepository;
     private final BeanValidator beanValidator;
 
     public EventServiceImpl(final EventRepository eventRepository,
                             final PlantRepository plantRepository,
+                            final UserRepository userRepository,
                             final BeanValidator beanValidator) {
         this.eventRepository = eventRepository;
         this.plantRepository = plantRepository;
+        this.userRepository = userRepository;
         this.beanValidator = beanValidator;
     }
 
@@ -46,7 +51,19 @@ public class EventServiceImpl implements EventService {
         Plant plant = plantRepository.findById(plantId)
                 .orElseThrow(() -> new EntityNotFoundException("Plant not found for id "+plantId));
         return eventRepository.findAllByPlant(plant).stream()
+                .filter(e -> e.isDone())
                 .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventDto> getAllByUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found for id "+userId));
+        return eventRepository.findAll().stream()
+                .filter(e -> e.getPlant().getUser().getId().equals(userId))
+                .filter(e -> !e.isDone())
+                .map(DtoMapper :: mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -73,12 +90,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto update(Long id, EventDto eventDto) {
-        Event event = eventRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        if(eventDto.getEventName()!=null)
+        Event event = eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Event not found for id " + id));
+        if(eventDto.getEventName()!=null && !eventDto.getEventName().isEmpty())
             event.setEventName(eventDto.getEventName());
-        if(eventDto.getEventDescription()!=null)
+        if(eventDto.getEventDescription()!=null && !eventDto.getEventDescription().isEmpty())
             event.setEventDescription(eventDto.getEventDescription());
-        if(eventDto.getEventDescription()!=null)
+        if(eventDto.getEventDate()!=null)
             event.setEventDate(eventDto.getEventDate());
         event.setDone(eventDto.isDone());
         if(eventDto.getPlantId()!=null) {

@@ -1,6 +1,7 @@
 package com.hepiplant.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
@@ -18,9 +19,7 @@ public class Event {
     private String eventName;
     @Size(min=1, max=255)
     private String eventDescription;
-    @PastOrPresent
     private LocalDateTime eventDate;
-    @NotBlank
     private boolean isDone;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plant_id")

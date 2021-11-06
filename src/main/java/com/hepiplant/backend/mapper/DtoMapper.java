@@ -22,8 +22,10 @@ public class DtoMapper {
         dto.setEventDescription(event.getEventDescription());
         dto.setEventDate(event.getEventDate());
         dto.setDone(event.isDone());
-        if (event.getPlant() != null)
+        if (event.getPlant() != null){
             dto.setPlantId(event.getPlant().getId());
+            dto.setPlantName(event.getPlant().getName());
+        }
         return dto;
     }
 
@@ -62,6 +64,7 @@ public class DtoMapper {
         dto.setUpdatedDate(post.getUpdatedDate());
         if(post.getUser() != null){
             dto.setUserId(post.getUser().getId());
+            dto.setUsername(post.getUser().getUsername());
         }
         if(post.getCategory() != null){
             dto.setCategoryId(post.getCategory().getId());
@@ -106,6 +109,7 @@ public class DtoMapper {
         dto.setUpdatedDate(salesOffer.getUpdatedDate());
         if(salesOffer.getUser() != null){
             dto.setUserId(salesOffer.getUser().getId());
+            dto.setUsername(salesOffer.getUser().getUsername());
         }
         if(salesOffer.getCategory() != null){
             dto.setCategoryId(salesOffer.getCategory().getId());

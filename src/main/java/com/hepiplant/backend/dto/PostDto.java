@@ -18,6 +18,7 @@ public class PostDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedDate;
     private Long userId;
+    private String username;
     private Long categoryId;
     private List<CommentDto> comments;
 
@@ -86,6 +87,14 @@ public class PostDto {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Long getCategoryId() {
