@@ -48,6 +48,11 @@ public class DtoMapper {
         if(plant.getSchedule() != null){
             dto.setSchedule(mapToDto(plant.getSchedule()));
         }
+        if(plant.getEventList()!=null){
+            dto.setEvents(plant.getEventList().stream()
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList()));
+        }
         return dto;
     }
 

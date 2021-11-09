@@ -75,20 +75,25 @@ public class PlantServiceImpl implements PlantService {
         Event eventW = new Event();
         Event eventF = new Event();
         Event eventM = new Event();
+        List<Event> eventList = new ArrayList<>();
         if(plantDto.getSchedule()!=null){
             if(plantDto.getSchedule().getWateringFrequency()>0){
                 eventW= addNewEvent(plant,  WATERING,WATERING_PLANT, plantDto.getSchedule().getWateringFrequency());
+                eventList.add(eventW);
             }
             if(plantDto.getSchedule().getMistingFrequency()>0){
                 eventM = addNewEvent(plant, MISTING,MISTING_PLANT, plantDto.getSchedule().getMistingFrequency());
+                eventList.add(eventM);
             }
             if(plantDto.getSchedule().getFertilizingFrequency()>0){
                 eventF = addNewEvent(plant, FERTILIZATING,FERRTILIZATING_PLANT, plantDto.getSchedule().getFertilizingFrequency());
+                eventList.add(eventF);
             }
         }
 
         plant.setSchedule(schedule);
-
+        if(eventList.size()>0)
+            plant.setEventList(eventList);
         beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);
         scheduleRepository.save(schedule);
