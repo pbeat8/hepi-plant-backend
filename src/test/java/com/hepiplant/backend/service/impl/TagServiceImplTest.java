@@ -54,7 +54,7 @@ public class TagServiceImplTest {
         dto.setId(tag.getId());
         dto.setName(tag.getName());
         dto.setPosts(tag.getPosts().stream().map(Post::getId).collect(Collectors.toSet()));
-        dto.setSalesOffer(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
+        dto.setSalesOffers(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
     }
 
     //Create tests
