@@ -7,7 +7,7 @@ public class TagDto {
     private Long id;
     private String name;
     private Set<Long> posts;
-    private Set<Long> salesOffer;
+    private Set<Long> salesOffers;
 
     public TagDto() {
     }
@@ -36,11 +36,11 @@ public class TagDto {
         this.posts = posts;
     }
 
-    public Set<Long> getSalesOffer() {
-        return salesOffer;
+    public Set<Long> getSalesOffers() {
+        return salesOffers;
     }
 
-    public void setSalesOffer(Set<Long> salesOffer) {
-        this.salesOffer = salesOffer;
+    public void setSalesOffers(Set<Long> salesOffers) {
+        this.salesOffers = salesOffers;
     }
 }

@@ -172,8 +172,15 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         if(salesOffer.isEmpty()){
             return "No sales offer with id = " + id;
         }
-        salesOfferRepository.delete(salesOffer.get());
-        return "Successfully deleted the sales offer with id = "+ id;
+        SalesOffer salesOfferValue = salesOffer.get();
+        salesOfferValue.getTags().forEach(tag -> {
+            int relatedItemsCount = tag.getSalesOffers().size() + tag.getPosts().size();
+            if(relatedItemsCount < 2){
+                tagRepository.delete(tag);
+            }
+        });
+        salesOfferRepository.delete(salesOfferValue);
+        return "Successfully deleted the sales offer with id = " + id;
     }
 
     private void addTagsToSalesOffer(SalesOffer salesOffer, SalesOfferDto salesOfferDto) {
