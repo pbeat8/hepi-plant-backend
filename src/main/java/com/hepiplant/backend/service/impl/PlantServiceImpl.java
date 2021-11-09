@@ -37,7 +37,7 @@ public class PlantServiceImpl implements PlantService {
     
 
     public PlantServiceImpl(final PlantRepository plantRepository,
-                            CategoryRepository categoryRepository, final SpeciesRepository speciesRepository,
+                            final CategoryRepository categoryRepository, final SpeciesRepository speciesRepository,
                             final UserRepository userRepository,
                             final ScheduleRepository scheduleRepository,
                             final EventRepository eventRepository,
@@ -145,7 +145,7 @@ public class PlantServiceImpl implements PlantService {
             Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(EntityNotFoundException::new);
             plant.setSpecies(species);
             if(!plantDto.getSpecies().getName().equals("Brak"))
-            plant.setCategory(species.getCategory());
+                plant.setCategory(species.getCategory());
         }
         if(plantDto.getUserId()!=null && !plantDto.getUserId().equals(plant.getUser().getId())){
             throw new ImmutableFieldException("Field User in Plant is immutable!");
