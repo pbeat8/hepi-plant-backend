@@ -63,8 +63,9 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
             Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(() -> new EntityNotFoundException("Species not found for id " + plantDto.getSpecies().getId()));
             plant.setSpecies(species);
-            plant.setCategory(species.getCategory());
-            schedule.setWateringFrequency(species.getWateringFrequency());
+            if(!plantDto.getSpecies().getName().equals("Brak"))
+                plant.setCategory(species.getCategory());
+            schedule.setWateringFrequency(plantDto.getSchedule().getWateringFrequency());
             schedule.setFertilizingFrequency(species.getFertilizingFrequency());
             schedule.setMistingFrequency(species.getMistingFrequency());
         }
