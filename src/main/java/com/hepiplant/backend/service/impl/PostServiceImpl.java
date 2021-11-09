@@ -161,8 +161,15 @@ public class PostServiceImpl implements PostService {
         if(post.isEmpty()){
             return "No post with id = " + id;
         }
-        postRepository.delete(post.get());
-        return "Successfully deleted the post with id = "+ id;
+        Post postValue = post.get();
+        postValue.getTags().forEach(tag -> {
+            int relatedItemsCount = tag.getSalesOffers().size() + tag.getPosts().size();
+            if(relatedItemsCount < 2){
+                tagRepository.delete(tag);
+            }
+        });
+        postRepository.delete(postValue);
+        return "Successfully deleted the post with id = " + id;
     }
 
     private void addTagsToPost(Post post, PostDto postDto) {

@@ -70,9 +70,9 @@ public class TagServiceImpl implements TagService {
             }
             tag.setPosts(posts);
         }
-        if(tagDto.getSalesOffer()!=null){
+        if(tagDto.getSalesOffers()!=null){
             Set<SalesOffer> salesOffers=null;
-            for (Long id: tagDto.getSalesOffer()) {
+            for (Long id: tagDto.getSalesOffers()) {
                 if(id!=null){
                     SalesOffer salesOffer = salesOfferRepository.findById(id).get();
                     if(salesOffer!=null) salesOffers.add(salesOffer);
