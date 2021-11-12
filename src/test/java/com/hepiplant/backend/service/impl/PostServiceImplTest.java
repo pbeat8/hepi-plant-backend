@@ -12,7 +12,6 @@ import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.PostRepository;
 import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
-import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +24,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,8 +51,6 @@ class PostServiceImplTest {
     private TagRepository tagRepository;
     @Mock
     private BeanValidator beanValidator;
-    @Mock
-    private TagService tagService;
 
     @Captor
     private ArgumentCaptor<Post> postArgumentCaptor;
@@ -201,6 +201,48 @@ class PostServiceImplTest {
 
         //then
         then(postRepository).should(times(1)).findAll();
+        assertEquals(0, result.size());
+    }
+
+    // GET ALL BY DATE tests
+
+    @Test
+    public void shouldGetAllPostsByDateOk() throws ParseException {
+        //given
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Date startDate = formatter.parse("01-01-2021");
+        Date endDate = formatter.parse("30-03-2021");
+        given(postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)))
+                .willReturn(List.of(post));
+
+        //when
+        List<PostDto> result = postService.getAll(startDate, endDate);
+
+        //then
+        then(postRepository).should(times(1)).findAllByCreatedDateBetween(any(), any());
+        assertEquals(1, result.size());
+        assertEquals(post.getTitle(), result.get(0).getTitle());
+        assertEquals(post.getBody(), result.get(0).getBody());
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
+        assertEquals(user.getId(), result.get(0).getUserId());
+        assertEquals(category.getId(), result.get(0).getCategoryId());
+    }
+
+    @Test
+    public void shouldGetAllPostsByDateEmptyListOk() throws ParseException {
+        //given
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Date startDate = formatter.parse("01-01-2021");
+        Date endDate = formatter.parse("30-03-2021");
+        given(postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)))
+                .willReturn(List.of());
+
+        //when
+        List<PostDto> result = postService.getAll(startDate, endDate);
+
+        //then
+        then(postRepository).should(times(1)).findAllByCreatedDateBetween(any(), any());
         assertEquals(0, result.size());
     }
 
@@ -376,6 +418,7 @@ class PostServiceImplTest {
     public void shouldUpdatePostOk(){
         //given
         Post postToUpdate = new Post();
+        postToUpdate.setTags(new HashSet<>());
         dto.setUserId(null);
         given(postRepository.findById(post.getId())).willReturn(Optional.of(postToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
@@ -422,10 +465,10 @@ class PostServiceImplTest {
     public void shouldUpdatePostCategoryDoesNotExistThrowsException(){
         //given
         Post postToUpdate = new Post();
+        postToUpdate.setTags(new HashSet<>());
         dto.setUserId(null);
         given(postRepository.findById(post.getId())).willReturn(Optional.of(postToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.empty());
-//        given(tagService.add(tagDto)).willReturn(tagDto);
 
         //when
 
@@ -441,6 +484,7 @@ class PostServiceImplTest {
     public void shouldUpdatePostUserChangeThrowsException(){
         //given
         Post postToUpdate = new Post();
+        postToUpdate.setTags(new HashSet<>());
 
         given(postRepository.findById(post.getId())).willReturn(Optional.of(postToUpdate));
 
@@ -457,6 +501,7 @@ class PostServiceImplTest {
     public void shouldUpdatePostInvalidValuesThrowsException(){
         //given
         Post postToUpdate = new Post();
+        postToUpdate.setTags(new HashSet<>());
         dto.setUserId(null);
         given(postRepository.findById(post.getId())).willReturn(Optional.of(postToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
