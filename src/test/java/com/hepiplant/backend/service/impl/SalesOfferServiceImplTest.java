@@ -12,7 +12,6 @@ import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SalesOfferRepository;
 import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
-import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +25,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,8 +52,6 @@ class SalesOfferServiceImplTest {
     private TagRepository tagRepository;
     @Mock
     private BeanValidator beanValidator;
-    @Mock
-    private TagService tagService;
 
     @Captor
     private ArgumentCaptor<SalesOffer> salesOfferArgumentCaptor;
@@ -213,6 +213,52 @@ class SalesOfferServiceImplTest {
         then(salesOfferRepository).should(times(1)).findAll();
         assertEquals(0, result.size());
     }
+
+    // GET ALL with dates tests
+
+    @Test
+    public void shouldGetAllSalesOffersByDateOk() throws ParseException {
+        //given
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Date startDate = formatter.parse("01-01-2021");
+        Date endDate = formatter.parse("30-03-2021");
+        given(salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)))
+                .willReturn(List.of(salesOffer));
+
+        //when
+        List<SalesOfferDto> result = salesOfferService.getAll(startDate, endDate);
+
+        //then
+        then(salesOfferRepository).should(times(1)).findAllByCreatedDateBetween(any(), any());
+        assertEquals(1, result.size());
+        assertEquals(salesOffer.getTitle(), result.get(0).getTitle());
+        assertEquals(salesOffer.getBody(), result.get(0).getBody());
+        assertEquals(salesOffer.getLocation(), result.get(0).getLocation());
+        assertEquals(salesOffer.getPrice(), result.get(0).getPrice());
+        assertEquals(1, result.get(0).getTags().size());
+        assertEquals(salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()), result.get(0).getTags());
+        assertEquals(user.getId(), result.get(0).getUserId());
+        assertEquals(category.getId(), result.get(0).getCategoryId());
+    }
+
+    @Test
+    public void shouldGetAllSalesOffersByDateEmptyListOk() throws ParseException {
+        //given
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Date startDate = formatter.parse("01-01-2021");
+        Date endDate = formatter.parse("30-03-2021");
+        given(salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)))
+                .willReturn(List.of());
+
+        //when
+        List<SalesOfferDto> result = salesOfferService.getAll(startDate, endDate);
+
+        //then
+        then(salesOfferRepository).should(times(1)).findAllByCreatedDateBetween(any(), any());
+        assertEquals(0, result.size());
+    }
+
+    // GET ALL BY USER tests
 
     @Test
     public void shouldGetAllSalesOfferByUserOk(){
@@ -392,6 +438,7 @@ class SalesOfferServiceImplTest {
     public void shouldUpdateSalesOfferOk(){
         //given
         SalesOffer salesOfferToUpdate = new SalesOffer();
+        salesOfferToUpdate.setTags(new HashSet<>());
         dto.setUserId(null);
         given(salesOfferRepository.findById(salesOffer.getId())).willReturn(Optional.of(salesOfferToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
@@ -444,6 +491,7 @@ class SalesOfferServiceImplTest {
     public void shouldUpdateSalesOfferCategoryDoesNotExistThrowsException(){
         //given
         SalesOffer salesOfferToUpdate = new SalesOffer();
+        salesOfferToUpdate.setTags(new HashSet<>());
         dto.setUserId(null);
 
         given(salesOfferRepository.findById(salesOffer.getId())).willReturn(Optional.of(salesOfferToUpdate));
@@ -462,6 +510,7 @@ class SalesOfferServiceImplTest {
     public void shouldUpdateSalesOfferUserChangeThrowsException(){
         //given
         SalesOffer salesOfferToUpdate = new SalesOffer();
+        salesOfferToUpdate.setTags(new HashSet<>());
 
         given(salesOfferRepository.findById(salesOffer.getId())).willReturn(Optional.of(salesOfferToUpdate));
 
@@ -478,6 +527,7 @@ class SalesOfferServiceImplTest {
     public void shouldUpdateSalesOfferInvalidValuesThrowsException(){
         //given
         SalesOffer salesOfferToUpdate = new SalesOffer();
+        salesOfferToUpdate.setTags(new HashSet<>());
         dto.setUserId(null);
         given(salesOfferRepository.findById(salesOffer.getId())).willReturn(Optional.of(salesOfferToUpdate));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));

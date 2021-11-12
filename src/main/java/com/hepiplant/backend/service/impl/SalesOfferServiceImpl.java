@@ -1,7 +1,6 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.SalesOfferDto;
-import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.Tag;
@@ -13,7 +12,6 @@ import com.hepiplant.backend.repository.SalesOfferRepository;
 import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.SalesOfferService;
-import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
@@ -27,27 +25,22 @@ import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 @Service
 public class SalesOfferServiceImpl implements SalesOfferService {
 
-    private static final int TAGS_AMOUNT = 3;
-
     private final SalesOfferRepository salesOfferRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final BeanValidator beanValidator;
     private final TagRepository tagRepository;
-    private final TagService tagService;
 
     public SalesOfferServiceImpl(final SalesOfferRepository salesOfferRepository,
                                  final CategoryRepository categoryRepository,
                                  final UserRepository userRepository,
                                  final BeanValidator beanValidator,
-                                 final TagRepository tagRepository,
-                                 final TagService tagService) {
+                                 final TagRepository tagRepository) {
         this.salesOfferRepository = salesOfferRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.beanValidator = beanValidator;
         this.tagRepository = tagRepository;
-        this.tagService = tagService;
     }
 
     @Override
@@ -148,7 +141,12 @@ public class SalesOfferServiceImpl implements SalesOfferService {
             salesOffer.setPrice(salesOfferDto.getPrice());
         }
         if(salesOfferDto.getTags() != null && !salesOfferDto.getTags().isEmpty()){
+            Set<Tag> oldTags = salesOffer.getTags();
             addTagsToSalesOffer(salesOffer, salesOfferDto);
+            oldTags = oldTags.stream()
+                    .filter(t -> !salesOfferDto.getTags().contains(t.getName()))
+                    .collect(Collectors.toSet());
+            removeOrphanTags(oldTags);
         }
         if(salesOfferDto.getPhoto()!=null){
             salesOffer.setPhoto(salesOfferDto.getPhoto());
@@ -173,36 +171,33 @@ public class SalesOfferServiceImpl implements SalesOfferService {
             return "No sales offer with id = " + id;
         }
         SalesOffer salesOfferValue = salesOffer.get();
-        salesOfferValue.getTags().forEach(tag -> {
-            int relatedItemsCount = tag.getSalesOffers().size() + tag.getPosts().size();
-            if(relatedItemsCount < 2){
-                tagRepository.delete(tag);
-            }
-        });
+        removeOrphanTags(salesOfferValue.getTags());
         salesOfferRepository.delete(salesOfferValue);
         return "Successfully deleted the sales offer with id = " + id;
     }
 
     private void addTagsToSalesOffer(SalesOffer salesOffer, SalesOfferDto salesOfferDto) {
-        Set<Tag> tags=new HashSet<>();;
+        Set<Tag> tags=new HashSet<>();
         for(String tagName : salesOfferDto.getTags()){
             Optional<Tag> tag = tagRepository.findByName(tagName.toLowerCase());
             if(tag.isPresent()) tags.add(tag.get());
             else{
                 Tag newTag = new Tag();
                 newTag.setName(tagName.toLowerCase());
-                newTag.setSalesOffers(Set.of(salesOffer));
                 beanValidator.validate(newTag);
-                TagDto savedTag = tagService.add(mapToDto(newTag));
-                if(savedTag!=null){
-                    Tag newTag2 = new Tag();
-                    newTag2.setId(savedTag.getId());
-                    newTag2.setName(savedTag.getName().toLowerCase().trim());
-                    newTag2.setSalesOffers(Set.of(salesOffer));
-                    tags.add(newTag2);
-                }
+                Tag savedTag = tagRepository.save(newTag);
+                tags.add(savedTag);
             }
         }
         salesOffer.setTags(tags);
+    }
+
+    private void removeOrphanTags(Set<Tag> tags) {
+        tags.forEach(tag -> {
+            long relatedItemsCount = tagRepository.countPostsAndSalesOffersByTagId(tag.getId());
+            if(relatedItemsCount < 2){
+                tagRepository.delete(tag);
+            }
+        });
     }
 }

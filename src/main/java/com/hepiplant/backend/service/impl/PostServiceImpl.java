@@ -2,10 +2,8 @@ package com.hepiplant.backend.service.impl;
 
 
 import com.hepiplant.backend.dto.PostDto;
-import com.hepiplant.backend.dto.TagDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
-import com.hepiplant.backend.entity.PostComment;
 import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
@@ -15,7 +13,6 @@ import com.hepiplant.backend.repository.PostRepository;
 import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.service.PostService;
-import com.hepiplant.backend.service.TagService;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
@@ -29,22 +26,22 @@ import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 @Service
 public class PostServiceImpl implements PostService {
 
-    private static final int TAGS_AMOUNT = 5;
-
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final BeanValidator beanValidator;
-    private final TagService tagService;
 
-    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, TagRepository tagRepository, BeanValidator beanValidator, TagService tagService) {
+    public PostServiceImpl(final PostRepository postRepository,
+                           final CategoryRepository categoryRepository,
+                           final UserRepository userRepository,
+                           final TagRepository tagRepository,
+                           final BeanValidator beanValidator) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.beanValidator = beanValidator;
-        this.tagService = tagService;
     }
 
     @Override
@@ -137,7 +134,12 @@ public class PostServiceImpl implements PostService {
             post.setBody(postDto.getBody());
         }
         if(postDto.getTags() != null && !postDto.getTags().isEmpty()){
+            Set<Tag> oldTags = post.getTags();
             addTagsToPost(post, postDto);
+            oldTags = oldTags.stream()
+                    .filter(t -> !postDto.getTags().contains(t.getName()))
+                    .collect(Collectors.toSet());
+            removeOrphanTags(oldTags);
         }
         if(postDto.getPhoto() !=null){
             post.setPhoto(postDto.getPhoto());
@@ -162,12 +164,7 @@ public class PostServiceImpl implements PostService {
             return "No post with id = " + id;
         }
         Post postValue = post.get();
-        postValue.getTags().forEach(tag -> {
-            int relatedItemsCount = tag.getSalesOffers().size() + tag.getPosts().size();
-            if(relatedItemsCount < 2){
-                tagRepository.delete(tag);
-            }
-        });
+        removeOrphanTags(postValue.getTags());
         postRepository.delete(postValue);
         return "Successfully deleted the post with id = " + id;
     }
@@ -177,21 +174,23 @@ public class PostServiceImpl implements PostService {
         for(String tagName : postDto.getTags()){
             Optional<Tag> tag = tagRepository.findByName(tagName.toLowerCase());
             if(tag.isPresent()) tags.add(tag.get());
-            else{
+            else {
                 Tag newTag = new Tag();
                 newTag.setName(tagName.toLowerCase());
-                newTag.setPosts(Set.of(post));
                 beanValidator.validate(newTag);
-                TagDto savedTag = tagService.add(mapToDto(newTag));
-                if(savedTag!=null){
-                    Tag newTag2 = new Tag();
-                    newTag2.setId(savedTag.getId());
-                    newTag2.setName(savedTag.getName().toLowerCase().trim());
-                    newTag2.setPosts(Set.of(post));
-                    tags.add(newTag2);
-                }
+                Tag savedTag = tagRepository.save(newTag);
+                tags.add(savedTag);
             }
         }
         post.setTags(tags);
+    }
+
+    private void removeOrphanTags(Set<Tag> tags) {
+        tags.forEach(tag -> {
+            long relatedItemsCount = tagRepository.countPostsAndSalesOffersByTagId(tag.getId());
+            if (relatedItemsCount < 2) {
+                tagRepository.delete(tag);
+            }
+        });
     }
 }
