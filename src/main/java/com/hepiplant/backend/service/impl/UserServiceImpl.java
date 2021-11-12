@@ -73,7 +73,6 @@ public class UserServiceImpl implements UserService {
         user.setRoles(Set.of(roleRepository.findByName(ROLE_USER)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found for name " + ROLE_USER))));
         user.setNotifications(true);
-        user.setRoles(Set.of(roleRepository.findByName(ROLE_USER)));
 
         beanValidator.validate(user);
         User savedUser = userRepository.save(user);
