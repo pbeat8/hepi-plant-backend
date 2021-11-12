@@ -13,6 +13,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +29,10 @@ public class TagServiceImpl implements TagService {
     private final PostRepository postRepository;
     private final SalesOfferRepository salesOfferRepository;
 
-    public TagServiceImpl(BeanValidator beanValidator, TagRepository tagRepository, PostRepository postRepository, SalesOfferRepository salesOfferRepository) {
+    public TagServiceImpl(final BeanValidator beanValidator,
+                          final TagRepository tagRepository,
+                          final PostRepository postRepository,
+                          final SalesOfferRepository salesOfferRepository) {
         this.beanValidator = beanValidator;
         this.tagRepository = tagRepository;
         this.postRepository = postRepository;
@@ -60,22 +64,21 @@ public class TagServiceImpl implements TagService {
         Tag tag = new Tag();
         tag.setName(tagDto.getName().toLowerCase().trim());
         if(tagDto.getPosts()!=null){
-            Set<Post> posts=null;
+            Set<Post> posts = new HashSet<>();
             for (Long id: tagDto.getPosts()) {
                 if(id!=null){
-                    Post post = postRepository.findById(id).get();
-                    if(post!=null) posts.add(post);
+                    Optional<Post> post = postRepository.findById(id);
+                    post.ifPresent(posts::add);
                 }
-
             }
             tag.setPosts(posts);
         }
         if(tagDto.getSalesOffers()!=null){
-            Set<SalesOffer> salesOffers=null;
+            Set<SalesOffer> salesOffers = new HashSet<>();
             for (Long id: tagDto.getSalesOffers()) {
                 if(id!=null){
-                    SalesOffer salesOffer = salesOfferRepository.findById(id).get();
-                    if(salesOffer!=null) salesOffers.add(salesOffer);
+                    Optional<SalesOffer> salesOffer = salesOfferRepository.findById(id);
+                    salesOffer.ifPresent(salesOffers::add);
                 }
 
             }
@@ -95,9 +98,9 @@ public class TagServiceImpl implements TagService {
         }
         Tag tagValue = tag.get();
         tagValue.getPosts()
-            .forEach(p -> p.getTags().remove(tag));
+            .forEach(p -> p.getTags().remove(tagValue));
         tagValue.getSalesOffers()
-            .forEach(s -> s.getTags().remove(tag));
+            .forEach(s -> s.getTags().remove(tagValue));
         tagRepository.delete(tagValue);
         return "Successfully deleted the tag with id = "+ id;
     }
