@@ -40,7 +40,7 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public List<SpeciesDto> getAll() {
         return speciesRepository.findAll().stream()
-                .sorted(Comparator.comparing(Species::getId))
+                .sorted(Comparator.comparing(Species::getName))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
