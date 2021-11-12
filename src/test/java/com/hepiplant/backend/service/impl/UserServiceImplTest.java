@@ -66,7 +66,7 @@ class UserServiceImplTest {
     public void initializeUser(){
         roleUser = new Role();
         roleUser.setName(ROLE_USER);
-        user = new User(1L, "username 1", "uid 1", "password 1", Set.of(roleUser), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        user = new User(1L, "username 1", "uid 1", "password 1", true, Set.of(roleUser), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         dto = new UserDto();
         dto.setUsername(user.getUsername());
         dto.setUid(user.getUid());

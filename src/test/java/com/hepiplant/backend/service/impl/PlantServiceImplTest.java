@@ -70,9 +70,9 @@ public class PlantServiceImplTest {
         ArrayList<Plant> plants = new ArrayList<Plant>();
         plants.add(plant2);
         user = new User(1L, "username1", "p@ssw0rd", "email@gmail.com",
-                null, plants, new ArrayList<>(), new ArrayList<>());
+                true, null, plants, new ArrayList<>(), new ArrayList<>());
         user2 = new User(2L, "username2", "p@ssw0rd2", "email2@gmail.com",
-                null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                true, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
         category2 = new Category(4L, "Category2", new ArrayList<>());
         species = new Species(3L, "name", 3, 21, 1, BARDZO_JASNE, "soil", category);

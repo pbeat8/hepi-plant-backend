@@ -70,6 +70,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(userDto.getUsername());
         user.setUid(passwordEncoder.encode(userDto.getUid()));
         user.setEmail(userDto.getEmail());
+        user.setNotifications(true);
         user.setRoles(Set.of(roleRepository.findByName(ROLE_USER)));
 
         beanValidator.validate(user);
@@ -88,6 +89,7 @@ public class UserServiceImpl implements UserService {
         if(userDto.getEmail()!=null) {
             user.setEmail(userDto.getEmail());
         }
+        user.setNotifications(userDto.isNotifications());
         if(userDto.getRoles()!=null) {
             Set<Role> roles = new HashSet<>();
             for (String roleName : userDto.getRoles()){
