@@ -1,6 +1,7 @@
 package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.UserDto;
+import com.hepiplant.backend.dto.UserStatisticsDto;
 import com.hepiplant.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,4 +45,17 @@ public class UserController {
     public ResponseEntity<String> delete(@PathVariable Long id){
         return ResponseEntity.ok().body(userService.delete(id));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}/statistics")
+    public ResponseEntity<UserStatisticsDto> getUserStatistics(@PathVariable Long id){
+        return ResponseEntity.ok().body(userService.getUserStatistics(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/grant-role")
+    public ResponseEntity<String> grantRole(@PathVariable Long id, @RequestParam String role){
+        return ResponseEntity.ok().body(userService.grantRole(id, role));
+    }
+
 }
