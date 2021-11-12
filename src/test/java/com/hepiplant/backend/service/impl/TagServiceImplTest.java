@@ -1,13 +1,10 @@
 package com.hepiplant.backend.service.impl;
 
-
 import com.hepiplant.backend.dto.TagDto;
-
 import com.hepiplant.backend.entity.Post;
 import com.hepiplant.backend.entity.SalesOffer;
 import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.exception.InvalidBeanException;
-
 import com.hepiplant.backend.repository.TagRepository;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +51,7 @@ public class TagServiceImplTest {
         dto.setId(tag.getId());
         dto.setName(tag.getName());
         dto.setPosts(tag.getPosts().stream().map(Post::getId).collect(Collectors.toSet()));
-        dto.setSalesOffer(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
+        dto.setSalesOffers(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
     }
 
     //Create tests
@@ -113,7 +110,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldGettagByIdOk()
+    public void shouldGetTagByIdOk()
     {
         //given
         given(tagRepository.findById(tag.getId())).willReturn(Optional.of(tag));
@@ -127,7 +124,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldGettagByIdDoesNotExistThrowsException()
+    public void shouldGetTagByIdDoesNotExistThrowsException()
     {
         //given
         given(tagRepository.findById(tag.getId())).willReturn(Optional.empty());
@@ -141,7 +138,7 @@ public class TagServiceImplTest {
 
 
     @Test
-    public void shouldDeletetagOk(){
+    public void shouldDeleteTagOk(){
         //given
         given(tagRepository.findById(tag.getId())).willReturn(Optional.of(tag));
 
@@ -155,7 +152,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldDeletetagDoesNotExistThrowsException()
+    public void shouldDeleteTagDoesNotExistThrowsException()
     {
         //given
         given(tagRepository.findById(tag.getId())).willReturn(Optional.empty());

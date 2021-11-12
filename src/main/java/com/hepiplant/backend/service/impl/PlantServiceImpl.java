@@ -1,6 +1,5 @@
 package com.hepiplant.backend.service.impl;
 
-import com.hepiplant.backend.dto.EventDto;
 import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.entity.*;
 import com.hepiplant.backend.exception.ImmutableFieldException;
@@ -30,6 +29,7 @@ public class PlantServiceImpl implements PlantService {
     public static final String FERTILIZATING = "Nawożenie";
     public static final String FERRTILIZATING_PLANT = "Nawożenie rośliny o nazwie ";
     private final PlantRepository plantRepository;
+    private final CategoryRepository categoryRepository;
     private final SpeciesRepository speciesRepository;
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
@@ -38,12 +38,13 @@ public class PlantServiceImpl implements PlantService {
     
 
     public PlantServiceImpl(final PlantRepository plantRepository,
-                            final SpeciesRepository speciesRepository,
+                            final CategoryRepository categoryRepository, final SpeciesRepository speciesRepository,
                             final UserRepository userRepository,
                             final ScheduleRepository scheduleRepository,
                             final EventRepository eventRepository,
                             final BeanValidator beanValidator) {
         this.plantRepository = plantRepository;
+        this.categoryRepository = categoryRepository;
         this.speciesRepository = speciesRepository;
         this.userRepository = userRepository;
         this.scheduleRepository = scheduleRepository;
@@ -62,9 +63,13 @@ public class PlantServiceImpl implements PlantService {
         schedule.setPlant(plant);
         if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
             Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(() -> new EntityNotFoundException("Species not found for id " + plantDto.getSpecies().getId()));
+            Category category = categoryRepository.findById(plantDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id " + plantDto.getCategoryId()));
             plant.setSpecies(species);
-            plant.setCategory(species.getCategory());
-            schedule.setWateringFrequency(species.getWateringFrequency());
+            if(!plantDto.getSpecies().getName().equals("Brak"))
+                plant.setCategory(species.getCategory());
+            else
+                plant.setCategory(category);
+            schedule.setWateringFrequency(plantDto.getSchedule().getWateringFrequency());
             schedule.setFertilizingFrequency(species.getFertilizingFrequency());
             schedule.setMistingFrequency(species.getMistingFrequency());
         }
@@ -145,7 +150,8 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
             Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(EntityNotFoundException::new);
             plant.setSpecies(species);
-            plant.setCategory(species.getCategory());
+            if(!plantDto.getSpecies().getName().equals("Brak"))
+                plant.setCategory(species.getCategory());
         }
         if(plantDto.getUserId()!=null && !plantDto.getUserId().equals(plant.getUser().getId())){
             throw new ImmutableFieldException("Field User in Plant is immutable!");

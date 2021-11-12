@@ -187,8 +187,8 @@ public class DtoMapper {
         dto.setName(tag.getName().toLowerCase().trim());
         if(tag.getPosts()!=null)
             dto.setPosts(tag.getPosts().stream().map(Post::getId).collect(Collectors.toSet()));
-        if(dto.getSalesOffer()!=null)
-            dto.setSalesOffer(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
+        if(tag.getSalesOffers()!=null)
+            dto.setSalesOffers(tag.getSalesOffers().stream().map(SalesOffer::getId).collect(Collectors.toSet()));
         return dto;
     }
 
