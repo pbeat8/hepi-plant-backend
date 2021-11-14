@@ -72,6 +72,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setRoles(Set.of(roleRepository.findByName(ROLE_USER)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found for name " + ROLE_USER))));
+        user.setNotifications(true);
 
         beanValidator.validate(user);
         User savedUser = userRepository.save(user);
@@ -89,6 +90,7 @@ public class UserServiceImpl implements UserService {
         if(userDto.getEmail()!=null) {
             user.setEmail(userDto.getEmail());
         }
+        user.setNotifications(userDto.isNotifications());
         if(userDto.getRoles()!=null) {
             throw new ImmutableFieldException("Field roles in User can be altered using grant-role endpoint!");
         }

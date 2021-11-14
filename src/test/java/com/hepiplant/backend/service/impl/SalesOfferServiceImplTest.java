@@ -69,7 +69,7 @@ class SalesOfferServiceImplTest {
     @BeforeAll
     public static void initializeVariables(){
         user = new User(1L, "username1", "uId1", "email@gmail.com",
-                null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                true, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
         tag = new Tag(1L,"tag1",new HashSet<>(),new HashSet<>());
         tags =new HashSet<>();

@@ -63,12 +63,17 @@ public class PlantServiceImpl implements PlantService {
         schedule.setPlant(plant);
         if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
             Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(() -> new EntityNotFoundException("Species not found for id " + plantDto.getSpecies().getId()));
-            Category category = categoryRepository.findById(plantDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id " + plantDto.getCategoryId()));
             plant.setSpecies(species);
             if(!plantDto.getSpecies().getName().equals("Brak"))
                 plant.setCategory(species.getCategory());
-            else
+            else if(plantDto.getCategoryId()!=null && plantDto.getSpecies().getName().equals("Brak")){
+                Category category = categoryRepository.findById(plantDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id " + plantDto.getCategoryId()));
                 plant.setCategory(category);
+            }
+            else{
+                Category category = categoryRepository.findByName("Brak").orElseThrow(() -> new EntityNotFoundException("Category not found for name Brak"));
+                plant.setCategory(category);
+            }
             schedule.setWateringFrequency(plantDto.getSchedule().getWateringFrequency());
             schedule.setFertilizingFrequency(species.getFertilizingFrequency());
             schedule.setMistingFrequency(species.getMistingFrequency());

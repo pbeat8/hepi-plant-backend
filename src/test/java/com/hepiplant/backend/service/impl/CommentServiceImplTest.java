@@ -67,7 +67,7 @@ public class CommentServiceImplTest {
     public static void initializeVariables(){
         category = new Category(2L, "Category1", new ArrayList<>());
         user = new User(1L, "username1", "uId1", "email@gmail.com",
-                null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                true, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     @BeforeEach

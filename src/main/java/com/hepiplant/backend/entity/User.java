@@ -25,6 +25,7 @@ public class User {
     @Email
     @Column(unique = true)
     private String email;
+    private boolean notifications;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(schema = "users", name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -40,12 +41,13 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String uId, String email, Set<Role> roles,
+    public User(Long id, String username, String uId, String email, boolean notifications, Set<Role> roles,
                 List<Plant> plantList, List<Post> postList, List<SalesOffer> salesOfferList) {
         this.id = id;
         this.username = username;
         this.uid = uId;
         this.email = email;
+        this.notifications = notifications;
         this.roles = roles;
         this.plantList = plantList;
         this.postList = postList;
@@ -106,6 +108,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(boolean notifications) {
+        this.notifications = notifications;
     }
 
     public Set<Role> getRoles() {
