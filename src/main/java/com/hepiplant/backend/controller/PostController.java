@@ -29,8 +29,10 @@ public class PostController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<PostDto>> getPosts(@RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-                                                  @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
-        return ResponseEntity.ok().body(postService.getAll(startDate, endDate));
+                                                           @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate,
+                                                           @RequestParam(required = false) String tag,
+                                                           @RequestParam(required = false) Long categoryId){
+        return ResponseEntity.ok().body(postService.getAllByFilters(startDate, endDate, tag, categoryId));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

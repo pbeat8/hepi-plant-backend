@@ -1,10 +1,8 @@
 package com.hepiplant.backend.service.impl;
 
+import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
-import com.hepiplant.backend.entity.Category;
-import com.hepiplant.backend.entity.SalesOffer;
-import com.hepiplant.backend.entity.Tag;
-import com.hepiplant.backend.entity.User;
+import com.hepiplant.backend.entity.*;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
 import com.hepiplant.backend.repository.CategoryRepository;
@@ -70,17 +68,11 @@ public class SalesOfferServiceImpl implements SalesOfferService {
 
     @Override
     public List<SalesOfferDto> getAll(Date startDate, Date endDate) {
-        if (startDate == null || endDate == null) { // todo maybe change
-            return salesOfferRepository.findAll().stream()
-                    .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
-                    .map(DtoMapper::mapToDto)
-                    .collect(Collectors.toList());
-        } else {
-            return salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)).stream()
-                    .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
-                    .map(DtoMapper::mapToDto)
-                    .collect(Collectors.toList());
-        }
+       return salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate).plusDays(1)).stream()
+                        .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
+                        .map(DtoMapper::mapToDto)
+                        .collect(Collectors.toList());
+
     }
 
     @Override
@@ -115,6 +107,52 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                 .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SalesOfferDto> getAllByFilters(Date startDate, Date endDate, String tag, Long categoryId) {
+        Set<SalesOfferDto> salesOfferDtos = new HashSet<>();
+        boolean wasInIf = false;
+        if(startDate==null && endDate==null && tag==null && categoryId==null){
+            salesOfferDtos.addAll(salesOfferRepository.findAll().stream()
+                    .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList()));
+            wasInIf=true;
+        }
+        if(startDate!=null && endDate!=null){
+            List<SalesOfferDto> temp= getAll(startDate,endDate);
+            salesOfferDtos = getSalesOffersDtos(salesOfferDtos, temp, wasInIf);
+            wasInIf =true;
+        }
+
+        if(tag!=null && !tag.isEmpty()){
+            List<SalesOfferDto> temp= getAllByTag(tag);
+            salesOfferDtos = getSalesOffersDtos(salesOfferDtos, temp, wasInIf);
+            wasInIf=true;
+        }
+
+        if(categoryId!=null){
+            List<SalesOfferDto> temp = getAllByCategory(categoryId);
+            salesOfferDtos = getSalesOffersDtos(salesOfferDtos, temp, wasInIf);
+            wasInIf=true;
+        }
+
+        List<SalesOfferDto> filterPost = new ArrayList<>(salesOfferDtos);
+        return filterPost;
+    }
+
+    private Set<SalesOfferDto> getSalesOffersDtos(Set<SalesOfferDto> posts, List<SalesOfferDto> temp, boolean was) {
+        if (!posts.isEmpty()) {
+            Set<Long> indexes = temp.stream().map(SalesOfferDto::getId).collect(Collectors.toSet());
+            Set<SalesOfferDto> newPosts = posts.stream().filter(p -> indexes.contains(p.getId())).collect(Collectors.toSet());
+            posts = newPosts;
+        }
+        else if(was && posts.isEmpty()){
+            posts = new HashSet<>();
+        }
+        else posts.addAll(temp);
+        return posts;
     }
 
     @Override
