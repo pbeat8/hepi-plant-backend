@@ -1,15 +1,12 @@
 package com.hepiplant.backend.repository;
 
-import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Post;
-import com.hepiplant.backend.entity.Tag;
 import com.hepiplant.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Repository

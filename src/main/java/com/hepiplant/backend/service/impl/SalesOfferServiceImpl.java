@@ -1,6 +1,5 @@
 package com.hepiplant.backend.service.impl;
 
-import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.*;
 import com.hepiplant.backend.exception.ImmutableFieldException;
@@ -138,21 +137,21 @@ public class SalesOfferServiceImpl implements SalesOfferService {
             wasInIf=true;
         }
 
-        List<SalesOfferDto> filterPost = new ArrayList<>(salesOfferDtos);
-        return filterPost;
+        List<SalesOfferDto> filterSalesOffers = new ArrayList<>(salesOfferDtos);
+        return filterSalesOffers;
     }
 
-    private Set<SalesOfferDto> getSalesOffersDtos(Set<SalesOfferDto> posts, List<SalesOfferDto> temp, boolean was) {
-        if (!posts.isEmpty()) {
+    private Set<SalesOfferDto> getSalesOffersDtos(Set<SalesOfferDto> salesOffers, List<SalesOfferDto> temp, boolean was) {
+        if (!salesOffers.isEmpty()) {
             Set<Long> indexes = temp.stream().map(SalesOfferDto::getId).collect(Collectors.toSet());
-            Set<SalesOfferDto> newPosts = posts.stream().filter(p -> indexes.contains(p.getId())).collect(Collectors.toSet());
-            posts = newPosts;
+            Set<SalesOfferDto> newPosts = salesOffers.stream().filter(p -> indexes.contains(p.getId())).collect(Collectors.toSet());
+            salesOffers = newPosts;
         }
-        else if(was && posts.isEmpty()){
-            posts = new HashSet<>();
+        else if(was && salesOffers.isEmpty()){
+            salesOffers = new HashSet<>();
         }
-        else posts.addAll(temp);
-        return posts;
+        else salesOffers.addAll(temp);
+        return salesOffers;
     }
 
     @Override
