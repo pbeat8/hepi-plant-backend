@@ -69,17 +69,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getAll(Date startDate, Date endDate) {
-        if (startDate == null || endDate == null){ // todo maybe change
-            return postRepository.findAll().stream()
+            return postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate).plusDays(1)).stream()
                     .sorted(Comparator.comparing(Post::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
-        } else {
-            return postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)).stream()
-                    .sorted(Comparator.comparing(Post::getCreatedDate))
-                    .map(DtoMapper::mapToDto)
-                    .collect(Collectors.toList());
-        }
     }
 
     @Override
@@ -114,6 +107,52 @@ public class PostServiceImpl implements PostService {
                 .sorted(Comparator.comparing(Post::getCreatedDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostDto> getAllByFilters(Date startDate, Date endDate, String tag, Long categoryId) {
+        Set<PostDto> posts = new HashSet<>();
+        boolean wasInIf = false;
+        if(startDate==null && endDate==null && tag==null && categoryId==null){
+            posts.addAll(postRepository.findAll().stream()
+                    .sorted(Comparator.comparing(Post::getCreatedDate))
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList()));
+            wasInIf=true;
+        }
+        if(startDate!=null && endDate!=null){
+            List<PostDto> temp= getAll(startDate,endDate);
+            posts = getPostDtos(posts, temp, wasInIf);
+            wasInIf =true;
+        }
+
+        if(tag!=null && !tag.isEmpty()){
+            List<PostDto> temp= getAllByTag(tag);
+            posts = getPostDtos(posts, temp, wasInIf);
+            wasInIf=true;
+        }
+
+        if(categoryId!=null){
+            List<PostDto> temp = getAllByCategory(categoryId);
+            posts = getPostDtos(posts, temp, wasInIf);
+            wasInIf=true;
+        }
+
+        List<PostDto> filterPost = new ArrayList<>(posts);
+        return filterPost;
+    }
+
+    private Set<PostDto> getPostDtos(Set<PostDto> posts, List<PostDto> temp, boolean was) {
+        if (!posts.isEmpty()) {
+            Set<Long> indexes = temp.stream().map(PostDto::getId).collect(Collectors.toSet());
+            Set<PostDto> newPosts = posts.stream().filter(p -> indexes.contains(p.getId())).collect(Collectors.toSet());
+            posts = newPosts;
+        }
+        else if(was && posts.isEmpty()){
+            posts = new HashSet<>();
+        }
+        else posts.addAll(temp);
+        return posts;
     }
 
     @Override

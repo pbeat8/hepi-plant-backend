@@ -11,8 +11,10 @@ public interface PostService {
     List<PostDto> getAllByCategory(Long categoryId);
     List<PostDto> getAllByUser(Long userId);
     List<PostDto> getAllByTag(String tag); // todo by multiple tags?
+    List<PostDto> getAllByFilters(Date startDate, Date endDate, String tag, Long categoryId);
     PostDto getById(Long id);
     PostDto update(Long id, PostDto postDto);
     String delete(Long id);
 
 }
+

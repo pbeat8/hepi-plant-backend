@@ -12,7 +12,9 @@ public interface SalesOfferService {
     List<SalesOfferDto> getAllByCategory(Long categoryId);
     List<SalesOfferDto> getAllByUser(Long userId);
     List<SalesOfferDto> getAllByTag(String tag);
+    List<SalesOfferDto> getAllByFilters(Date startDate, Date endDate, String tag, Long categoryId);
     SalesOfferDto getById(Long id);
     SalesOfferDto update(Long id, SalesOfferDto salesOfferDto);
     String delete(Long id);
 }
+

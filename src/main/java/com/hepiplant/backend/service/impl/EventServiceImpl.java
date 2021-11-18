@@ -15,6 +15,7 @@ import com.hepiplant.backend.validator.BeanValidator;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +53,8 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new EntityNotFoundException("Plant not found for id "+plantId));
         return eventRepository.findAllByPlant(plant).stream()
                 .filter(e -> e.isDone())
+                .sorted(Comparator.comparing(Event::getEventName))
+                .sorted(Comparator.comparing(Event::getEventDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -63,6 +66,8 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAll().stream()
                 .filter(e -> e.getPlant().getUser().getId().equals(userId))
                 .filter(e -> !e.isDone())
+                .sorted(Comparator.comparing(Event::getEventName))
+                .sorted(Comparator.comparing(Event::getEventDate))
                 .map(DtoMapper :: mapToDto)
                 .collect(Collectors.toList());
     }
