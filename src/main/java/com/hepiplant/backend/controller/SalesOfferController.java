@@ -29,8 +29,10 @@ public class SalesOfferController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<SalesOfferDto>> getSalesOffers(@RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date startDate,
-                                                              @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate){
-        return ResponseEntity.ok().body(salesOfferService.getAll(startDate, endDate));
+                                                              @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date endDate,
+                                                              @RequestParam(required = false) String tag,
+                                                              @RequestParam(required = false) Long categoryId){
+        return ResponseEntity.ok().body(salesOfferService.getAllByFilters(startDate, endDate, tag, categoryId));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
