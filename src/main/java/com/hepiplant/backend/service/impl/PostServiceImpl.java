@@ -139,7 +139,9 @@ public class PostServiceImpl implements PostService {
         }
 
         List<PostDto> filterPost = new ArrayList<>(posts);
-        return filterPost;
+        return filterPost.stream()
+                .sorted(Comparator.comparing(PostDto::getCreatedDate).reversed())
+                .collect(Collectors.toList());
     }
 
     private Set<PostDto> getPostDtos(Set<PostDto> posts, List<PostDto> temp, boolean was) {

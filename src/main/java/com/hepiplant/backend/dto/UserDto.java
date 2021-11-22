@@ -9,6 +9,7 @@ public class UserDto {
     private String uid;
     private String email;
     private boolean notifications;
+    private String hourOfNotifications;
     private Set<String> roles;
 
     public UserDto() {
@@ -52,6 +53,14 @@ public class UserDto {
 
     public void setNotifications(boolean notifications) {
         this.notifications = notifications;
+    }
+
+    public String getHourOfNotifications() {
+        return hourOfNotifications;
+    }
+
+    public void setHourOfNotifications(String hourOfNotifications) {
+        this.hourOfNotifications = hourOfNotifications;
     }
 
     public Set<String> getRoles() {
