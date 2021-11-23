@@ -66,7 +66,7 @@ class UserServiceImplTest {
         roleUser.setName(ROLE_USER);
         HashSet<Role> roles = new HashSet<>();
         roles.add(roleUser);
-        user = new User(1L, "username 1", "uid 1", "password 1", true, roles, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        user = new User(1L, "username 1", "uid 1", "password 1", true, "00:00:00", roles, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         dto = new UserDto();
         dto.setUsername(user.getUsername());
         dto.setUid(user.getUid());

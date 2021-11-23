@@ -26,6 +26,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private boolean notifications;
+    private String hourOfNotifications;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(schema = "users", name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -41,13 +42,14 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String uId, String email, boolean notifications, Set<Role> roles,
+    public User(Long id, String username, String uId, String email, boolean notifications, String hourOfNotifications, Set<Role> roles,
                 List<Plant> plantList, List<Post> postList, List<SalesOffer> salesOfferList) {
         this.id = id;
         this.username = username;
         this.uid = uId;
         this.email = email;
         this.notifications = notifications;
+        this.hourOfNotifications = hourOfNotifications;
         this.roles = roles;
         this.plantList = plantList;
         this.postList = postList;
@@ -116,6 +118,14 @@ public class User {
 
     public void setNotifications(boolean notifications) {
         this.notifications = notifications;
+    }
+
+    public String getHourOfNotifications() {
+        return hourOfNotifications;
+    }
+
+    public void setHourOfNotifications(String hourOfNotifications) {
+        this.hourOfNotifications = hourOfNotifications;
     }
 
     public Set<Role> getRoles() {
