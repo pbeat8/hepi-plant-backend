@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS users.users
     username character varying(50) COLLATE pg_catalog."default",
     uid character varying(255) COLLATE pg_catalog."default",
     notifications boolean NOT NULL,
+    hour_of_notifications character varying(10) COLLATE pg_catalog."default",
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT uk_efqukogbk7i0poucwoy2qie74 UNIQUE (uid)
 )

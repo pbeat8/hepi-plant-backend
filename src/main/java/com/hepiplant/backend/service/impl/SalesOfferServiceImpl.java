@@ -1,5 +1,6 @@
 package com.hepiplant.backend.service.impl;
 
+import com.hepiplant.backend.dto.PostDto;
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.*;
 import com.hepiplant.backend.exception.ImmutableFieldException;
@@ -138,7 +139,9 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         }
 
         List<SalesOfferDto> filterSalesOffers = new ArrayList<>(salesOfferDtos);
-        return filterSalesOffers;
+        return filterSalesOffers.stream()
+                .sorted(Comparator.comparing(SalesOfferDto::getCreatedDate).reversed())
+                .collect(Collectors.toList());
     }
 
     private Set<SalesOfferDto> getSalesOffersDtos(Set<SalesOfferDto> salesOffers, List<SalesOfferDto> temp, boolean was) {
