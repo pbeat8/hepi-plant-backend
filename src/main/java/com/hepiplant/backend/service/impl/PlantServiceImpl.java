@@ -26,8 +26,8 @@ public class PlantServiceImpl implements PlantService {
     public static final String WATERING_PLANT = "Podlewanie rośliny o nazwie ";
     public static final String MISTING = "Zraszanie";
     public static final String MISTING_PLANT = "Zraszanie rośliny o nazwie ";
-    public static final String FERTILIZATING = "Nawożenie";
-    public static final String FERRTILIZATING_PLANT = "Nawożenie rośliny o nazwie ";
+    public static final String FERTILIZING = "Nawożenie";
+    public static final String FERTILIZING_PLANT = "Nawożenie rośliny o nazwie ";
     private final PlantRepository plantRepository;
     private final CategoryRepository categoryRepository;
     private final SpeciesRepository speciesRepository;
@@ -98,7 +98,7 @@ public class PlantServiceImpl implements PlantService {
                 eventList.add(eventM);
             }
             if(plantDto.getSchedule().getFertilizingFrequency()>0){
-                eventF = addNewEvent(plant, FERTILIZATING,FERRTILIZATING_PLANT, plantDto.getSchedule().getFertilizingFrequency(),userHour);
+                eventF = addNewEvent(plant, FERTILIZING, FERTILIZING_PLANT, plantDto.getSchedule().getFertilizingFrequency(),userHour);
                 eventList.add(eventF);
             }
         }
@@ -185,7 +185,7 @@ public class PlantServiceImpl implements PlantService {
                 eventM = addNewEvent(plant, MISTING,MISTING_PLANT, plantDto.getSchedule().getMistingFrequency(),userHour);
             }
             if(plantDto.getSchedule().getFertilizingFrequency()>0){
-                eventF = addNewEvent(plant, FERTILIZATING,FERRTILIZATING_PLANT, plantDto.getSchedule().getFertilizingFrequency(),userHour);
+                eventF = addNewEvent(plant, FERTILIZING, FERTILIZING_PLANT, plantDto.getSchedule().getFertilizingFrequency(),userHour);
             }
         }
 
