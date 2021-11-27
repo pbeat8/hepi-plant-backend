@@ -1,11 +1,14 @@
 package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.PlantDto;
+import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.service.PlantService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -32,8 +35,17 @@ public class PlantController {
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PlantDto>> getPlantsByUser(@PathVariable Long userId){
-        return ResponseEntity.ok().body(plantService.getAllByUser(userId));
+    public ResponseEntity<List<PlantDto>> getPlantsByUser(@PathVariable Long userId,
+                                                          @RequestParam(required = false) String name,
+                                                          @RequestParam(required = false) Long speciesId,
+                                                          @RequestParam(required = false) String location){
+        return ResponseEntity.ok().body(plantService.getAllByUserFiltered(userId, name, speciesId, location));
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @GetMapping("/user/{userId}/locations")
+    public ResponseEntity<List<String>> getLocationsByUser(@PathVariable Long userId){
+        return ResponseEntity.ok().body(plantService.getAllLocationsByUser(userId));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
