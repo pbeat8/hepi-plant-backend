@@ -166,8 +166,9 @@ public class PlantServiceImpl implements PlantService {
             plants = getPlantsDtos(plants, tempPlants, wasInIf);
             wasInIf =true;
         }
-        List<PlantDto> filterPlant = new ArrayList<>(plants);
-        return filterPlant;
+        return plants.stream()
+                .sorted(Comparator.comparing(PlantDto::getPurchaseDate))
+                .collect(Collectors.toList());
     }
 
     private Set<PlantDto> getPlantsDtos(Set<PlantDto> plants, List<PlantDto> temp, boolean was) {
