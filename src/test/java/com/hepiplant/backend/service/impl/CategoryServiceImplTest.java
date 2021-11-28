@@ -55,7 +55,7 @@ public class CategoryServiceImplTest {
 
     //Create tests
     @Test
-    public void shouldCreateCategoryok(){
+    public void shouldCreateCategoryOk(){
         //given
         given(categoryRepository.save(categoryArgumentCaptor.capture())).willAnswer(returnsFirstArg());
         //when

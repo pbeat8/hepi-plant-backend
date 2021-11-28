@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "/plants")
@@ -32,8 +33,17 @@ public class PlantController {
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PlantDto>> getPlantsByUser(@PathVariable Long userId){
-        return ResponseEntity.ok().body(plantService.getAllByUser(userId));
+    public ResponseEntity<List<PlantDto>> getPlantsByUser(@PathVariable Long userId,
+                                                          @RequestParam(required = false) String name,
+                                                          @RequestParam(required = false) Long speciesId,
+                                                          @RequestParam(required = false) String location){
+        return ResponseEntity.ok().body(plantService.getAllByUserFiltered(userId, name, speciesId, location));
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @GetMapping("/user/{userId}/locations")
+    public ResponseEntity<Set<String>> getLocationsByUser(@PathVariable Long userId){
+        return ResponseEntity.ok().body(plantService.getAllLocationsByUser(userId));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
