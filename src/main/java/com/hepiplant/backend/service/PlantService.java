@@ -5,6 +5,7 @@ import com.hepiplant.backend.dto.PlantDto;
 import com.hepiplant.backend.dto.SpeciesDto;
 
 import java.util.List;
+import java.util.Set;
 
 public interface PlantService {
     PlantDto create(PlantDto plantDto);
@@ -14,6 +15,6 @@ public interface PlantService {
     PlantDto getById(Long id);
     PlantDto update(Long id, PlantDto plantDto);
     String delete(Long id);
-    List<String> getAllLocationsByUser(Long userId);
+    Set<String> getAllLocationsByUser(Long userId);
 
 }

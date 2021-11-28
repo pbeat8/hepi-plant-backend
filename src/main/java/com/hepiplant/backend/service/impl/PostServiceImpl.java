@@ -70,7 +70,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getAll(Date startDate, Date endDate) {
             return postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate).plusDays(1)).stream()
-                    .sorted(Comparator.comparing(Post::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList());
     }

@@ -121,6 +121,7 @@ public class PlantServiceImpl implements PlantService {
     @Override
     public List<PlantDto> getAll() {
         return plantRepository.findAll().stream()
+                .sorted(Comparator.comparing(Plant::getPurchaseDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -129,6 +130,7 @@ public class PlantServiceImpl implements PlantService {
     public List<PlantDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
         return user.getPlantList().stream()
+                .sorted(Comparator.comparing(Plant::getPurchaseDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -144,6 +146,7 @@ public class PlantServiceImpl implements PlantService {
         boolean wasInIf = false;
         if(name==null && speciesId==null && location==null) {
             plants.addAll(user.getPlantList().stream()
+                    .sorted(Comparator.comparing(Plant::getPurchaseDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList()));
             wasInIf = true;
@@ -187,7 +190,7 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public List<String> getAllLocationsByUser(Long userId) {
+    public Set<String> getAllLocationsByUser(Long userId) {
         List<PlantDto> plantList  = new ArrayList();
         plantList = getAllByUser(userId);
         Set<String> location = new HashSet<>();
@@ -195,8 +198,7 @@ public class PlantServiceImpl implements PlantService {
         {
             location.add(plantList.get(i).getLocation());
         }
-        List<String> locations = new ArrayList<String>(location);
-        return locations;
+        return location;
     }
 
     @Override

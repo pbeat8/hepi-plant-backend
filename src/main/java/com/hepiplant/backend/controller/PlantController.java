@@ -1,15 +1,13 @@
 package com.hepiplant.backend.controller;
 
 import com.hepiplant.backend.dto.PlantDto;
-import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.service.PlantService;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "/plants")
@@ -44,7 +42,7 @@ public class PlantController {
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/user/{userId}/locations")
-    public ResponseEntity<List<String>> getLocationsByUser(@PathVariable Long userId){
+    public ResponseEntity<Set<String>> getLocationsByUser(@PathVariable Long userId){
         return ResponseEntity.ok().body(plantService.getAllLocationsByUser(userId));
     }
 
