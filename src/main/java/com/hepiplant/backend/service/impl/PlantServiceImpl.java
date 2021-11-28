@@ -1,6 +1,8 @@
 package com.hepiplant.backend.service.impl;
 
 import com.hepiplant.backend.dto.PlantDto;
+import com.hepiplant.backend.dto.PostDto;
+import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.*;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.mapper.DtoMapper;
@@ -12,9 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
@@ -121,6 +121,7 @@ public class PlantServiceImpl implements PlantService {
     @Override
     public List<PlantDto> getAll() {
         return plantRepository.findAll().stream()
+                .sorted(Comparator.comparing(Plant::getPurchaseDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -129,14 +130,76 @@ public class PlantServiceImpl implements PlantService {
     public List<PlantDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
         return user.getPlantList().stream()
+                .sorted(Comparator.comparing(Plant::getPurchaseDate))
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PlantDto> getAllByUserFiltered(Long userId, String name, Long speciesId, String location) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
+        Set<PlantDto> plants = new HashSet<>();
+        Set<PlantDto> plantsAllByUser = new HashSet<>();
+        plantsAllByUser.addAll(user.getPlantList().stream()
+                .map(DtoMapper::mapToDto)
+                .collect(Collectors.toList()));
+        boolean wasInIf = false;
+        if(name==null && speciesId==null && location==null) {
+            plants.addAll(user.getPlantList().stream()
+                    .sorted(Comparator.comparing(Plant::getPurchaseDate))
+                    .map(DtoMapper::mapToDto)
+                    .collect(Collectors.toList()));
+            wasInIf = true;
+        }
+        if(name!=null){
+            List<PlantDto> tempPlants = plantsAllByUser.stream().filter(p -> p.getName().equals(name)).collect(Collectors.toList());
+            plants = getPlantsDtos(plants, tempPlants, wasInIf);
+            wasInIf =true;
+        }
+        if(speciesId!= null){
+            List<PlantDto> tempPlants = plantsAllByUser.stream().filter(p -> p.getSpecies().getId()==speciesId).collect(Collectors.toList());
+            plants = getPlantsDtos(plants, tempPlants, wasInIf);
+            wasInIf =true;
+        }
+        if(location!= null){
+            List<PlantDto> tempPlants = plantsAllByUser.stream().filter(p -> p.getLocation().equals(location)).collect(Collectors.toList());
+            plants = getPlantsDtos(plants, tempPlants, wasInIf);
+            wasInIf =true;
+        }
+        return plants.stream()
+                .sorted(Comparator.comparing(PlantDto::getPurchaseDate))
+                .collect(Collectors.toList());
+    }
+
+    private Set<PlantDto> getPlantsDtos(Set<PlantDto> plants, List<PlantDto> temp, boolean was) {
+        if (!plants.isEmpty()) {
+            Set<Long> indexes = temp.stream().map(PlantDto::getId).collect(Collectors.toSet());
+            Set<PlantDto> newPlants = plants.stream().filter(p -> indexes.contains(p.getId())).collect(Collectors.toSet());
+            plants = newPlants;
+        }
+        else if(was && plants.isEmpty()){
+            plants = new HashSet<>();
+        }
+        else plants.addAll(temp);
+        return plants;
     }
 
     @Override
     public PlantDto getById(Long id) {
         Plant plant = plantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Plant not found for id " + id));
         return mapToDto(plant);
+    }
+
+    @Override
+    public Set<String> getAllLocationsByUser(Long userId) {
+        List<PlantDto> plantList  = new ArrayList();
+        plantList = getAllByUser(userId);
+        Set<String> location = new HashSet<>();
+        for (int i=0; i<plantList.size(); i++)
+        {
+            location.add(plantList.get(i).getLocation());
+        }
+        return location;
     }
 
     @Override
