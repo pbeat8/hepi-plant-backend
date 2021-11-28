@@ -239,7 +239,7 @@ class PostServiceImplTest {
                 .willReturn(List.of());
 
         //when
-        List<PostDto> result = postService.getAll(startDate, endDate);
+        List<PostDto> result = postService.getAllByFilters(startDate, endDate, null, null);
 
         //then
         then(postRepository).should(times(1)).findAllByCreatedDateBetween(any(), any());

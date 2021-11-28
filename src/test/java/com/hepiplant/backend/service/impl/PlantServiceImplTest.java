@@ -45,6 +45,8 @@ public class PlantServiceImplTest {
     @Mock
     private ScheduleRepository scheduleRepository;
     @Mock
+    private EventRepository eventRepository;
+    @Mock
     private BeanValidator beanValidator;
 
     @Captor
@@ -117,6 +119,7 @@ public class PlantServiceImplTest {
         given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
         given(scheduleRepository.save(any())).willAnswer(returnsFirstArg());
+        given(eventRepository.save(any())).willAnswer(returnsFirstArg());
         given(plantRepository.save(plantArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -125,6 +128,7 @@ public class PlantServiceImplTest {
         //then
         then(speciesRepository).should(times(1)).findById(eq(dto.getSpecies().getId()));
         then(scheduleRepository).should(times(1)).save(any(Schedule.class));
+        then(eventRepository).should(times(3)).save(any(Event.class));
         then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
         then(beanValidator).should(times(1)).validate(any());
         then(plantRepository).should(times(1)).save(any(Plant.class));
@@ -145,9 +149,9 @@ public class PlantServiceImplTest {
         assertEquals(category, captorValue.getCategory());
         assertEquals(species, captorValue.getSpecies());
         assertEquals(user, captorValue.getUser());
-        assertEquals(scheduleDto.getFertilizingFrequency(), captorValue.getSchedule().getFertilizingFrequency());
+        assertEquals(species.getFertilizingFrequency(), captorValue.getSchedule().getFertilizingFrequency());
         assertEquals(scheduleDto.getWateringFrequency(), captorValue.getSchedule().getWateringFrequency());
-        assertEquals(scheduleDto.getMistingFrequency(), captorValue.getSchedule().getMistingFrequency());
+        assertEquals(species.getMistingFrequency(), captorValue.getSchedule().getMistingFrequency());
     }
 
     @Test
@@ -304,6 +308,8 @@ public class PlantServiceImplTest {
 
         given(plantRepository.findById(plant.getId())).willReturn(Optional.of(plantToUpdate));
         given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
+        given(eventRepository.findAll()).willReturn(List.of());
+        given(eventRepository.save(any())).willAnswer(returnsFirstArg());
         given(plantRepository.save(plantArgumentCaptor.capture())).willAnswer(returnsFirstArg());
 
         //when
@@ -311,6 +317,8 @@ public class PlantServiceImplTest {
 
         //then
         then(plantRepository).should(times(1)).findById(plant.getId());
+        then(eventRepository).should(times(1)).findAll();
+        then(eventRepository).should(times(3)).save(any(Event.class));
         then(beanValidator).should(times(1)).validate(any());
         then(plantRepository).should(times(1)).save(any(Plant.class));
         assertEquals(plant.getName(), result.getName());

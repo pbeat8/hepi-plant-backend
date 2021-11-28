@@ -142,7 +142,10 @@ public class PlantServiceImpl implements PlantService {
     @Override
     public PlantDto update(Long id, PlantDto plantDto) {
         Plant plant = plantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Plant not found for id " + id));
-        String userHour = plant.getUser().getHourOfNotifications();
+        String userHour = "12:00:00";
+        if(plant.getUser()!=null){
+            userHour = plant.getUser().getHourOfNotifications();
+        }
         if(plantDto.getName()!=null && !plantDto.getName().isEmpty()){
             plant.setName(plantDto.getName());
         }
