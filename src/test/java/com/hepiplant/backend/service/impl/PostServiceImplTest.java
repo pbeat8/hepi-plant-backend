@@ -26,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.persistence.EntityNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -178,7 +179,7 @@ class PostServiceImplTest {
         given(postRepository.findAll()).willReturn(List.of(post));
 
         //when
-        List<PostDto> result = postService.getAll(null, null);
+        List<PostDto> result = postService.getAllByFilters(null, null, null, null);
 
         //then
         then(postRepository).should(times(1)).findAll();
@@ -197,7 +198,7 @@ class PostServiceImplTest {
         given(postRepository.findAll()).willReturn(List.of());
 
         //when
-        List<PostDto> result = postService.getAll(null, null);
+        List<PostDto> result = postService.getAllByFilters(null, null,null,null);
 
         //then
         then(postRepository).should(times(1)).findAll();
@@ -212,11 +213,11 @@ class PostServiceImplTest {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date startDate = formatter.parse("01-01-2021");
         Date endDate = formatter.parse("30-03-2021");
-        given(postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)))
+        given(postRepository.findAllByCreatedDateBetween(any(), any()))
                 .willReturn(List.of(post));
 
         //when
-        List<PostDto> result = postService.getAll(startDate, endDate);
+        List<PostDto> result = postService.getAllByFilters(startDate, endDate,null,null);
 
         //then
         then(postRepository).should(times(1)).findAllByCreatedDateBetween(any(), any());
@@ -235,7 +236,7 @@ class PostServiceImplTest {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date startDate = formatter.parse("01-01-2021");
         Date endDate = formatter.parse("30-03-2021");
-        given(postRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)))
+        given(postRepository.findAllByCreatedDateBetween(any(), any()))
                 .willReturn(List.of());
 
         //when
@@ -255,7 +256,7 @@ class PostServiceImplTest {
         given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
 
         //when
-        List<PostDto> result = postService.getAllByTag((String) post.getTags().stream().map(Tag::getName).collect(Collectors.toSet()).toArray()[0]);
+        List<PostDto> result = postService.getAllByFilters(null,null,(String) post.getTags().stream().map(Tag::getName).distinct().toArray()[0],null);
 
         //then
         then(postRepository).should(times(1)).findAll();
@@ -276,7 +277,7 @@ class PostServiceImplTest {
         given(tagRepository.findByName(anyString())).willReturn(Optional.empty());
 
         //when
-        List<PostDto> result = postService.getAllByTag("someTag");
+        List<PostDto> result = postService.getAllByFilters(null,null,"someTag",null);
 
         //then
         then(postRepository).should(times(1)).findAll();
@@ -340,7 +341,7 @@ class PostServiceImplTest {
         given(postRepository.findAllByCategory(post.getCategory())).willReturn(List.of(post));
 
         //when
-        List<PostDto> result = postService.getAllByCategory(post.getCategory().getId());
+        List<PostDto> result = postService.getAllByFilters(null,null,null,post.getCategory().getId());
 
         //then
         then(categoryRepository).should(times(1)).findById(dto.getCategoryId());
@@ -361,7 +362,7 @@ class PostServiceImplTest {
         given(postRepository.findAllByCategory(post.getCategory())).willReturn(List.of());
 
         //when
-        List<PostDto> result = postService.getAllByCategory(anyLong());
+        List<PostDto> result = postService.getAllByFilters(null,null,null,anyLong());
 
         //then
         then(categoryRepository).should(times(1)).findById(anyLong());

@@ -139,8 +139,7 @@ public class PlantServiceImpl implements PlantService {
     public List<PlantDto> getAllByUserFiltered(Long userId, String name, Long speciesId, String location) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
         Set<PlantDto> plants = new HashSet<>();
-        Set<PlantDto> plantsAllByUser = new HashSet<>();
-        plantsAllByUser.addAll(user.getPlantList().stream()
+        Set<PlantDto> plantsAllByUser = new HashSet<>(user.getPlantList().stream()
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList()));
         boolean wasInIf = false;
@@ -157,14 +156,13 @@ public class PlantServiceImpl implements PlantService {
             wasInIf =true;
         }
         if(speciesId!= null){
-            List<PlantDto> tempPlants = plantsAllByUser.stream().filter(p -> p.getSpecies().getId()==speciesId).collect(Collectors.toList());
+            List<PlantDto> tempPlants = plantsAllByUser.stream().filter(p -> p.getSpecies().getId().equals(speciesId)).collect(Collectors.toList());
             plants = getPlantsDtos(plants, tempPlants, wasInIf);
             wasInIf =true;
         }
         if(location!= null){
             List<PlantDto> tempPlants = plantsAllByUser.stream().filter(p -> p.getLocation().equals(location)).collect(Collectors.toList());
             plants = getPlantsDtos(plants, tempPlants, wasInIf);
-            wasInIf =true;
         }
         return plants.stream()
                 .sorted(Comparator.comparing(PlantDto::getPurchaseDate))
@@ -174,10 +172,9 @@ public class PlantServiceImpl implements PlantService {
     private Set<PlantDto> getPlantsDtos(Set<PlantDto> plants, List<PlantDto> temp, boolean was) {
         if (!plants.isEmpty()) {
             Set<Long> indexes = temp.stream().map(PlantDto::getId).collect(Collectors.toSet());
-            Set<PlantDto> newPlants = plants.stream().filter(p -> indexes.contains(p.getId())).collect(Collectors.toSet());
-            plants = newPlants;
+            plants = plants.stream().filter(p -> indexes.contains(p.getId())).collect(Collectors.toSet());
         }
-        else if(was && plants.isEmpty()){
+        else if(was){
             plants = new HashSet<>();
         }
         else plants.addAll(temp);
@@ -192,12 +189,13 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public Set<String> getAllLocationsByUser(Long userId) {
-        List<PlantDto> plantList  = new ArrayList();
+        List<PlantDto> plantList;
         plantList = getAllByUser(userId);
         Set<String> location = new HashSet<>();
-        for (int i=0; i<plantList.size(); i++)
-        {
-            location.add(plantList.get(i).getLocation());
+        for (PlantDto plantDto : plantList) {
+            if (plantDto.getLocation() != null) {
+                location.add(plantDto.getLocation());
+            }
         }
         return location;
     }

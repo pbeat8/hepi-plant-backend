@@ -27,6 +27,8 @@ import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -186,7 +188,7 @@ class SalesOfferServiceImplTest {
         given(salesOfferRepository.findAll()).willReturn(List.of(salesOffer));
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAll(null, null);
+        List<SalesOfferDto> result = salesOfferService.getAllByFilters(null, null, null, null);
 
         //then
         then(salesOfferRepository).should(times(1)).findAll();
@@ -207,7 +209,7 @@ class SalesOfferServiceImplTest {
         given(salesOfferRepository.findAll()).willReturn(List.of());
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAll(null, null);
+        List<SalesOfferDto> result = salesOfferService.getAllByFilters(null, null,null,null);
 
         //then
         then(salesOfferRepository).should(times(1)).findAll();
@@ -222,11 +224,11 @@ class SalesOfferServiceImplTest {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date startDate = formatter.parse("01-01-2021");
         Date endDate = formatter.parse("30-03-2021");
-        given(salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)))
+        given(salesOfferRepository.findAllByCreatedDateBetween(any(), any()))
                 .willReturn(List.of(salesOffer));
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAll(startDate, endDate);
+        List<SalesOfferDto> result = salesOfferService.getAllByFilters(startDate, endDate,null,null);
 
         //then
         then(salesOfferRepository).should(times(1)).findAllByCreatedDateBetween(any(), any());
@@ -247,11 +249,11 @@ class SalesOfferServiceImplTest {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date startDate = formatter.parse("01-01-2021");
         Date endDate = formatter.parse("30-03-2021");
-        given(salesOfferRepository.findAllByCreatedDateBetween(convertToLocalDate(startDate), convertToLocalDate(endDate)))
+        given(salesOfferRepository.findAllByCreatedDateBetween(any(), any()))
                 .willReturn(List.of());
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAll(startDate, endDate);
+        List<SalesOfferDto> result = salesOfferService.getAllByFilters(startDate,endDate,null,null);
 
         //then
         then(salesOfferRepository).should(times(1)).findAllByCreatedDateBetween(any(), any());
@@ -317,7 +319,7 @@ class SalesOfferServiceImplTest {
         given(salesOfferRepository.findAllByCategory(salesOffer.getCategory())).willReturn(List.of(salesOffer));
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAllByCategory(salesOffer.getCategory().getId());
+        List<SalesOfferDto> result = salesOfferService.getAllByFilters(null,null,null,salesOffer.getCategory().getId());
 
         //then
         then(categoryRepository).should(times(1)).findById(dto.getCategoryId());
@@ -340,7 +342,7 @@ class SalesOfferServiceImplTest {
         given(salesOfferRepository.findAllByCategory(salesOffer.getCategory())).willReturn(List.of());
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAllByCategory(anyLong());
+        List<SalesOfferDto> result = salesOfferService.getAllByFilters(null,null,null,anyLong());
 
         //then
         then(categoryRepository).should(times(1)).findById(anyLong());
@@ -369,7 +371,7 @@ class SalesOfferServiceImplTest {
         given(tagRepository.findByName((String) dto.getTags().toArray()[0])).willReturn(Optional.of(tag));
 
         //when
-        List<SalesOfferDto> result = salesOfferService.getAllByTag((String) salesOffer.getTags().stream().map(Tag::getName).collect(Collectors.toSet()).toArray()[0]);
+        List<SalesOfferDto> result = salesOfferService.getAllByFilters(null,null,(String) salesOffer.getTags().stream().map(Tag::getName).distinct().toArray()[0],null);
 
         //then
         then(tagRepository).should(times(1)).findByName((String) dto.getTags().toArray()[0]);

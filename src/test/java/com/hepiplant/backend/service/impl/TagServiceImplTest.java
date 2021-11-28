@@ -27,6 +27,7 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 
@@ -136,6 +137,32 @@ public class TagServiceImplTest {
         then(tagRepository).should(times(1)).findById(tag.getId());
     }
 
+    @Test
+    public void shouldGetTagByNameOk()
+    {
+        //given
+        given(tagRepository.findByName(dto.getName().toLowerCase())).willReturn(Optional.of(tag));
+
+        //when
+        TagDto result = tagService.getByName(tag.getName().toLowerCase());
+
+        //then
+        then(tagRepository).should(times(1)).findByName(eq(dto.getName().toLowerCase()));
+        assertEquals(tag.getName().toLowerCase().trim(), result.getName());
+    }
+
+    @Test
+    public void shouldGetTagByNameDoesNotExistThrowsException()
+    {
+        //given
+        given(tagRepository.findByName(dto.getName().toLowerCase())).willReturn(Optional.empty());
+
+        //when
+
+        //then
+        assertThrows(EntityNotFoundException.class, () -> tagService.getByName(tag.getName().toLowerCase()));
+        then(tagRepository).should(times(1)).findByName(dto.getName().toLowerCase());
+    }
 
     @Test
     public void shouldDeleteTagOk(){

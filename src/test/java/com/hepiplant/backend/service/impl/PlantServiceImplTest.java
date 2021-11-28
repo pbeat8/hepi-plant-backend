@@ -21,6 +21,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.hepiplant.backend.entity.enums.Placement.BARDZO_JASNE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,8 +69,8 @@ public class PlantServiceImplTest {
 
     @BeforeAll
     public static void initializeVariables(){
-        Plant plant2 = new Plant(1l,"name",null,"location", null, null,null,null,null,null);
-        ArrayList<Plant> plants = new ArrayList<Plant>();
+        Plant plant2 = new Plant(1L,"name",null,"location", null, null,null,null,null,null);
+        ArrayList<Plant> plants = new ArrayList<>();
         plants.add(plant2);
         user = new User(1L, "username1", "p@ssw0rd", "email@gmail.com",
                 true, "00:00:00", null, plants, new ArrayList<>(), new ArrayList<>());
@@ -98,7 +99,7 @@ public class PlantServiceImplTest {
 
     @BeforeEach
     public void initializePlant(){
-        plant = new Plant(1l,"name",null,"location", null, category,species,user,null,schedule);
+        plant = new Plant(1L,"name",null,"location", null, category,species,user,null,schedule);
         dto = new PlantDto();
         dto.setId(plant.getId());
         dto.setName(plant.getName());
@@ -255,11 +256,93 @@ public class PlantServiceImplTest {
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         //when
-        List<PlantDto> result = plantService.getAllByUser(1L);
+        List<PlantDto> result = plantService.getAllByUser(plant.getUser().getId());
 
         //then
         then(userRepository).should(times(1)).findById(user.getId());
         assertEquals(1, result.size());
+    }
+
+    @Test
+    public void shouldGetPlantsByUserFiltersByNameOk(){
+        //given
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+
+        //when
+        List<PlantDto> result = plantService.getAllByUserFiltered(plant.getUser().getId(),plant.getName(),null,null);
+
+        //then
+        then(userRepository).should(times(1)).findById(dto.getUserId());
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void shouldGetPlantsByUserFiltersByNameEmptyListOk(){
+        //given
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+
+        //when
+        List<PlantDto> result = plantService.getAllByUserFiltered(plant.getUser().getId(),anyString(),null,null);
+
+        //then
+        then(userRepository).should(times(1)).findById(dto.getUserId());
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetPlantsByUserFiltersBySpeciesOk(){
+        user.setPlantList(List.of(plant));
+        //given
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+
+        //when
+        List<PlantDto> result = plantService.getAllByUserFiltered(plant.getUser().getId(),null,plant.getSpecies().getId(),null);
+
+        //then
+        then(userRepository).should(times(1)).findById(dto.getUserId());
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void shouldGetPlantsByUserFiltersBySpeciesEmptyListOk(){
+        user.setPlantList(List.of(plant));
+        //given
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+
+        //when
+        List<PlantDto> result = plantService.getAllByUserFiltered(plant.getUser().getId(),null,anyLong(),null);
+
+        //then
+        then(userRepository).should(times(1)).findById(dto.getUserId());
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetPlantsByUserFiltersByLocationOk(){
+        user.setPlantList(List.of(plant));
+        //given
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+
+        //when
+        List<PlantDto> result = plantService.getAllByUserFiltered(plant.getUser().getId(),null,null,plant.getLocation());
+
+        //then
+        then(userRepository).should(times(1)).findById(dto.getUserId());
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void shouldGetPlantsByUserFiltersByLocationEmptyListOk(){
+        user.setPlantList(List.of(plant));
+        //given
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+
+        //when
+        List<PlantDto> result = plantService.getAllByUserFiltered(plant.getUser().getId(),null,null,anyString());
+
+        //then
+        then(userRepository).should(times(1)).findById(dto.getUserId());
+        assertEquals(0, result.size());
     }
 
     //GET by id
@@ -296,6 +379,34 @@ public class PlantServiceImplTest {
         //then
         assertThrows(EntityNotFoundException.class, () -> plantService.getById(plant.getId()));
         then(plantRepository).should(times(1)).findById(plant.getId());
+    }
+
+    @Test
+    public void shouldGetAllLocationByUserOk(){
+        //given
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+        //when
+        Set<String> result = plantService.getAllLocationsByUser(plant.getUser().getId());
+
+        //then
+        then(userRepository).should(times(1)).findById(user.getId());
+        assertEquals(1, result.size());
+        assertEquals(result.toArray()[0],dto.getLocation());
+    }
+
+    @Test
+    public void shouldGetAllLocationByUserEmptyListOk(){
+        user.getPlantList().get(0).setLocation(null);
+        //given
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+        //when
+        Set<String> result = plantService.getAllLocationsByUser(plant.getUser().getId());
+
+        //then
+        then(userRepository).should(times(1)).findById(user.getId());
+        assertEquals(0, result.size());
     }
 
     // UPDATE tests
