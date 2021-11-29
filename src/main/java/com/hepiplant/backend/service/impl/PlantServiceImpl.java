@@ -238,6 +238,10 @@ public class PlantServiceImpl implements PlantService {
                 .collect(Collectors.toList())) {
             eventRepository.delete(event);
         }
+        changeNameOfArchiveEvents(plant, WATERING, WATERING_PLANT);
+        changeNameOfArchiveEvents(plant,MISTING,MISTING_PLANT);
+        changeNameOfArchiveEvents(plant,FERTILIZING,FERTILIZING_PLANT);
+
         Event eventW = new Event();
         Event eventF = new Event();
         Event eventM = new Event();
@@ -262,6 +266,16 @@ public class PlantServiceImpl implements PlantService {
         if(plantDto.getSchedule().getFertilizingFrequency()>0)
             eventRepository.save(eventF);
         return mapToDto(savedPlant);
+    }
+
+    private void changeNameOfArchiveEvents(Plant plant, String name, String description) {
+
+        eventRepository.findAll()
+                .stream().filter(e -> e.getPlant().getId().equals(plant.getId()))
+                .filter(Event::isDone)
+                .filter(e -> e.getEventName().contains(name))
+                .forEach(e -> e.setEventDescription(description+plant.getName()));
+
     }
 
     private Event addNewEvent(Plant plant, String name, String longName, int days, String hour) {
