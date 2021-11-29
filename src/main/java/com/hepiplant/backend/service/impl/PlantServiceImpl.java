@@ -269,13 +269,11 @@ public class PlantServiceImpl implements PlantService {
     }
 
     private void changeNameOfArchiveEvents(Plant plant, String name, String description) {
-
         eventRepository.findAll()
                 .stream().filter(e -> e.getPlant().getId().equals(plant.getId()))
                 .filter(Event::isDone)
                 .filter(e -> e.getEventName().contains(name))
                 .forEach(e -> e.setEventDescription(description+plant.getName()));
-
     }
 
     private Event addNewEvent(Plant plant, String name, String longName, int days, String hour) {
