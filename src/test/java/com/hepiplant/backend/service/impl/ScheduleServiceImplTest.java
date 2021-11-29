@@ -57,7 +57,6 @@ class ScheduleServiceImplTest {
 
     @BeforeEach
     public void initializeSchedule(){
-
         schedule = new Schedule(1L, plant,3,21,2);
         dto = new ScheduleDto();
         dto.setId(schedule.getId());
