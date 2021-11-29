@@ -1,6 +1,5 @@
 package com.hepiplant.backend.service.impl;
 
-
 import com.hepiplant.backend.dto.SalesOfferDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.SalesOffer;
@@ -27,12 +26,9 @@ import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,7 +88,6 @@ class SalesOfferServiceImplTest {
     }
 
     // CREATE tests
-
     @Test
     public void shouldCreateSalesOfferOk(){
         //given
@@ -181,7 +176,6 @@ class SalesOfferServiceImplTest {
     }
 
     // GET ALL tests
-
     @Test
     public void shouldGetAllSalesOffersOk(){
         //given
@@ -217,7 +211,6 @@ class SalesOfferServiceImplTest {
     }
 
     // GET ALL with dates tests
-
     @Test
     public void shouldGetAllSalesOffersByDateOk() throws ParseException {
         //given
@@ -363,7 +356,6 @@ class SalesOfferServiceImplTest {
     }
 
     // GET ALL BY TAG tests
-
     @Test
     public void shouldGetAllSalesOffersByTagOk(){
         //given
@@ -401,7 +393,6 @@ class SalesOfferServiceImplTest {
     }
 
     // GET BY ID tests
-
     @Test
     public void shouldGetSalesOfferByIdOk(){
         //given

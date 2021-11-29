@@ -346,7 +346,6 @@ public class PlantServiceImplTest {
     }
 
     //GET by id
-
     @Test
     public void shouldGetPlantByIdOk() {
         //given

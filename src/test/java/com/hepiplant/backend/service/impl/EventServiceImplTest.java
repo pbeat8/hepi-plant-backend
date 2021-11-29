@@ -3,7 +3,6 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.EventDto;
 import com.hepiplant.backend.entity.Event;
 import com.hepiplant.backend.entity.Plant;
-import com.hepiplant.backend.entity.Role;
 import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
@@ -23,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +34,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EventServiceImplTest {
+
     @Mock
     private EventRepository eventRepository;
     @Mock
@@ -59,9 +58,9 @@ public class EventServiceImplTest {
     @BeforeAll
     public static void initializeVariables(){
         user = new User(1L,"username","uid","email",true,"12:00:00",null,null,null,null);
-
         plant = new Plant(1L, "Name", null, "location", null, null, null, user, new ArrayList<>(), null);
     }
+
     @BeforeEach
     public void initializeEvent(){
         event = new Event(1L, "EventName", "EventDescription", null, false, plant);
@@ -227,7 +226,6 @@ public class EventServiceImplTest {
         then(plantRepository).should(times(1)).findById(eq(dto.getPlantId()));
         then(eventRepository).should(times(1)).findAllByPlant(event.getPlant());
         assertEquals(0, result.size());
-
     }
 
     @Test
@@ -265,7 +263,6 @@ public class EventServiceImplTest {
         then(userRepository).should(times(1)).findById(eq(event.getPlant().getUser().getId()));
         then(eventRepository).should(times(1)).findAll();
         assertEquals(0, result.size());
-
     }
 
     //UPDATE tests
@@ -290,13 +287,11 @@ public class EventServiceImplTest {
         assertEquals(event.getEventDate(), result.getEventDate());
         assertEquals(event.isDone(), result.isDone());
 
-
         Event captorValue = eventArgumentCaptor.getValue();
         assertEquals(event.getEventName(), result.getEventName());
         assertEquals(event.getEventDescription(), result.getEventDescription());
         assertEquals(event.getEventDate(), result.getEventDate());
         assertEquals(event.isDone(), result.isDone());
-
     }
 
     @Test

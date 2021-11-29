@@ -73,7 +73,6 @@ public class TagServiceImplTest {
     //Create tests
     @Test
     public void shouldCreateTagOk(){
-
         //given
         given(tagRepository.findByName(dto.getName().toLowerCase())).willReturn(Optional.empty());
         given(postRepository.findById((Long) dto.getPosts().toArray()[0])).willReturn(Optional.of(post));
@@ -133,8 +132,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldGetAllCategoriesEmptyListOk()
-    {
+    public void shouldGetAllCategoriesEmptyListOk() {
         //given
         given(tagRepository.findAll()).willReturn(List.of());
 
@@ -147,8 +145,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldGetTagByIdOk()
-    {
+    public void shouldGetTagByIdOk() {
         //given
         given(tagRepository.findById(tag.getId())).willReturn(Optional.of(tag));
 
@@ -161,8 +158,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldGetTagByIdDoesNotExistThrowsException()
-    {
+    public void shouldGetTagByIdDoesNotExistThrowsException() {
         //given
         given(tagRepository.findById(tag.getId())).willReturn(Optional.empty());
 
@@ -174,8 +170,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldGetTagByNameOk()
-    {
+    public void shouldGetTagByNameOk() {
         //given
         given(tagRepository.findByName(dto.getName().toLowerCase())).willReturn(Optional.of(tag));
 
@@ -188,8 +183,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldGetTagByNameDoesNotExistThrowsException()
-    {
+    public void shouldGetTagByNameDoesNotExistThrowsException() {
         //given
         given(tagRepository.findByName(dto.getName().toLowerCase())).willReturn(Optional.empty());
 
@@ -218,7 +212,6 @@ public class TagServiceImplTest {
 
     @Test
     public void shouldDeleteTagDoesNotExistThrowsException() {
-
         //given
         given(tagRepository.findById(tag.getId())).willReturn(Optional.empty());
 
@@ -230,4 +223,5 @@ public class TagServiceImplTest {
         then(tagRepository).should(times(0)).delete(any());
         assertTrue(result.contains("No tag"));
     }
+
 }

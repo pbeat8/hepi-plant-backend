@@ -52,8 +52,7 @@ class ScheduleServiceImplTest {
 
     @BeforeAll
     public static void initializeVariables(){
-        plant = new Plant(1l,"name",LocalDateTime.now(),"location", "photo", null,null,null,null,null);
-
+        plant = new Plant(1L,"name",LocalDateTime.now(),"location", "photo", null,null,null,null,null);
     }
 
     @BeforeEach
@@ -203,7 +202,6 @@ class ScheduleServiceImplTest {
         assertEquals(schedule.getWateringFrequency(),captorValue.getWateringFrequency());
         assertEquals(schedule.getFertilizingFrequency(),captorValue.getFertilizingFrequency());
         assertEquals(schedule.getMistingFrequency(),captorValue.getMistingFrequency());
-
     }
 
     @Test
@@ -216,6 +214,7 @@ class ScheduleServiceImplTest {
         doThrow(InvalidBeanException.class).when(beanValidator).validate(scheduleArgumentCaptor.capture());
 
         //when
+
         //then
         assertThrows(InvalidBeanException.class, () -> scheduleService.add(dto));
         Schedule captorValue = scheduleArgumentCaptor.getValue();
@@ -225,7 +224,6 @@ class ScheduleServiceImplTest {
         assertEquals(dto.getFertilizingFrequency(), captorValue.getFertilizingFrequency());
         assertEquals(dto.getMistingFrequency(), captorValue.getMistingFrequency());
         assertEquals(dto.getWateringFrequency(), captorValue.getWateringFrequency());
-
     }
 
     @Test
@@ -234,6 +232,7 @@ class ScheduleServiceImplTest {
         given(plantRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
+
         //then
         assertThrows(EntityNotFoundException.class, () -> scheduleService.add(dto));
         then(plantRepository).should(times(1)).findById(anyLong());
@@ -267,8 +266,7 @@ class ScheduleServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateScheduleInvalidValuesThrowsException()
-    {
+    public void shouldUpdateScheduleInvalidValuesThrowsException() {
         //given
         Schedule scheduleToUpdate = new Schedule();
         dto.setPlantId(null);
@@ -276,6 +274,7 @@ class ScheduleServiceImplTest {
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
 
         //when
+
         //then
         assertThrows(InvalidBeanException.class, () -> scheduleService.update(schedule.getId(), dto));
         then(scheduleRepository).should(times(1)).findById(schedule.getId());
@@ -284,8 +283,7 @@ class ScheduleServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateScheduleInvalidPlantChangeThrowsException()
-    {
+    public void shouldUpdateScheduleInvalidPlantChangeThrowsException() {
         //given
         Schedule scheduleToUpdate = new Schedule();
         given(scheduleRepository.findById(schedule.getId())).willReturn(Optional.of(scheduleToUpdate));
@@ -299,12 +297,12 @@ class ScheduleServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateScheduleThatNotExistsThrowsException()
-    {
+    public void shouldUpdateScheduleThatNotExistsThrowsException() {
         //given
         given(scheduleRepository.findById(anyLong())).willReturn(Optional.empty());
 
         //when
+
         //then
         assertThrows(EntityNotFoundException.class, () -> scheduleService.update(schedule.getId(), dto));
         then(scheduleRepository).should(times(1)).findById(schedule.getId());

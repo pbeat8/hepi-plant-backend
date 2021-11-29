@@ -96,8 +96,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void shouldGetAllUsersEmptyListOk()
-    {
+    public void shouldGetAllUsersEmptyListOk() {
         //given
         given(userRepository.findAll()).willReturn(List.of());
 
@@ -258,8 +257,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void shouldDeleteUserDoesNotExistThrowsException()
-    {
+    public void shouldDeleteUserDoesNotExistThrowsException() {
         //given
         given(userRepository.findById(user.getId())).willReturn(Optional.empty());
 

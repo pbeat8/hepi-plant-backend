@@ -26,11 +26,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.persistence.EntityNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,7 +90,6 @@ class PostServiceImplTest {
     }
 
     // CREATE tests
-
     @Test
     public void shouldCreatePostOk(){
         //given
@@ -206,7 +203,6 @@ class PostServiceImplTest {
     }
 
     // GET ALL BY DATE tests
-
     @Test
     public void shouldGetAllPostsByDateOk() throws ParseException {
         //given
@@ -248,7 +244,6 @@ class PostServiceImplTest {
     }
 
     // GET ALL BY TAG tests
-
     @Test
     public void shouldGetAllPostsByTagOk(){
         //given
@@ -414,7 +409,6 @@ class PostServiceImplTest {
     }
 
     // UPDATE tests
-
     @Test
     public void shouldUpdatePostOk(){
         //given
@@ -477,7 +471,6 @@ class PostServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> postService.update(post.getId(), dto));
         then(postRepository).should(times(1)).findById(post.getId());
         then(categoryRepository).should(atMostOnce()).findById(eq(dto.getCategoryId()));
-//        then(tagRepository).should(atMostOnce()).save(tag);
         then(postRepository).should(times(0)).save(any(Post.class));
     }
 
