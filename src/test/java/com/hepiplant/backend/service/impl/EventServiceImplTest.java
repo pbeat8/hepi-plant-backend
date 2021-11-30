@@ -3,10 +3,12 @@ package com.hepiplant.backend.service.impl;
 import com.hepiplant.backend.dto.EventDto;
 import com.hepiplant.backend.entity.Event;
 import com.hepiplant.backend.entity.Plant;
+import com.hepiplant.backend.entity.User;
 import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.EventRepository;
 import com.hepiplant.backend.repository.PlantRepository;
+import com.hepiplant.backend.repository.UserRepository;
 import com.hepiplant.backend.validator.BeanValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,10 +34,13 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EventServiceImplTest {
+
     @Mock
     private EventRepository eventRepository;
     @Mock
     private PlantRepository plantRepository;
+    @Mock
+    private UserRepository userRepository;
     @Mock
     private BeanValidator beanValidator;
 
@@ -48,13 +53,16 @@ public class EventServiceImplTest {
     private Event event;
     private EventDto dto;
     private static Plant plant;
+    private static User user;
 
     @BeforeAll
-    public static void initializeVariables(){
-        plant = new Plant(1L, "Name", null, "location", null, null, null, null, new ArrayList<>(), null);
+    public static void initializeVariables() {
+        user = new User(1L,"username","uid","email",true,"12:00:00",null,null,null,null);
+        plant = new Plant(1L, "Name", null, "location", null, null, null, user, new ArrayList<>(), null);
     }
+
     @BeforeEach
-    public void initializeEvent(){
+    public void initializeEvent() {
         event = new Event(1L, "EventName", "EventDescription", null, false, plant);
         dto = new EventDto();
         dto.setId(event.getId());
@@ -62,12 +70,13 @@ public class EventServiceImplTest {
         dto.setEventDescription(event.getEventDescription());
         dto.setEventDate(event.getEventDate());
         dto.setDone(event.isDone());
-        dto.setPlantId(plant.getId());
+        dto.setPlantId(event.getPlant().getId());
+
     }
 
     //CREATE tests
     @Test
-    public void shouldCreateEvent(){
+    public void shouldCreateEvent() {
         //given
         given(plantRepository.findById(dto.getPlantId())).willReturn(Optional.of(plant));
         given(eventRepository.save(eventArgumentCaptor.capture())).willAnswer(returnsFirstArg());
@@ -94,7 +103,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void shouldCreateEventPlantDoesNotExistThrowsException(){
+    public void shouldCreateEventPlantDoesNotExistThrowsException() {
         //given
         given(plantRepository.findById(dto.getPlantId())).willReturn(Optional.empty());
         //when
@@ -106,7 +115,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void shouldCreateEventInvalidValuesThrowsException(){
+    public void shouldCreateEventInvalidValuesThrowsException() {
         //given
         given(plantRepository.findById(dto.getPlantId())).willReturn(Optional.of(plant));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
@@ -121,9 +130,8 @@ public class EventServiceImplTest {
     }
 
     //GET ALL tests
-
     @Test
-    public void shouldGetAllEventsOk(){
+    public void shouldGetAllEventsOk() {
         //given
         given(eventRepository.findAll()).willReturn(List.of(event));
 
@@ -172,7 +180,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void shouldGetEventByIdEventDoesNotExistThrowsException(){
+    public void shouldGetEventByIdEventDoesNotExistThrowsException() {
         //given
         given(eventRepository.findById(event.getId())).willReturn(Optional.empty());
 
@@ -183,9 +191,82 @@ public class EventServiceImplTest {
         then(eventRepository).should(times(1)).findById(event.getId());
     }
 
+    @Test
+    public void shouldGetEventsByPlantOk() {
+        event.setDone(true);
+        //given
+        given(plantRepository.findById(dto.getPlantId())).willReturn(Optional.of(plant));
+        given(eventRepository.findAllByPlant(event.getPlant())).willReturn(List.of(event));
+
+        //when
+        List<EventDto> result = eventService.getAllByPlant(dto.getPlantId());
+
+        //then
+        then(plantRepository).should(times(1)).findById(eq(dto.getPlantId()));
+        then(eventRepository).should(times(1)).findAllByPlant(eq(event.getPlant()));
+        assertEquals(1, result.size());
+        assertEquals(event.getEventName(), result.get(0).getEventName());
+        assertEquals(event.getEventDescription(), result.get(0).getEventDescription());
+        assertEquals(event.getEventDate(), result.get(0).getEventDate());
+        assertEquals(event.isDone(), result.get(0).isDone());
+        assertEquals(plant.getId(), result.get(0).getPlantId());
+    }
+
+    @Test
+    public void shouldGetEventsByPlantEmptyList() {
+        //given
+        given(plantRepository.findById(dto.getPlantId())).willReturn(Optional.of(plant));
+        given(eventRepository.findAllByPlant(event.getPlant())).willReturn(List.of());
+
+        //when
+        List<EventDto> result = eventService.getAllByPlant(dto.getPlantId());
+
+        //then
+        then(plantRepository).should(times(1)).findById(eq(dto.getPlantId()));
+        then(eventRepository).should(times(1)).findAllByPlant(event.getPlant());
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void shouldGetEventsByUserOk() {
+        user.setPlantList(List.of(plant));
+        //given
+        given(userRepository.findById(event.getPlant().getUser().getId())).willReturn(Optional.of(user));
+        given(eventRepository.findAll()).willReturn(List.of(event));
+
+        //when
+        List<EventDto> result = eventService.getAllByUser(event.getPlant().getUser().getId());
+
+        //then
+        then(userRepository).should(times(1)).findById(eq(event.getPlant().getUser().getId()));
+        then(eventRepository).should(times(1)).findAll();
+        assertEquals(1, result.size());
+        assertEquals(event.getEventName(), result.get(0).getEventName());
+        assertEquals(event.getEventDescription(), result.get(0).getEventDescription());
+        assertEquals(event.getEventDate(), result.get(0).getEventDate());
+        assertEquals(event.isDone(), result.get(0).isDone());
+        assertEquals(plant.getId(), result.get(0).getPlantId());
+    }
+
+    @Test
+    public void shouldGetEventsByUserEmptyList() {
+        user.setPlantList(List.of(plant));
+        //given
+        given(userRepository.findById(event.getPlant().getUser().getId())).willReturn(Optional.of(user));
+        given(eventRepository.findAll()).willReturn(List.of());
+
+        //when
+        List<EventDto> result = eventService.getAllByUser(event.getPlant().getUser().getId());
+
+        //then
+        then(userRepository).should(times(1)).findById(eq(event.getPlant().getUser().getId()));
+        then(eventRepository).should(times(1)).findAll();
+        assertEquals(0, result.size());
+    }
+
     //UPDATE tests
     @Test
-    public void shouldUpdateEventOk(){
+    public void shouldUpdateEventOk() {
         //given
         Event eventToUpdate = new Event();
         dto.setPlantId(null);
@@ -205,17 +286,15 @@ public class EventServiceImplTest {
         assertEquals(event.getEventDate(), result.getEventDate());
         assertEquals(event.isDone(), result.isDone());
 
-
         Event captorValue = eventArgumentCaptor.getValue();
         assertEquals(event.getEventName(), result.getEventName());
         assertEquals(event.getEventDescription(), result.getEventDescription());
         assertEquals(event.getEventDate(), result.getEventDate());
         assertEquals(event.isDone(), result.isDone());
-
     }
 
     @Test
-    public void shouldUpdateEventDoesNotExistThrowsException(){
+    public void shouldUpdateEventDoesNotExistThrowsException() {
         //given
         dto.setPlantId(null);
         given(eventRepository.findById(event.getId())).willReturn(Optional.empty());
@@ -229,7 +308,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateEventPlantChangeThrowsException(){
+    public void shouldUpdateEventPlantChangeThrowsException() {
         //given
         Event eventToUpdate = new Event();
 
@@ -244,8 +323,7 @@ public class EventServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateEventInvalidValuesThrowsException()
-    {
+    public void shouldUpdateEventInvalidValuesThrowsException() {
         //given
         Event eventToUpdate = new Event();
         dto.setPlantId(null);

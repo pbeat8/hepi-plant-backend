@@ -71,6 +71,7 @@ class UserServiceImplTest {
         dto.setUsername(user.getUsername());
         dto.setUid(user.getUid());
         dto.setEmail(user.getEmail());
+        dto.setHourOfNotifications(user.getHourOfNotifications());
         dto.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
 
     }
@@ -90,12 +91,12 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(),result.get(0).getUsername());
         assertEquals(user.getUid(),result.get(0).getUid());
         assertEquals(user.getEmail(),result.get(0).getEmail());
+        assertEquals(user.getHourOfNotifications(),result.get(0).getHourOfNotifications());
         assertEquals(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()), result.get(0).getRoles());
     }
 
     @Test
-    public void shouldGetAllUsersEmptyListOk()
-    {
+    public void shouldGetAllUsersEmptyListOk() {
         //given
         given(userRepository.findAll()).willReturn(List.of());
 
@@ -120,6 +121,7 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(),result.getUsername());
         assertEquals(user.getUid(),result.getUid());
         assertEquals(user.getEmail(),result.getEmail());
+        assertEquals(user.getHourOfNotifications(),result.getHourOfNotifications());
         assertEquals(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()), result.getRoles());
     }
 
@@ -160,7 +162,6 @@ class UserServiceImplTest {
         assertEquals(user.getUid(),captorValue.getUid());
         assertEquals(user.getRoles(),captorValue.getRoles());
         assertEquals(user.getEmail(),captorValue.getEmail());
-
     }
 
     @Test
@@ -178,7 +179,7 @@ class UserServiceImplTest {
         assertEquals(user.getUid(),result.getUid());
         assertEquals(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()),result.getRoles());
         assertEquals(user.getEmail(),result.getEmail());
-
+        assertEquals(user.getHourOfNotifications(),result.getHourOfNotifications());
     }
 
     @Test
@@ -212,11 +213,13 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(),result.getUsername());
         assertEquals(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()),result.getRoles());
         assertEquals(user.getEmail(),result.getEmail());
+        assertEquals(user.getHourOfNotifications(),result.getHourOfNotifications());
 
         User captorValue = userArgumentCaptor.getValue();
         assertEquals(user.getUsername(),captorValue.getUsername());
         assertEquals(user.getRoles(),captorValue.getRoles());
         assertEquals(user.getEmail(),captorValue.getEmail());
+        assertEquals(user.getHourOfNotifications(),captorValue.getHourOfNotifications());
     }
 
     @Test
@@ -254,8 +257,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void shouldDeleteUserDoesNotExistThrowsException()
-    {
+    public void shouldDeleteUserDoesNotExistThrowsException() {
         //given
         given(userRepository.findById(user.getId())).willReturn(Optional.empty());
 
@@ -288,6 +290,7 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(), result.getUser().getUsername());
         assertEquals(user.getUid(), result.getUser().getUid());
         assertEquals(user.getEmail(), result.getUser().getEmail());
+        assertEquals(user.getHourOfNotifications(),result.getUser().getHourOfNotifications());
         assertEquals(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()), result.getUser().getRoles());
         assertEquals(user.getPlantList().size(), result.getPlantsAmount());
         assertEquals(user.getPostList().size(), result.getPostsAmount());
@@ -312,6 +315,7 @@ class UserServiceImplTest {
         assertEquals(user.getUsername(), result.getUser().getUsername());
         assertEquals(user.getUid(), result.getUser().getUid());
         assertEquals(user.getEmail(), result.getUser().getEmail());
+        assertEquals(user.getHourOfNotifications(),result.getUser().getHourOfNotifications());
         assertEquals(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()), result.getUser().getRoles());
         assertEquals(user.getPlantList().size(), result.getPlantsAmount());
         assertEquals(user.getPostList().size(), result.getPostsAmount());
