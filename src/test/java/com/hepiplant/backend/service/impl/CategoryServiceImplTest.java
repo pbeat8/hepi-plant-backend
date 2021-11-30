@@ -29,6 +29,7 @@ import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceImplTest {
+
     @Mock
     private CategoryRepository categoryRepository;
     @Mock
@@ -95,8 +96,7 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    public void shouldGetAllCategoriesEmptyListOk()
-    {
+    public void shouldGetAllCategoriesEmptyListOk() {
         //given
         given(categoryRepository.findAll()).willReturn(List.of());
 
@@ -109,8 +109,7 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    public void shouldGetCategoryByIdOk()
-    {
+    public void shouldGetCategoryByIdOk() {
         //given
         given(categoryRepository.findById(category.getId())).willReturn(Optional.of(category));
 
@@ -136,8 +135,7 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateCategoryOk()
-    {
+    public void shouldUpdateCategoryOk() {
         //given
         Category categoryToUpdate = new Category();
         given(categoryRepository.findById(category.getId())).willReturn(Optional.of(categoryToUpdate));
@@ -156,8 +154,7 @@ public class CategoryServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateCategoryInvalidValuesThrowsException()
-    {
+    public void shouldUpdateCategoryInvalidValuesThrowsException() {
         //given
         Category categoryToUpdate = new Category();
         given(categoryRepository.findById(category.getId())).willReturn(Optional.of(categoryToUpdate));

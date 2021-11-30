@@ -4,7 +4,6 @@ import com.hepiplant.backend.dto.SpeciesDto;
 import com.hepiplant.backend.entity.Category;
 import com.hepiplant.backend.entity.Species;
 import com.hepiplant.backend.entity.enums.Placement;
-import com.hepiplant.backend.exception.ImmutableFieldException;
 import com.hepiplant.backend.exception.InvalidBeanException;
 import com.hepiplant.backend.repository.CategoryRepository;
 import com.hepiplant.backend.repository.SpeciesRepository;
@@ -93,8 +92,7 @@ class SpeciesServiceImplTest {
     }
 
     @Test
-    public void shouldGetAllSpeciesEmptyListOk()
-    {
+    public void shouldGetAllSpeciesEmptyListOk() {
         //given
         given(speciesRepository.findAll()).willReturn(List.of());
 
@@ -128,7 +126,6 @@ class SpeciesServiceImplTest {
 
     @Test
     void shouldGetSpeciesByIdDoesNotExistThrowsException(){
-
         //given
         given(speciesRepository.findById(species.getId())).willReturn(Optional.empty());
 
@@ -231,8 +228,7 @@ class SpeciesServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateSpeciesInvalidValuesThrowsException()
-    {
+    public void shouldUpdateSpeciesInvalidValuesThrowsException() {
         //given
         Species speciesToUpdate = new Species();
         dto.setSoil(null);
