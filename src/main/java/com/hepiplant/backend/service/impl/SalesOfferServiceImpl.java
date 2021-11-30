@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class SalesOfferServiceImpl implements SalesOfferService {
@@ -46,9 +47,8 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         SalesOffer salesOffer = new SalesOffer();
         salesOffer.setTitle(salesOfferDto.getTitle());
         salesOffer.setBody(salesOfferDto.getBody());
-        if(salesOfferDto.getTags()!=null){
-            addTagsToSalesOffer(salesOffer, salesOfferDto);
-        }
+        ofNullable(salesOfferDto.getTags())
+                .ifPresent(c ->addTagsToSalesOffer(salesOffer, salesOfferDto));
         salesOffer.setPhoto(salesOfferDto.getPhoto());
         salesOffer.setLocation(salesOfferDto.getLocation());
         salesOffer.setPrice(salesOfferDto.getPrice());
@@ -111,34 +111,34 @@ public class SalesOfferServiceImpl implements SalesOfferService {
 
     @Override
     public List<SalesOfferDto> getAllByFilters(Date startDate, Date endDate, String tag, Long categoryId) {
-        Set<SalesOfferDto> salesOfferDtos = new HashSet<>();
-        boolean wasInIf = false;
+        final Set<SalesOfferDto>[] salesOfferDtos = new Set[]{new HashSet<>()};
+        final boolean[] wasInIf = {false};
         if(startDate==null && endDate==null && tag==null && categoryId==null){
-            salesOfferDtos.addAll(salesOfferRepository.findAll().stream()
+            salesOfferDtos[0].addAll(salesOfferRepository.findAll().stream()
                     .sorted(Comparator.comparing(SalesOffer::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList()));
-            wasInIf=true;
+            wasInIf[0] =true;
         }
         if(startDate!=null && endDate!=null){
             List<SalesOfferDto> temp= getAll(startDate,endDate);
-            salesOfferDtos = getSalesOffersDtos(salesOfferDtos, temp, wasInIf);
-            wasInIf =true;
+            salesOfferDtos[0] = getSalesOffersDtos(salesOfferDtos[0], temp, wasInIf[0]);
+            wasInIf[0] =true;
         }
 
         if(tag!=null && !tag.isEmpty()){
             List<SalesOfferDto> temp= getAllByTag(tag);
-            salesOfferDtos = getSalesOffersDtos(salesOfferDtos, temp, wasInIf);
-            wasInIf=true;
+            salesOfferDtos[0] = getSalesOffersDtos(salesOfferDtos[0], temp, wasInIf[0]);
+            wasInIf[0] =true;
         }
 
-        if(categoryId!=null){
+        ofNullable(categoryId).ifPresent(c -> {
             List<SalesOfferDto> temp = getAllByCategory(categoryId);
-            salesOfferDtos = getSalesOffersDtos(salesOfferDtos, temp, wasInIf);
-            wasInIf=true;
-        }
+            salesOfferDtos[0] = getSalesOffersDtos(salesOfferDtos[0], temp, wasInIf[0]);
+            wasInIf[0] =true;
+        });
 
-        List<SalesOfferDto> filterSalesOffers = new ArrayList<>(salesOfferDtos);
+        List<SalesOfferDto> filterSalesOffers = new ArrayList<>(salesOfferDtos[0]);
         return filterSalesOffers.stream()
                 .sorted(Comparator.comparing(SalesOfferDto::getCreatedDate).reversed())
                 .collect(Collectors.toList());
@@ -168,18 +168,14 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     public SalesOfferDto update(Long id, SalesOfferDto salesOfferDto) {
         SalesOffer salesOffer = salesOfferRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sales offer not found for id " + id));
-        if(salesOfferDto.getTitle() != null){
-            salesOffer.setTitle(salesOfferDto.getTitle());
-        }
-        if(salesOfferDto.getBody() != null){
-            salesOffer.setBody(salesOfferDto.getBody());
-        }
-        if(salesOfferDto.getLocation() != null){
-            salesOffer.setLocation(salesOfferDto.getLocation());
-        }
-        if(salesOfferDto.getPrice() != null){
-            salesOffer.setPrice(salesOfferDto.getPrice());
-        }
+        ofNullable(salesOfferDto.getTitle())
+                .ifPresent(c -> salesOffer.setTitle(salesOfferDto.getTitle()));
+        ofNullable(salesOfferDto.getBody())
+                .ifPresent(c ->salesOffer.setBody(salesOfferDto.getBody()));
+        ofNullable(salesOfferDto.getLocation())
+                .ifPresent(c -> salesOffer.setLocation(salesOfferDto.getLocation()));
+        ofNullable(salesOfferDto.getPrice())
+                .ifPresent(c -> salesOffer.setPrice(salesOfferDto.getPrice()));
         if(salesOfferDto.getTags() != null && !salesOfferDto.getTags().isEmpty()){
             Set<Tag> oldTags = salesOffer.getTags();
             addTagsToSalesOffer(salesOffer, salesOfferDto);
@@ -188,12 +184,10 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                     .collect(Collectors.toSet());
             removeOrphanTags(oldTags);
         }
-        if(salesOfferDto.getPhoto()!=null){
-            salesOffer.setPhoto(salesOfferDto.getPhoto());
-        }
-        if(salesOfferDto.getUserId() != null){
-            throw new ImmutableFieldException("Cannot change User for Sales offer!");
-        }
+        ofNullable(salesOfferDto.getPhoto())
+                .ifPresent(c ->salesOffer.setPhoto(salesOfferDto.getPhoto()));
+        ofNullable(salesOfferDto.getUserId())
+                .ifPresent(c-> {throw new ImmutableFieldException("Cannot change User for Sales offer!");});
         if(salesOfferDto.getCategoryId() != null){
             Category category = categoryRepository.findById(salesOfferDto.getCategoryId())
                     .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + salesOfferDto.getCategoryId()));

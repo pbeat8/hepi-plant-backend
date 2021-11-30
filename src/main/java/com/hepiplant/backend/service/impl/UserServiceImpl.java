@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -83,21 +84,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(final Long id, final UserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
-        if(userDto.getUsername()!=null)
-            user.setUsername(userDto.getUsername());
-        if(userDto.getUid()!=null){
-            throw new ImmutableFieldException("Field uid in User is immutable!");
-        }
-        if(userDto.getEmail()!=null) {
-            user.setEmail(userDto.getEmail());
-        }
+        ofNullable(userDto.getUsername())
+                .ifPresent(c -> user.setUsername(userDto.getUsername()));
+        ofNullable(userDto.getUid())
+                .ifPresent(c -> {throw new ImmutableFieldException("Field uid in User is immutable!");});
+        ofNullable(userDto.getEmail())
+                .ifPresent(c -> user.setEmail(userDto.getEmail()));
         user.setNotifications(userDto.isNotifications());
-        if(userDto.getHourOfNotifications()!=null){
-            user.setHourOfNotifications(userDto.getHourOfNotifications());
-        }
-        if(userDto.getRoles()!=null) {
-            throw new ImmutableFieldException("Field roles in User can be altered using grant-role endpoint!");
-        }
+        ofNullable(userDto.getHourOfNotifications())
+                .ifPresent(c -> user.setHourOfNotifications(userDto.getHourOfNotifications()));
+        ofNullable(userDto.getRoles())
+                .ifPresent(c -> {throw new ImmutableFieldException("Field roles in User can be altered using grant-role endpoint!");});
         beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);

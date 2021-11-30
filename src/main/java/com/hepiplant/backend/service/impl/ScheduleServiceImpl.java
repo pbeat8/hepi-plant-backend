@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -51,10 +52,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleDto add(ScheduleDto scheduleDto) {
         Schedule schedule = new Schedule();
-        if(scheduleDto.getPlantId()!=null){
+        ofNullable(scheduleDto.getPlantId()).ifPresent(c -> {
             Plant plant = plantRepository.findById(scheduleDto.getPlantId()).orElseThrow(() ->new EntityNotFoundException("Plant not found for id " + scheduleDto.getPlantId()));
             schedule.setPlant(plant);
-        }
+        });
 
         schedule.setWateringFrequency(scheduleDto.getWateringFrequency());
         schedule.setFertilizingFrequency(scheduleDto.getFertilizingFrequency());
