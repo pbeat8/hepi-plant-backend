@@ -73,11 +73,13 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public SpeciesDto update(Long id, SpeciesDto speciesDto) {
         Species species = speciesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Species not found for id "+id));
-        ofNullable(speciesDto.getName()).ifPresent(c-> species.setName(speciesDto.getName()));
+        ofNullable(speciesDto.getName())
+                .ifPresent(c-> species.setName(speciesDto.getName()));
         species.setWateringFrequency(speciesDto.getWateringFrequency());
         species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
         species.setMistingFrequency(speciesDto.getMistingFrequency());
-        ofNullable(speciesDto.getPlacement()).ifPresent(c-> species.setPlacement(speciesDto.getPlacement()));
+        ofNullable(speciesDto.getPlacement())
+                .ifPresent(c-> species.setPlacement(speciesDto.getPlacement()));
         if(speciesDto.getSoil()!=null){
             species.setSoil(speciesDto.getSoil());
         }

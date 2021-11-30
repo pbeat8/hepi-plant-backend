@@ -47,7 +47,8 @@ public class SalesOfferServiceImpl implements SalesOfferService {
         SalesOffer salesOffer = new SalesOffer();
         salesOffer.setTitle(salesOfferDto.getTitle());
         salesOffer.setBody(salesOfferDto.getBody());
-        ofNullable(salesOfferDto.getTags()).ifPresent(c ->addTagsToSalesOffer(salesOffer, salesOfferDto));
+        ofNullable(salesOfferDto.getTags())
+                .ifPresent(c ->addTagsToSalesOffer(salesOffer, salesOfferDto));
         salesOffer.setPhoto(salesOfferDto.getPhoto());
         salesOffer.setLocation(salesOfferDto.getLocation());
         salesOffer.setPrice(salesOfferDto.getPrice());
@@ -167,10 +168,14 @@ public class SalesOfferServiceImpl implements SalesOfferService {
     public SalesOfferDto update(Long id, SalesOfferDto salesOfferDto) {
         SalesOffer salesOffer = salesOfferRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sales offer not found for id " + id));
-        ofNullable(salesOfferDto.getTitle()).ifPresent(c -> salesOffer.setTitle(salesOfferDto.getTitle()));
-        ofNullable(salesOfferDto.getBody()).ifPresent(c ->salesOffer.setBody(salesOfferDto.getBody()));
-        ofNullable(salesOfferDto.getLocation()).ifPresent(c -> salesOffer.setLocation(salesOfferDto.getLocation()));
-        ofNullable(salesOfferDto.getPrice()).ifPresent(c -> salesOffer.setPrice(salesOfferDto.getPrice()));
+        ofNullable(salesOfferDto.getTitle())
+                .ifPresent(c -> salesOffer.setTitle(salesOfferDto.getTitle()));
+        ofNullable(salesOfferDto.getBody())
+                .ifPresent(c ->salesOffer.setBody(salesOfferDto.getBody()));
+        ofNullable(salesOfferDto.getLocation())
+                .ifPresent(c -> salesOffer.setLocation(salesOfferDto.getLocation()));
+        ofNullable(salesOfferDto.getPrice())
+                .ifPresent(c -> salesOffer.setPrice(salesOfferDto.getPrice()));
         if(salesOfferDto.getTags() != null && !salesOfferDto.getTags().isEmpty()){
             Set<Tag> oldTags = salesOffer.getTags();
             addTagsToSalesOffer(salesOffer, salesOfferDto);
@@ -179,8 +184,10 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                     .collect(Collectors.toSet());
             removeOrphanTags(oldTags);
         }
-        ofNullable(salesOfferDto.getPhoto()).ifPresent(c ->salesOffer.setPhoto(salesOfferDto.getPhoto()));
-        ofNullable(salesOfferDto.getUserId()).ifPresent(c-> {throw new ImmutableFieldException("Cannot change User for Sales offer!");});
+        ofNullable(salesOfferDto.getPhoto())
+                .ifPresent(c ->salesOffer.setPhoto(salesOfferDto.getPhoto()));
+        ofNullable(salesOfferDto.getUserId())
+                .ifPresent(c-> {throw new ImmutableFieldException("Cannot change User for Sales offer!");});
         if(salesOfferDto.getCategoryId() != null){
             Category category = categoryRepository.findById(salesOfferDto.getCategoryId())
                     .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + salesOfferDto.getCategoryId()));

@@ -84,12 +84,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(final Long id, final UserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found for id "+id));
-        ofNullable(userDto.getUsername()).ifPresent(c -> user.setUsername(userDto.getUsername()));
-        ofNullable(userDto.getUid()).ifPresent(c -> {throw new ImmutableFieldException("Field uid in User is immutable!");});
-        ofNullable(userDto.getEmail()).ifPresent(c -> user.setEmail(userDto.getEmail()));
+        ofNullable(userDto.getUsername())
+                .ifPresent(c -> user.setUsername(userDto.getUsername()));
+        ofNullable(userDto.getUid())
+                .ifPresent(c -> {throw new ImmutableFieldException("Field uid in User is immutable!");});
+        ofNullable(userDto.getEmail())
+                .ifPresent(c -> user.setEmail(userDto.getEmail()));
         user.setNotifications(userDto.isNotifications());
-        ofNullable(userDto.getHourOfNotifications()).ifPresent(c -> user.setHourOfNotifications(userDto.getHourOfNotifications()));
-        ofNullable(userDto.getRoles()).ifPresent(c -> {throw new ImmutableFieldException("Field roles in User can be altered using grant-role endpoint!");});
+        ofNullable(userDto.getHourOfNotifications())
+                .ifPresent(c -> user.setHourOfNotifications(userDto.getHourOfNotifications()));
+        ofNullable(userDto.getRoles())
+                .ifPresent(c -> {throw new ImmutableFieldException("Field roles in User can be altered using grant-role endpoint!");});
         beanValidator.validate(user);
         User savedUser = userRepository.save(user);
         return mapToDto(savedUser);
