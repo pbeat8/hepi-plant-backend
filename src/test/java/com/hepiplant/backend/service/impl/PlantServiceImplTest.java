@@ -579,7 +579,6 @@ public class PlantServiceImplTest {
         dto.setUserId(null);
         dto.setCategoryId(null);
 
-
         given(plantRepository.findById(plant.getId())).willReturn(Optional.of(plantToUpdate));
         given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
