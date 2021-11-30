@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
@@ -60,10 +61,10 @@ public class SpeciesServiceImpl implements SpeciesService {
         species.setMistingFrequency(speciesDto.getMistingFrequency());
         species.setPlacement(speciesDto.getPlacement());
         species.setSoil(speciesDto.getSoil());
-        if(speciesDto.getCategoryId()!=null) {
+        ofNullable(speciesDto.getCategoryId()).ifPresent(c -> {
             Category category = categoryRepository.findById(speciesDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id " + speciesDto.getCategoryId()));
             species.setCategory(category);
-        }
+        });
         beanValidator.validate(species);
         Species savedSpecies = speciesRepository.save(species);
         return mapToDto(savedSpecies);
@@ -72,13 +73,11 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public SpeciesDto update(Long id, SpeciesDto speciesDto) {
         Species species = speciesRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Species not found for id "+id));
-        if(speciesDto.getName()!=null)
-            species.setName(speciesDto.getName());
+        ofNullable(speciesDto.getName()).ifPresent(c-> species.setName(speciesDto.getName()));
         species.setWateringFrequency(speciesDto.getWateringFrequency());
         species.setFertilizingFrequency(speciesDto.getFertilizingFrequency());
         species.setMistingFrequency(speciesDto.getMistingFrequency());
-        if(speciesDto.getPlacement()!=null)
-            species.setPlacement(speciesDto.getPlacement());
+        ofNullable(speciesDto.getPlacement()).ifPresent(c-> species.setPlacement(speciesDto.getPlacement()));
         if(speciesDto.getSoil()!=null){
             species.setSoil(speciesDto.getSoil());
         }

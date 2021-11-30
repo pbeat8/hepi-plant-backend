@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -63,27 +64,27 @@ public class TagServiceImpl implements TagService {
             return mapToDto(optionalTag.get());
         Tag tag = new Tag();
         tag.setName(tagDto.getName().toLowerCase().trim());
-        if(tagDto.getPosts()!=null){
+        ofNullable(tagDto.getPosts()).ifPresent(c -> {
             Set<Post> posts = new HashSet<>();
             for (Long id: tagDto.getPosts()) {
-                if(id!=null){
+                ofNullable(id).ifPresent(d->{
                     Optional<Post> post = postRepository.findById(id);
                     post.ifPresent(posts::add);
-                }
+                });
             }
             tag.setPosts(posts);
-        }
-        if(tagDto.getSalesOffers()!=null){
+        });
+        ofNullable(tagDto.getSalesOffers()).ifPresent(c->{
             Set<SalesOffer> salesOffers = new HashSet<>();
             for (Long id: tagDto.getSalesOffers()) {
-                if(id!=null){
+                ofNullable(id).ifPresent(d->{
                     Optional<SalesOffer> salesOffer = salesOfferRepository.findById(id);
                     salesOffer.ifPresent(salesOffers::add);
-                }
+                });
 
             }
             tag.setSalesOffers(salesOffers);
-        }
+        });
 
         beanValidator.validate(tag);
         Tag savedTag = tagRepository.save(tag);
