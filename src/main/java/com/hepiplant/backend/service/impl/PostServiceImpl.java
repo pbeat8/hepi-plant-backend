@@ -60,7 +60,8 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + postDto.getCategoryId()));
         post.setCategory(category);
         post.setComments(new ArrayList<>());
-        ofNullable(postDto.getTags()).ifPresent(c -> addTagsToPost(post, postDto));
+        ofNullable(postDto.getTags())
+                .ifPresent(c -> addTagsToPost(post, postDto));
         beanValidator.validate(post);
         Post savedPost = postRepository.save(post);
         return mapToDto(savedPost);
@@ -167,8 +168,10 @@ public class PostServiceImpl implements PostService {
     public PostDto update(Long id, PostDto postDto) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found for id "+id));
-        ofNullable(postDto.getTitle()).ifPresent(c -> post.setTitle(postDto.getTitle()));
-        ofNullable(postDto.getBody()).ifPresent(c -> post.setBody(postDto.getBody()));
+        ofNullable(postDto.getTitle())
+                .ifPresent(c -> post.setTitle(postDto.getTitle()));
+        ofNullable(postDto.getBody())
+                .ifPresent(c -> post.setBody(postDto.getBody()));
         if(postDto.getTags() != null && !postDto.getTags().isEmpty()){
             Set<Tag> oldTags = post.getTags();
             addTagsToPost(post, postDto);
@@ -177,8 +180,10 @@ public class PostServiceImpl implements PostService {
                     .collect(Collectors.toSet());
             removeOrphanTags(oldTags);
         }
-        ofNullable(postDto.getPhoto()).ifPresent(c -> post.setPhoto(postDto.getPhoto()));
-        ofNullable(postDto.getUserId()).ifPresent(c -> {throw new ImmutableFieldException("Cannot change User for Post!");});
+        ofNullable(postDto.getPhoto())
+                .ifPresent(c -> post.setPhoto(postDto.getPhoto()));
+        ofNullable(postDto.getUserId())
+                .ifPresent(c -> {throw new ImmutableFieldException("Cannot change User for Post!");});
         if(postDto.getCategoryId() != null){
             Category category = categoryRepository.findById(postDto.getCategoryId())
                     .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + postDto.getCategoryId()));
