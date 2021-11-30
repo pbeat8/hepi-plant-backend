@@ -386,7 +386,7 @@ public class PlantServiceImplTest {
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
 
         //when
-        List<PlantDto> result = plantService.getAllByUserFiltered(plant.getUser().getId(),anyString(),null,null);
+        List<PlantDto> result = plantService.getAllByUserFiltered(plant.getUser().getId(),"any",null,null);
 
         //then
         then(userRepository).should(times(1)).findById(dto.getUserId());
