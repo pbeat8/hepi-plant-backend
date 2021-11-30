@@ -122,7 +122,6 @@ public class PlantServiceImplTest {
         dto.setSpecies(speciesDto);
         dto.setUserId(user.getId());
         dto.setSchedule(scheduleDto);
-
     }
 
     //CREATE tests
@@ -169,9 +168,10 @@ public class PlantServiceImplTest {
 
     @Test
     public void shouldCreatePlantWithoutSpeciesAndWithCategoryOk(){
+        //given
         plant.setSpecies(speciesEmpty);
         dto.setSpecies(speciesDtoEmpty);
-        //given
+
         given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(speciesEmpty));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
@@ -214,11 +214,12 @@ public class PlantServiceImplTest {
 
     @Test
     public void shouldCreatePlantWithoutSpeciesWithoutCategoryOk(){
+        //given
         plant.setSpecies(speciesEmpty);
         dto.setSpecies(speciesDtoEmpty);
         plant.setCategory(category2);
         dto.setCategoryId(category2.getId());
-        //given
+
         given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(speciesEmpty));
         given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category2));
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
@@ -316,7 +317,6 @@ public class PlantServiceImplTest {
     }
 
     // GET ALL tests
-
     @Test
     public void shouldGetAllPlantsOk(){
         //given
@@ -352,8 +352,8 @@ public class PlantServiceImplTest {
         then(plantRepository).should(times(1)).findAll();
         assertEquals(0, result.size());
     }
-    // GET ALL BY User tests
 
+    // GET ALL BY User tests
     @Test
     public void shouldGetAllPlantsByUserOk() {
         //given
@@ -395,8 +395,9 @@ public class PlantServiceImplTest {
 
     @Test
     public void shouldGetPlantsByUserFiltersBySpeciesOk(){
-        user.setPlantList(List.of(plant));
         //given
+        user.setPlantList(List.of(plant));
+
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
 
         //when
@@ -409,8 +410,9 @@ public class PlantServiceImplTest {
 
     @Test
     public void shouldGetPlantsByUserFiltersBySpeciesEmptyListOk(){
-        user.setPlantList(List.of(plant));
         //given
+        user.setPlantList(List.of(plant));
+
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
 
         //when
@@ -423,8 +425,9 @@ public class PlantServiceImplTest {
 
     @Test
     public void shouldGetPlantsByUserFiltersByLocationOk(){
-        user.setPlantList(List.of(plant));
         //given
+        user.setPlantList(List.of(plant));
+
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
 
         //when
@@ -437,8 +440,9 @@ public class PlantServiceImplTest {
 
     @Test
     public void shouldGetPlantsByUserFiltersByLocationEmptyListOk(){
-        user.setPlantList(List.of(plant));
         //given
+        user.setPlantList(List.of(plant));
+
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
 
         //when
@@ -500,8 +504,9 @@ public class PlantServiceImplTest {
 
     @Test
     public void shouldGetAllLocationByUserEmptyListOk(){
-        user.getPlantList().get(0).setLocation(null);
         //given
+        user.getPlantList().get(0).setLocation(null);
+
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         //when
