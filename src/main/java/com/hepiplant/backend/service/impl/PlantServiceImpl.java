@@ -239,18 +239,18 @@ public class PlantServiceImpl implements PlantService {
             eventRepository.delete(event);
         }
         changeNameOfArchiveEvents(plant, WATERING, WATERING_PLANT);
-        changeNameOfArchiveEvents(plant,MISTING,MISTING_PLANT);
-        changeNameOfArchiveEvents(plant,FERTILIZING,FERTILIZING_PLANT);
+        changeNameOfArchiveEvents(plant, MISTING, MISTING_PLANT);
+        changeNameOfArchiveEvents(plant, FERTILIZING, FERTILIZING_PLANT);
 
         Event eventW = new Event();
         Event eventF = new Event();
         Event eventM = new Event();
         if(plantDto.getSchedule()!=null){
             if(plantDto.getSchedule().getWateringFrequency()>0){
-                eventW= addNewEvent(plant,  WATERING,WATERING_PLANT, plantDto.getSchedule().getWateringFrequency(),userHour);
+                eventW= addNewEvent(plant,  WATERING, WATERING_PLANT, plantDto.getSchedule().getWateringFrequency(),userHour);
             }
             if(plantDto.getSchedule().getMistingFrequency()>0){
-                eventM = addNewEvent(plant, MISTING,MISTING_PLANT, plantDto.getSchedule().getMistingFrequency(),userHour);
+                eventM = addNewEvent(plant, MISTING, MISTING_PLANT, plantDto.getSchedule().getMistingFrequency(),userHour);
             }
             if(plantDto.getSchedule().getFertilizingFrequency()>0){
                 eventF = addNewEvent(plant, FERTILIZING, FERTILIZING_PLANT, plantDto.getSchedule().getFertilizingFrequency(),userHour);
@@ -273,7 +273,7 @@ public class PlantServiceImpl implements PlantService {
                 .stream().filter(e -> e.getPlant().getId().equals(plant.getId()))
                 .filter(Event::isDone)
                 .filter(e -> e.getEventName().contains(name))
-                .forEach(e -> e.setEventDescription(description+plant.getName()));
+                .forEach(e -> e.setEventDescription(description + plant.getName()));
     }
 
     private Event addNewEvent(Plant plant, String name, String longName, int days, String hour) {
