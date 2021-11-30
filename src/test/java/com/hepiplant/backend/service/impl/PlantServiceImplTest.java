@@ -61,7 +61,9 @@ public class PlantServiceImplTest {
     private static Category category;
     private static Category category2;
     private static Species species;
+    private static Species speciesEmpty;
     private static SpeciesDto speciesDto;
+    private static SpeciesDto speciesDtoEmpty;
     private static Schedule schedule;
     private static ScheduleDto scheduleDto;
     private static User user;
@@ -77,8 +79,9 @@ public class PlantServiceImplTest {
         user2 = new User(2L, "username2", "p@ssw0rd2", "email2@gmail.com",
                 true, "00:00:00", null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         category = new Category(2L, "Category1", new ArrayList<>());
-        category2 = new Category(4L, "Category2", new ArrayList<>());
+        category2 = new Category(4L, "Brak", new ArrayList<>());
         species = new Species(3L, "name", 3, 21, 1, BARDZO_JASNE, "soil", category);
+        speciesEmpty = new Species(5L, "Brak", 3, 21, 1, BARDZO_JASNE, "soil", category);
         speciesDto = new SpeciesDto();
         speciesDto.setId(species.getId());
         speciesDto.setName(species.getName());
@@ -88,6 +91,15 @@ public class PlantServiceImplTest {
         speciesDto.setPlacement(species.getPlacement());
         speciesDto.setSoil(species.getSoil());
         speciesDto.setCategoryId(species.getCategory().getId());
+        speciesDtoEmpty = new SpeciesDto();
+        speciesDtoEmpty.setId(speciesEmpty.getId());
+        speciesDtoEmpty.setName(speciesEmpty.getName());
+        speciesDtoEmpty.setWateringFrequency(speciesEmpty.getWateringFrequency());
+        speciesDtoEmpty.setFertilizingFrequency(speciesEmpty.getFertilizingFrequency());
+        speciesDtoEmpty.setMistingFrequency(speciesEmpty.getMistingFrequency());
+        speciesDtoEmpty.setPlacement(speciesEmpty.getPlacement());
+        speciesDtoEmpty.setSoil(speciesEmpty.getSoil());
+        speciesDtoEmpty.setCategoryId(speciesEmpty.getCategory().getId());
         schedule = new Schedule(5L, plant2, 2, 21, 2);
         scheduleDto = new ScheduleDto();
         scheduleDto.setId(5L);
@@ -115,7 +127,7 @@ public class PlantServiceImplTest {
 
     //CREATE tests
     @Test
-    public void shouldCreatePlantOk(){
+    public void shouldCreatePlantWithSpeciesOk(){
         //given
         given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(species));
         given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
@@ -153,6 +165,98 @@ public class PlantServiceImplTest {
         assertEquals(species.getFertilizingFrequency(), captorValue.getSchedule().getFertilizingFrequency());
         assertEquals(scheduleDto.getWateringFrequency(), captorValue.getSchedule().getWateringFrequency());
         assertEquals(species.getMistingFrequency(), captorValue.getSchedule().getMistingFrequency());
+    }
+
+    @Test
+    public void shouldCreatePlantWithoutSpeciesAndWithCategoryOk(){
+        plant.setSpecies(speciesEmpty);
+        dto.setSpecies(speciesDtoEmpty);
+        //given
+        given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(speciesEmpty));
+        given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category));
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+        given(scheduleRepository.save(any())).willAnswer(returnsFirstArg());
+        given(eventRepository.save(any())).willAnswer(returnsFirstArg());
+        given(plantRepository.save(plantArgumentCaptor.capture())).willAnswer(returnsFirstArg());
+
+        //when
+        PlantDto result = plantService.create(dto);
+
+        //then
+        then(speciesRepository).should(times(1)).findById(eq(dto.getSpecies().getId()));
+        then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(scheduleRepository).should(times(1)).save(any(Schedule.class));
+        then(eventRepository).should(times(3)).save(any(Event.class));
+        then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
+        then(beanValidator).should(times(1)).validate(any());
+        then(plantRepository).should(times(1)).save(any(Plant.class));
+        assertEquals(plant.getName(), result.getName());
+        assertEquals(plant.getPurchaseDate(), result.getPurchaseDate());
+        assertEquals(plant.getLocation(), result.getLocation());
+        assertEquals(plant.getPhoto(), result.getPhoto());
+        assertEquals(category.getId(), result.getCategoryId());
+        assertEquals(speciesEmpty.getId(), result.getSpecies().getId());
+        assertEquals(user.getId(), result.getUserId());
+
+
+        Plant captorValue = plantArgumentCaptor.getValue();
+        assertEquals(plant.getName(), captorValue.getName());
+        assertEquals(plant.getPurchaseDate(), captorValue.getPurchaseDate());
+        assertEquals(plant.getLocation(), captorValue.getLocation());
+        assertEquals(plant.getPhoto(), captorValue.getPhoto());
+        assertEquals(category, captorValue.getCategory());
+        assertEquals(speciesEmpty, captorValue.getSpecies());
+        assertEquals(user, captorValue.getUser());
+        assertEquals(speciesEmpty.getFertilizingFrequency(), captorValue.getSchedule().getFertilizingFrequency());
+        assertEquals(scheduleDto.getWateringFrequency(), captorValue.getSchedule().getWateringFrequency());
+        assertEquals(speciesEmpty.getMistingFrequency(), captorValue.getSchedule().getMistingFrequency());
+    }
+
+    @Test
+    public void shouldCreatePlantWithoutSpeciesWithoutCategoryOk(){
+        plant.setSpecies(speciesEmpty);
+        dto.setSpecies(speciesDtoEmpty);
+        plant.setCategory(category2);
+        dto.setCategoryId(category2.getId());
+        //given
+        given(speciesRepository.findById(dto.getSpecies().getId())).willReturn(Optional.of(speciesEmpty));
+        given(categoryRepository.findById(dto.getCategoryId())).willReturn(Optional.of(category2));
+        given(userRepository.findById(dto.getUserId())).willReturn(Optional.of(user));
+        given(scheduleRepository.save(any())).willAnswer(returnsFirstArg());
+        given(eventRepository.save(any())).willAnswer(returnsFirstArg());
+        given(plantRepository.save(plantArgumentCaptor.capture())).willAnswer(returnsFirstArg());
+
+        //when
+        PlantDto result = plantService.create(dto);
+
+        //then
+        then(speciesRepository).should(times(1)).findById(eq(dto.getSpecies().getId()));
+        then(categoryRepository).should(times(1)).findById(eq(dto.getCategoryId()));
+        then(scheduleRepository).should(times(1)).save(any(Schedule.class));
+        then(eventRepository).should(times(3)).save(any(Event.class));
+        then(userRepository).should(times(1)).findById(eq(dto.getUserId()));
+        then(beanValidator).should(times(1)).validate(any());
+        then(plantRepository).should(times(1)).save(any(Plant.class));
+        assertEquals(plant.getName(), result.getName());
+        assertEquals(plant.getPurchaseDate(), result.getPurchaseDate());
+        assertEquals(plant.getLocation(), result.getLocation());
+        assertEquals(plant.getPhoto(), result.getPhoto());
+        assertEquals(category2.getId(), result.getCategoryId());
+        assertEquals(speciesEmpty.getId(), result.getSpecies().getId());
+        assertEquals(user.getId(), result.getUserId());
+
+
+        Plant captorValue = plantArgumentCaptor.getValue();
+        assertEquals(plant.getName(), captorValue.getName());
+        assertEquals(plant.getPurchaseDate(), captorValue.getPurchaseDate());
+        assertEquals(plant.getLocation(), captorValue.getLocation());
+        assertEquals(plant.getPhoto(), captorValue.getPhoto());
+        assertEquals(category2, captorValue.getCategory());
+        assertEquals(speciesEmpty, captorValue.getSpecies());
+        assertEquals(user, captorValue.getUser());
+        assertEquals(speciesEmpty.getFertilizingFrequency(), captorValue.getSchedule().getFertilizingFrequency());
+        assertEquals(scheduleDto.getWateringFrequency(), captorValue.getSchedule().getWateringFrequency());
+        assertEquals(speciesEmpty.getMistingFrequency(), captorValue.getSchedule().getMistingFrequency());
     }
 
     @Test
@@ -427,7 +531,7 @@ public class PlantServiceImplTest {
 
         //then
         then(plantRepository).should(times(1)).findById(plant.getId());
-        then(eventRepository).should(times(1)).findAll();
+        then(eventRepository).should(times(4)).findAll();
         then(eventRepository).should(times(3)).save(any(Event.class));
         then(beanValidator).should(times(1)).validate(any());
         then(plantRepository).should(times(1)).save(any(Plant.class));
