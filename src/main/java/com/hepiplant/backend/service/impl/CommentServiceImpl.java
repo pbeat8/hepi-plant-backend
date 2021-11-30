@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -95,15 +96,13 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto updatePostComment(Long id, CommentDto commentDto) {
         PostComment comment = postCommentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post comment not found for id " + id));
-        if(commentDto.getBody() != null){
-            comment.setBody(commentDto.getBody());
-        }
-        if(commentDto.getPostId() != null){
-            throw new ImmutableFieldException("Cannot change Post for Comment!");
-        }
-        if(commentDto.getUserId() != null){
-            throw new ImmutableFieldException("Cannot change User for Comment!");
-        }
+        ofNullable(commentDto.getBody())
+                .ifPresent(c -> comment.setBody(commentDto.getBody()));
+        ofNullable(commentDto.getPostId())
+                .ifPresent(c -> {throw new ImmutableFieldException("Cannot change Post for Comment!");});
+        ofNullable(commentDto.getUserId())
+            .ifPresent(c -> {throw new ImmutableFieldException("Cannot change User for Comment!");});
+
         beanValidator.validate(comment);
         PostComment savedComment = postCommentRepository.save(comment);
         return mapToDto(savedComment);
@@ -113,15 +112,13 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto updateSalesOfferComment(Long id, CommentDto commentDto) {
         SalesOfferComment comment = salesOfferCommentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Sales offer comment not found for id " + id));
-        if(commentDto.getBody() != null){
-            comment.setBody(commentDto.getBody());
-        }
-        if(commentDto.getPostId() != null){
-            throw new ImmutableFieldException("Cannot change Sales offer for Comment!");
-        }
-        if(commentDto.getUserId() != null){
-            throw new ImmutableFieldException("Cannot change User for Comment!");
-        }
+        ofNullable(commentDto.getBody())
+                .ifPresent(c -> comment.setBody(commentDto.getBody()));
+        ofNullable(commentDto.getPostId())
+                .ifPresent(c -> {throw new ImmutableFieldException("Cannot change Sales offer for Comment!");});
+        ofNullable(commentDto.getUserId())
+                .ifPresent(c -> {throw new ImmutableFieldException("Cannot change User for Comment!");});
+
         beanValidator.validate(comment);
         SalesOfferComment savedComment = salesOfferCommentRepository.save(comment);
         return mapToDto(savedComment);
