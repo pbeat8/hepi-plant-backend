@@ -121,7 +121,7 @@ public class PlantServiceImpl implements PlantService {
     @Override
     public List<PlantDto> getAll() {
         return plantRepository.findAll().stream()
-                .sorted(Comparator.comparing(Plant::getPurchaseDate))
+                .sorted(Comparator.comparing(Plant::getId).reversed())
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -130,7 +130,7 @@ public class PlantServiceImpl implements PlantService {
     public List<PlantDto> getAllByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found for id " + userId));
         return user.getPlantList().stream()
-                .sorted(Comparator.comparing(Plant::getPurchaseDate))
+                .sorted(Comparator.comparing(Plant::getId).reversed())
                 .map(DtoMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -146,13 +146,13 @@ public class PlantServiceImpl implements PlantService {
         boolean wasInIf = false;
         if(name==null && speciesId==null && location==null) {
             plants.addAll(user.getPlantList().stream()
-                    .sorted(Comparator.comparing(Plant::getPurchaseDate))
+                    .sorted(Comparator.comparing(Plant::getId).reversed())
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList()));
             wasInIf = true;
         }
         if(name!=null){
-            List<PlantDto> tempPlants = plantsAllByUser.stream().filter(p -> p.getName().equals(name)).collect(Collectors.toList());
+            List<PlantDto> tempPlants = plantsAllByUser.stream().filter(p -> p.getName().contains(name)).collect(Collectors.toList());
             plants = getPlantsDtos(plants, tempPlants, wasInIf);
             wasInIf =true;
         }
@@ -167,7 +167,7 @@ public class PlantServiceImpl implements PlantService {
             wasInIf =true;
         }
         return plants.stream()
-                .sorted(Comparator.comparing(PlantDto::getPurchaseDate))
+                .sorted(Comparator.comparing(PlantDto::getId).reversed())
                 .collect(Collectors.toList());
     }
 
