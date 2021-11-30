@@ -1,6 +1,5 @@
 package com.hepiplant.backend.service.impl;
 
-
 import com.hepiplant.backend.dto.EventDto;
 import com.hepiplant.backend.entity.Event;
 import com.hepiplant.backend.entity.Plant;
@@ -21,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -84,10 +84,11 @@ public class EventServiceImpl implements EventService {
         event.setEventDescription(eventDto.getEventDescription());
         event.setEventDate(eventDto.getEventDate());
         event.setDone(eventDto.isDone());
-        if(eventDto.getPlantId()!=null) {
+        ofNullable(eventDto.getPlantId()).ifPresent(p -> {
             Plant plant = plantRepository.findById(eventDto.getPlantId()).orElseThrow(EntityNotFoundException::new);
             event.setPlant(plant);
-        }
+        });
+
         beanValidator.validate(event);
         Event savedEvent = eventRepository.save(event);
         return mapToDto(savedEvent);
@@ -95,13 +96,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDto update(Long id, EventDto eventDto) {
-        Event event = eventRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Event not found for id " + id));
-        if(eventDto.getEventName()!=null && !eventDto.getEventName().isEmpty())
-            event.setEventName(eventDto.getEventName());
-        if(eventDto.getEventDescription()!=null && !eventDto.getEventDescription().isEmpty())
-            event.setEventDescription(eventDto.getEventDescription());
-        if(eventDto.getEventDate()!=null)
-            event.setEventDate(eventDto.getEventDate());
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found for id " + id));
+        ofNullable(eventDto.getEventName())
+                .ifPresent(e -> event.setEventName(eventDto.getEventName()));
+        ofNullable(eventDto.getEventDescription())
+                .ifPresent(e -> event.setEventDescription(eventDto.getEventDescription()));
+        ofNullable(eventDto.getEventDate())
+                .ifPresent(e -> event.setEventDate(eventDto.getEventDate()));
         event.setDone(eventDto.isDone());
         if(eventDto.getPlantId()!=null) {
             throw new ImmutableFieldException("Field Plant in Event is immutable!");
