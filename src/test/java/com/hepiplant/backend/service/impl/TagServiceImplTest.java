@@ -57,7 +57,7 @@ public class TagServiceImplTest {
     private static SalesOffer salesOffer;
 
     @BeforeEach
-    public void initializeTag(){
+    public void initializeTag() {
         tag = new Tag(1L, "Tag", new HashSet<>(), new HashSet<>());
         post = new Post(1L,"title","body","photo",null,null, Collections.singleton(tag));
         salesOffer = new SalesOffer(1L,"title","body","location", new BigDecimal("0.00"),"photo",null,null, Collections.singleton(tag));
@@ -72,7 +72,7 @@ public class TagServiceImplTest {
 
     //Create tests
     @Test
-    public void shouldCreateTagOk(){
+    public void shouldCreateTagOk() {
         //given
         given(tagRepository.findByName(dto.getName().toLowerCase())).willReturn(Optional.empty());
         given(postRepository.findById((Long) dto.getPosts().toArray()[0])).willReturn(Optional.of(post));
@@ -93,7 +93,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldCreateTagWithNameAlreadyExistsOk(){
+    public void shouldCreateTagWithNameAlreadyExistsOk() {
         //given
         given(tagRepository.findByName(tag.getName().toLowerCase())).willReturn(Optional.of(tag));
 
@@ -107,7 +107,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldCreateTagInvalidValuesThrowsException(){
+    public void shouldCreateTagInvalidValuesThrowsException() {
         //given
         doThrow(InvalidBeanException.class).when(beanValidator).validate(any());
         //when
@@ -118,7 +118,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldGetAllCategoriesOk(){
+    public void shouldGetAllCategoriesOk() {
         //given
         given(tagRepository.findAll()).willReturn(List.of(tag));
 
@@ -195,7 +195,7 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void shouldDeleteTagOk(){
+    public void shouldDeleteTagOk() {
         tag.setPosts(new HashSet<>());
         tag.setSalesOffers(new HashSet<>());
         //given
