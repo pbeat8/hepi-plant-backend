@@ -184,6 +184,9 @@ public class SalesOfferServiceImpl implements SalesOfferService {
                     .collect(Collectors.toSet());
             removeOrphanTags(oldTags);
         }
+        else{
+            salesOffer.setTags(new HashSet<>());
+        }
         ofNullable(salesOfferDto.getPhoto())
                 .ifPresent(c ->salesOffer.setPhoto(salesOfferDto.getPhoto()));
         ofNullable(salesOfferDto.getUserId())

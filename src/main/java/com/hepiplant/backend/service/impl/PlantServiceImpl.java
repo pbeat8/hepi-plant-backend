@@ -79,7 +79,6 @@ public class PlantServiceImpl implements PlantService {
             schedule.setWateringFrequency(plantDto.getSchedule().getWateringFrequency());
             schedule.setFertilizingFrequency(species.getFertilizingFrequency());
             schedule.setMistingFrequency(species.getMistingFrequency());
-
         });
 
         final String[] userHour = {null};
