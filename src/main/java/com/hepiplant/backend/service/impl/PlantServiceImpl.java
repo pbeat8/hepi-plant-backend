@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class PlantServiceImpl implements PlantService {
@@ -61,11 +62,12 @@ public class PlantServiceImpl implements PlantService {
         plant.setPhoto(plantDto.getPhoto());
         Schedule schedule = new Schedule();
         schedule.setPlant(plant);
-        if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
+        ofNullable(plantDto.getSpecies()).ifPresent(s -> {
             Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(() -> new EntityNotFoundException("Species not found for id " + plantDto.getSpecies().getId()));
             plant.setSpecies(species);
-            if(!plantDto.getSpecies().getName().equals("Brak"))
+            if(!plantDto.getSpecies().getName().equals("Brak")) {
                 plant.setCategory(species.getCategory());
+            }
             else if(plantDto.getCategoryId()!=null && plantDto.getSpecies().getName().equals("Brak")){
                 Category category = categoryRepository.findById(plantDto.getCategoryId()).orElseThrow(() -> new EntityNotFoundException("Category not found for id " + plantDto.getCategoryId()));
                 plant.setCategory(category);
@@ -77,31 +79,33 @@ public class PlantServiceImpl implements PlantService {
             schedule.setWateringFrequency(plantDto.getSchedule().getWateringFrequency());
             schedule.setFertilizingFrequency(species.getFertilizingFrequency());
             schedule.setMistingFrequency(species.getMistingFrequency());
-        }
-        String userHour = null;
-        if(plantDto.getUserId()!=null){
+        });
+
+        final String[] userHour = {null};
+        ofNullable(plantDto.getUserId()).ifPresent(u -> {
             User user = userRepository.findById(plantDto.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found for id " + plantDto.getUserId()));
-            userHour = user.getHourOfNotifications();
+            userHour[0] = user.getHourOfNotifications();
             plant.setUser(user);
-        }
-        Event eventW = new Event();
-        Event eventF = new Event();
-        Event eventM = new Event();
+        });
+
+        final Event[] eventW = {new Event()};
+        final Event[] eventF = {new Event()};
+        final Event[] eventM = {new Event()};
         List<Event> eventList = new ArrayList<>();
-        if(plantDto.getSchedule()!=null){
+        ofNullable(plantDto.getSchedule()).ifPresent(s -> {
             if(plantDto.getSchedule().getWateringFrequency()>0){
-                eventW= addNewEvent(plant,  WATERING,WATERING_PLANT, plantDto.getSchedule().getWateringFrequency(),userHour);
-                eventList.add(eventW);
+                eventW[0] = addNewEvent(plant,  WATERING,WATERING_PLANT, plantDto.getSchedule().getWateringFrequency(), userHour[0]);
+                eventList.add(eventW[0]);
             }
             if(plantDto.getSchedule().getMistingFrequency()>0){
-                eventM = addNewEvent(plant, MISTING,MISTING_PLANT, plantDto.getSchedule().getMistingFrequency(),userHour);
-                eventList.add(eventM);
+                eventM[0] = addNewEvent(plant, MISTING,MISTING_PLANT, plantDto.getSchedule().getMistingFrequency(), userHour[0]);
+                eventList.add(eventM[0]);
             }
             if(plantDto.getSchedule().getFertilizingFrequency()>0){
-                eventF = addNewEvent(plant, FERTILIZING, FERTILIZING_PLANT, plantDto.getSchedule().getFertilizingFrequency(),userHour);
-                eventList.add(eventF);
+                eventF[0] = addNewEvent(plant, FERTILIZING, FERTILIZING_PLANT, plantDto.getSchedule().getFertilizingFrequency(), userHour[0]);
+                eventList.add(eventF[0]);
             }
-        }
+        });
 
         plant.setSchedule(schedule);
         if(eventList.size()>0)
@@ -110,11 +114,11 @@ public class PlantServiceImpl implements PlantService {
         Plant savedPlant = plantRepository.save(plant);
         scheduleRepository.save(schedule);
         if(schedule.getWateringFrequency()>0)
-            eventRepository.save(eventW);
+            eventRepository.save(eventW[0]);
         if(schedule.getMistingFrequency()>0)
-            eventRepository.save(eventM);
+            eventRepository.save(eventM[0]);
         if(schedule.getFertilizingFrequency()>0)
-            eventRepository.save(eventF);
+            eventRepository.save(eventF[0]);
         return mapToDto(savedPlant);
     }
 
@@ -202,35 +206,31 @@ public class PlantServiceImpl implements PlantService {
 
     @Override
     public PlantDto update(Long id, PlantDto plantDto) {
-        Plant plant = plantRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Plant not found for id " + id));
-        String userHour = "12:00:00";
-        if(plant.getUser()!=null){
-            userHour = plant.getUser().getHourOfNotifications();
-        }
-        if(plantDto.getName()!=null && !plantDto.getName().isEmpty()){
-            plant.setName(plantDto.getName());
-        }
-        if(plantDto.getLocation()!=null && !plantDto.getLocation().isEmpty()){
-            plant.setLocation(plantDto.getLocation());
-        }
-        if(plantDto.getPhoto()!=null && !plantDto.getPhoto().isEmpty()){
-            plant.setPhoto(plantDto.getPhoto());
-        }
-        if(plantDto.getCategoryId()!=null && !plantDto.getCategoryId().equals(plant.getCategory().getId())){
-            throw new ImmutableFieldException("Field Category in Plant is immutable!");
-        }
-        if(plantDto.getSpecies()!=null && plantDto.getSpecies().getId()!=null){
-            Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(EntityNotFoundException::new);
-            plant.setSpecies(species);
-            if(!plantDto.getSpecies().getName().equals("Brak"))
-                plant.setCategory(species.getCategory());
-        }
-        if(plantDto.getUserId()!=null && !plantDto.getUserId().equals(plant.getUser().getId())){
-            throw new ImmutableFieldException("Field User in Plant is immutable!");
-        }
-        if(plantDto.getPurchaseDate()!=null){
-            plant.setPurchaseDate(plantDto.getPurchaseDate());
-        }
+        Plant plant = plantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Plant not found for id " + id));
+        final String[] userHour = {"12:00:00"};
+        ofNullable(plant.getUser()).ifPresent(u -> {
+            userHour[0] = plant.getUser().getHourOfNotifications();
+        });
+        ofNullable(plantDto.getName())
+                .ifPresent(p -> plant.setName(plantDto.getName()));
+        ofNullable(plantDto.getLocation())
+                .ifPresent(p -> plant.setLocation(plantDto.getLocation()));
+        ofNullable(plantDto.getPhoto())
+                .ifPresent(p -> plant.setPhoto(plantDto.getPhoto()));
+        ofNullable(plantDto.getCategoryId())
+                .ifPresent(c -> {throw new ImmutableFieldException("Field Category in Plant is immutable!");});
+        ofNullable(plantDto.getSpecies())
+                .ifPresent(s -> {
+                   Species species = speciesRepository.findById(plantDto.getSpecies().getId()).orElseThrow(EntityNotFoundException::new);
+                   plant.setSpecies(species);
+                   if(!plantDto.getSpecies().getName().equals("Brak"))
+                       plant.setCategory(species.getCategory());
+                });
+        ofNullable(plantDto.getUserId())
+                .ifPresent(u -> {throw new ImmutableFieldException("Field User in Plant is immutable!");});
+        ofNullable(plantDto.getPurchaseDate())
+                .ifPresent(p -> plant.setPurchaseDate(plantDto.getPurchaseDate()));
 
         for (Event event: eventRepository.findAll()
                 .stream().filter(e -> e.getPlant().getId().equals(plant.getId()))
@@ -239,32 +239,32 @@ public class PlantServiceImpl implements PlantService {
             eventRepository.delete(event);
         }
         changeNameOfArchiveEvents(plant, WATERING, WATERING_PLANT);
-        changeNameOfArchiveEvents(plant,MISTING,MISTING_PLANT);
-        changeNameOfArchiveEvents(plant,FERTILIZING,FERTILIZING_PLANT);
+        changeNameOfArchiveEvents(plant, MISTING, MISTING_PLANT);
+        changeNameOfArchiveEvents(plant, FERTILIZING, FERTILIZING_PLANT);
 
-        Event eventW = new Event();
-        Event eventF = new Event();
-        Event eventM = new Event();
-        if(plantDto.getSchedule()!=null){
+        final Event[] eventW = {new Event()};
+        final Event[] eventF = {new Event()};
+        final Event[] eventM = {new Event()};
+        ofNullable(plantDto.getSchedule()).ifPresent(s -> {
             if(plantDto.getSchedule().getWateringFrequency()>0){
-                eventW= addNewEvent(plant,  WATERING,WATERING_PLANT, plantDto.getSchedule().getWateringFrequency(),userHour);
+                eventW[0] = addNewEvent(plant,  WATERING, WATERING_PLANT, plantDto.getSchedule().getWateringFrequency(), userHour[0]);
             }
             if(plantDto.getSchedule().getMistingFrequency()>0){
-                eventM = addNewEvent(plant, MISTING,MISTING_PLANT, plantDto.getSchedule().getMistingFrequency(),userHour);
+                eventM[0] = addNewEvent(plant, MISTING, MISTING_PLANT, plantDto.getSchedule().getMistingFrequency(), userHour[0]);
             }
             if(plantDto.getSchedule().getFertilizingFrequency()>0){
-                eventF = addNewEvent(plant, FERTILIZING, FERTILIZING_PLANT, plantDto.getSchedule().getFertilizingFrequency(),userHour);
+                eventF[0] = addNewEvent(plant, FERTILIZING, FERTILIZING_PLANT, plantDto.getSchedule().getFertilizingFrequency(), userHour[0]);
             }
-        }
+        });
 
         beanValidator.validate(plant);
         Plant savedPlant = plantRepository.save(plant);
         if(plantDto.getSchedule().getWateringFrequency()>0)
-            eventRepository.save(eventW);
+            eventRepository.save(eventW[0]);
         if(plantDto.getSchedule().getMistingFrequency()>0)
-            eventRepository.save(eventM);
+            eventRepository.save(eventM[0]);
         if(plantDto.getSchedule().getFertilizingFrequency()>0)
-            eventRepository.save(eventF);
+            eventRepository.save(eventF[0]);
         return mapToDto(savedPlant);
     }
 
@@ -273,7 +273,7 @@ public class PlantServiceImpl implements PlantService {
                 .stream().filter(e -> e.getPlant().getId().equals(plant.getId()))
                 .filter(Event::isDone)
                 .filter(e -> e.getEventName().contains(name))
-                .forEach(e -> e.setEventDescription(description+plant.getName()));
+                .forEach(e -> e.setEventDescription(description + plant.getName()));
     }
 
     private Event addNewEvent(Plant plant, String name, String longName, int days, String hour) {

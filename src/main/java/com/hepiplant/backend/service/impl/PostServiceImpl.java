@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
 import static com.hepiplant.backend.util.ConversionUtils.convertToLocalDate;
+import static java.util.Optional.ofNullable;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -59,9 +60,8 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + postDto.getCategoryId()));
         post.setCategory(category);
         post.setComments(new ArrayList<>());
-        if(postDto.getTags()!=null) {
-            addTagsToPost(post, postDto);
-        }
+        ofNullable(postDto.getTags())
+                .ifPresent(c -> addTagsToPost(post, postDto));
         beanValidator.validate(post);
         Post savedPost = postRepository.save(post);
         return mapToDto(savedPost);
@@ -111,34 +111,34 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getAllByFilters(Date startDate, Date endDate, String tag, Long categoryId) {
-        Set<PostDto> posts = new HashSet<>();
-        boolean wasInIf = false;
+        final Set<PostDto>[] posts = new Set[]{new HashSet<>()};
+        final boolean[] wasInIf = {false};
         if(startDate==null && endDate==null && tag==null && categoryId==null){
-            posts.addAll(postRepository.findAll().stream()
+            posts[0].addAll(postRepository.findAll().stream()
                     .sorted(Comparator.comparing(Post::getCreatedDate))
                     .map(DtoMapper::mapToDto)
                     .collect(Collectors.toList()));
-            wasInIf=true;
+            wasInIf[0] =true;
         }
         if(startDate!=null && endDate!=null){
             List<PostDto> temp= getAll(startDate,endDate);
-            posts = getPostDtos(posts, temp, wasInIf);
-            wasInIf =true;
+            posts[0] = getPostDtos(posts[0], temp, wasInIf[0]);
+            wasInIf[0] =true;
         }
 
         if(tag!=null && !tag.isEmpty()){
             List<PostDto> temp= getAllByTag(tag);
-            posts = getPostDtos(posts, temp, wasInIf);
-            wasInIf=true;
+            posts[0] = getPostDtos(posts[0], temp, wasInIf[0]);
+            wasInIf[0] =true;
         }
 
-        if(categoryId!=null){
+        ofNullable(categoryId).ifPresent(c -> {
             List<PostDto> temp = getAllByCategory(categoryId);
-            posts = getPostDtos(posts, temp, wasInIf);
-            wasInIf=true;
-        }
+            posts[0] = getPostDtos(posts[0], temp, wasInIf[0]);
+            wasInIf[0] =true;
+        });
 
-        List<PostDto> filterPost = new ArrayList<>(posts);
+        List<PostDto> filterPost = new ArrayList<>(posts[0]);
         return filterPost.stream()
                 .sorted(Comparator.comparing(PostDto::getCreatedDate).reversed())
                 .collect(Collectors.toList());
@@ -168,12 +168,10 @@ public class PostServiceImpl implements PostService {
     public PostDto update(Long id, PostDto postDto) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found for id "+id));
-        if(postDto.getTitle() != null){
-            post.setTitle(postDto.getTitle());
-        }
-        if(postDto.getBody() != null){
-            post.setBody(postDto.getBody());
-        }
+        ofNullable(postDto.getTitle())
+                .ifPresent(c -> post.setTitle(postDto.getTitle()));
+        ofNullable(postDto.getBody())
+                .ifPresent(c -> post.setBody(postDto.getBody()));
         if(postDto.getTags() != null && !postDto.getTags().isEmpty()){
             Set<Tag> oldTags = post.getTags();
             addTagsToPost(post, postDto);
@@ -182,12 +180,13 @@ public class PostServiceImpl implements PostService {
                     .collect(Collectors.toSet());
             removeOrphanTags(oldTags);
         }
-        if(postDto.getPhoto() !=null){
-            post.setPhoto(postDto.getPhoto());
+        else{
+            post.setTags(new HashSet<>());
         }
-        if(postDto.getUserId() != null){
-            throw new ImmutableFieldException("Cannot change User for Post!");
-        }
+        ofNullable(postDto.getPhoto())
+                .ifPresent(c -> post.setPhoto(postDto.getPhoto()));
+        ofNullable(postDto.getUserId())
+                .ifPresent(c -> {throw new ImmutableFieldException("Cannot change User for Post!");});
         if(postDto.getCategoryId() != null){
             Category category = categoryRepository.findById(postDto.getCategoryId())
                     .orElseThrow(() -> new EntityNotFoundException("Category not found for id " + postDto.getCategoryId()));

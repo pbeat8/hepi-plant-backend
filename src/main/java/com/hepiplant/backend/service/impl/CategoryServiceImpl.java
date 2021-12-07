@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.hepiplant.backend.mapper.DtoMapper.mapToDto;
+import static java.util.Optional.*;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -52,9 +53,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto update(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Category not found for id "+id));
-        if(categoryDto.getName()!=null)
-            category.setName(categoryDto.getName());
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found for id "+id));
+        ofNullable(categoryDto.getName())
+                .ifPresent(c -> category.setName(categoryDto.getName()));
         beanValidator.validate(category);
         Category savedCategory = categoryRepository.save(category);
         return mapToDto(savedCategory);
