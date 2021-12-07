@@ -180,6 +180,9 @@ public class PostServiceImpl implements PostService {
                     .collect(Collectors.toSet());
             removeOrphanTags(oldTags);
         }
+        else{
+            post.setTags(new HashSet<>());
+        }
         ofNullable(postDto.getPhoto())
                 .ifPresent(c -> post.setPhoto(postDto.getPhoto()));
         ofNullable(postDto.getUserId())
