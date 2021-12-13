@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -51,7 +52,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.findAll().stream().map(DtoMapper::mapToDto).collect(Collectors.toList());
+        return userRepository.findAll().stream()
+                .map(DtoMapper::mapToDto)
+                .sorted(Comparator.comparing(UserDto::getId))
+                .collect(Collectors.toList());
     }
 
     @Override
